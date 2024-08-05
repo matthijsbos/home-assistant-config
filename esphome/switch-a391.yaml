@@ -1,0 +1,78 @@
+substitutions:
+  device_name: switch-a391
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${device_name}
+
+esp8266:
+  board: esp01_1m
+
+logger:
+
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+    ssid: ${device_name}
+    password: !secret wifi_fallback_ap_password
+
+captive_portal:
+
+# https://templates.blakadder.com/brennenstuhl_WS_EC01.html
+# {"NAME":"WS EC01 DE","GPIO":[0,0,0,0,17,158,0,0,0,52,21,0,0],"FLAG":0,"BASE":18}
+
+# Define the relay
+switch:
+  - platform: gpio
+    pin: GPIO14
+    id: relay
+    name: None
+
+binary_sensor:
+  - platform: gpio
+    id: button
+    pin: 
+      number: GPIO4
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    filters:
+      - delayed_on: 10ms
+      - delayed_off: 10ms
+    on_press:
+      then:
+        - switch.toggle: relay
+
+# Define the relay status LED
+output:
+  - platform: gpio
+    pin: GPIO5
+    id: relay_led
+
+# Synchronize the relay LED with the relay state
+interval:
+  - interval: 1s
+    then:
+      if:
+        condition:
+          switch.is_on: relay
+        then:
+          - output.turn_on: relay_led
+        else:
+          - output.turn_off: relay_led
+
+# Define the link status LED
+status_led:
+  pin:
+    number: GPIO13
+    inverted: true
