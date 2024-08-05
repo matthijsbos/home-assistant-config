@@ -1,0 +1,196 @@
+substitutions:
+  device_name: btn-74ad
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${device_name}
+
+esp8266:
+  board: esp01_1m
+
+logger:
+
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+    id: ota_pass
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  ap:
+    ssid: ${device_name}
+    password: !secret wifi_fallback_ap_password
+
+captive_portal:
+
+event:
+  - platform: template
+    name: Button 1 Pressed
+    id: button_1_pressed
+    device_class: button
+    event_types:
+      - short_press
+      - long_press
+  - platform: template
+    name: Button 2 Pressed
+    id: button_2_pressed
+    device_class: button
+    event_types:
+      - short_press
+      - long_press
+  - platform: template
+    name: Button 3 Pressed
+    id: button_3_pressed
+    device_class: button
+    event_types:
+      - short_press
+      - long_press
+  - platform: template
+    name: Button 4 Pressed
+    id: button_4_pressed
+    device_class: button
+    event_types:
+      - short_press
+      - long_press
+  - platform: template
+    name: Button 5 Pressed
+    id: button_5_pressed
+    device_class: button
+    event_types:
+      - short_press
+      - long_press
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO5
+      mode:
+        input: true
+        pullup: true
+    name: "Button 1"
+    filters:
+      - invert:
+      - delayed_on: 10ms
+      - delayed_off: 10ms
+    internal: true
+    on_click:
+      - min_length: 50ms
+        max_length: 500ms
+        then:
+          - event.trigger:
+              id: button_1_pressed
+              event_type: "short_press"
+      - min_length: 500ms
+        max_length: 5s
+        then:
+          - event.trigger:
+              id: button_1_pressed
+              event_type: "long_press"
+  - platform: gpio
+    pin:
+      number: GPIO4
+      mode:
+        input: true
+        pullup: true
+    name: "Button 2"
+    filters:
+      - invert:
+      - delayed_on: 10ms
+      - delayed_off: 10ms
+    internal: true
+    on_click:
+      - min_length: 50ms
+        max_length: 500ms
+        then:
+          - event.trigger:
+              id: button_2_pressed
+              event_type: "short_press"
+      - min_length: 500ms
+        max_length: 5s
+        then:
+          - event.trigger:
+              id: button_2_pressed
+              event_type: "long_press"
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode:
+        input: true
+        pullup: true
+    name: "Button 3"
+    filters:
+      - invert:
+      - delayed_on: 10ms
+      - delayed_off: 10ms
+    internal: true
+    on_click:
+      - min_length: 50ms
+        max_length: 500ms
+        then:
+          - event.trigger:
+              id: button_3_pressed
+              event_type: "short_press"
+      - min_length: 500ms
+        max_length: 5s
+        then:
+          - event.trigger:
+              id: button_3_pressed
+              event_type: "long_press"
+
+  - platform: gpio
+    pin:
+      number: GPIO2
+      mode:
+        input: true
+        pullup: true
+    name: "Button 4"
+    filters:
+      - invert:
+      - delayed_on: 10ms
+      - delayed_off: 10ms
+    internal: true
+    on_click:
+      - min_length: 50ms
+        max_length: 500ms
+        then:
+          - event.trigger:
+              id: button_4_pressed
+              event_type: "short_press"
+      - min_length: 500ms
+        max_length: 5s
+        then:
+          - event.trigger:
+              id: button_4_pressed
+              event_type: "long_press"
+
+  - platform: gpio
+    pin:
+      number: GPIO14
+      mode:
+        input: true
+        pullup: true
+    name: "Button 5"
+    filters:
+      - invert:
+      - delayed_on: 10ms
+      - delayed_off: 10ms
+    internal: true
+    on_click:
+      - min_length: 50ms
+        max_length: 500ms
+        then:
+          - event.trigger:
+              id: button_5_pressed
+              event_type: "short_press"
+      - min_length: 500ms
+        max_length: 5s
+        then:
+          - event.trigger:
+              id: button_5_pressed
+              event_type: "long_press"
