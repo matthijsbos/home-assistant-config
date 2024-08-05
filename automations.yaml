@@ -492,38 +492,6 @@
       - light.living_room_lights
       - light.living_room_accent_lights
   mode: single
-- id: '1716639471327'
-  alias: Send notification when laundry timer has finished
-  description: ''
-  trigger:
-  - platform: event
-    event_type: ' timer.finished'
-    event_data:
-      entity_id: timer.laundry_timer
-  condition: []
-  action:
-  - service: notify.notify
-    metadata: {}
-    data:
-      message: The laundry is done!
-      title: Laundry Timer
-  mode: single
-- id: '1716645391338'
-  alias: Send notification when dryer timer has finished
-  description: ''
-  trigger:
-  - platform: event
-    event_type: ' timer.finished'
-    event_data:
-      entity_id: dryer_timer
-  condition: []
-  action:
-  - service: notify.notify
-    metadata: {}
-    data:
-      message: The dryer is done!
-      title: Dryer Timer
-  mode: single
 - id: '1716715924876'
   alias: Living Room Docking Station On
   description: ''
