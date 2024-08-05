@@ -1,0 +1,22 @@
+- platform: template
+  switches:
+    hallway_lights_auto:
+      unique_id: hallway_lights_auto
+      friendly_name: "Hallway Lights Auto"
+      turn_on:
+        - service: automation.turn_on
+          data:
+            entity_id: automation.hallway_lights_on
+        - service: automation.turn_on
+          data:
+            entity_id: automation.hallway_lights_off
+      turn_off:
+        - service: automation.turn_off
+          data:
+            entity_id: automation.hallway_lights_on
+        - service: automation.turn_off
+          data:
+            entity_id: automation.hallway_lights_off
+      value_template: >
+        {{ is_state('automation.hallway_lights_on', 'on') and is_state('automation.hallway_lights_off', 'on') }}
+      icon_template: mdi:lightbulb-auto

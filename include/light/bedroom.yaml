@@ -1,0 +1,49 @@
+- platform: group
+  unique_id: bedroom_lights_spots
+  name: Bedroom Lights Spots
+  entities:
+    - light.light_09e6_light
+    - light.light_40a4_light
+- platform: template
+  lights:
+    bedroom_lights:
+      unique_id: bedroom_lights
+      friendly_name: "Bedroom Lights"
+      value_template: "{{ is_state('switch.switch_67a8', 'on') }}"
+      turn_on:
+        service: switch.turn_on
+        data:
+          entity_id: switch.switch_67a8
+      turn_off:
+        service: switch.turn_off
+        data:
+          entity_id: switch.switch_67a8
+      icon_template: >-
+        {% if is_state('switch.bedroom_lights_auto', 'on') %}
+          {% if is_state('switch.switch_67a8', 'on') %}
+            mdi:lightbulb-auto
+          {% else %}
+            mdi:lightbulb-auto-outline
+          {% endif %}
+        {% else %}
+          {% if is_state('switch.switch_67a8', 'on') %}
+            mdi:lightbulb
+          {% else %}
+            mdi:lightbulb-outline
+          {% endif %}
+        {% endif %}
+- platform: template
+  lights:
+    bedroom_reading_light:
+      unique_id: bedroom_reading_light
+      friendly_name: "Bedroom Reading Light"
+      value_template: "{{ is_state('switch.switch_b941', 'on') }}"
+      turn_on:
+        service: switch.turn_on
+        data:
+          entity_id: switch.switch_b941
+      turn_off:
+        service: switch.turn_off
+        data:
+          entity_id: switch.switch_b941
+      availability_template: "{{ is_state('switch.switch_b941', 'unavailable') == False }}"

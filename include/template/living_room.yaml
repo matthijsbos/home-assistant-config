@@ -1,0 +1,46 @@
+- trigger:
+    - platform: state
+      entity_id: sensor.living_room_illuminance
+    - platform: state
+      entity_id: light.living_room_lights
+      to: "on"
+  sensor:
+    - unique_id: "living_room_illuminance_lights_off"
+      name: "Living Room Illuminance Lights Off"
+      unit_of_measurement: "lx"
+      state_class: measurement
+      device_class: illuminance
+      state: >
+        {% if is_state('light.living_room_lights', 'on') %}
+          {{ state_attr('sensor.living_room_illuminance_lights_off', 'last_lights_off_illuminance') }}
+        {% else %}
+          {{ states('sensor.living_room_illuminance') }}
+        {% endif %}
+      attributes:
+        last_lights_off_illuminance: >
+          {% if is_state('light.living_room_lights', 'off') %}
+            {{ states('sensor.living_room_illuminance') }}
+          {% else %}
+            {{ state_attr('sensor.living_room_illuminance_lights_off', 'last_lights_off_illuminance') }}
+          {% endif %}
+      availability: >
+        {% if is_state('light.living_room_lights', 'on') and state_attr('sensor.living_room_illuminance_lights_off', 'last_lights_off_illuminance') == None %}
+          false
+        {% else %}
+          true
+        {% endif %}
+- binary_sensor:
+    - unique_id: living_room_daylight
+      name: "Living Room Daylight"
+      device_class: light
+      state: >
+        {% set threshold = states('input_number.living_room_daylight_illuminance_threshold') | float %}
+        {% set illuminance = states('sensor.living_room_illuminance_lights_off') %}
+        {% if illuminance in ['unknown', 'unavailable'] %}
+          {% set illuminance = states('sensor.living_room_illuminance') %}
+        {% endif %}
+        {% if illuminance in ['unknown', 'unavailable'] %}
+          true
+        {% else %}
+          {{ illuminance | float > threshold }}
+        {% endif %}

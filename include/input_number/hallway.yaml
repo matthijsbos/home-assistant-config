@@ -1,0 +1,14 @@
+hallway_daylight_illuminance_threshold:
+  name: "Hallway Daylight Illuminance Threshold"
+  min: 1
+  max: 100
+  step: 1
+  mode: box
+  unit_of_measurement: lx
+hallway_lights_off_delay:
+  name: "Hallway Lights Off Delay"
+  min: 1
+  max: 60
+  step: 1
+  mode: box
+  unit_of_measurement: min

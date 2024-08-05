@@ -1,0 +1,44 @@
+- platform: min_max
+  unique_id: bedroom_temperature
+  name: "Bedroom Temperature"
+  type: mean
+  entity_ids:
+    - sensor.fan_1d90_temperature
+    - sensor.clock_3006_temperature
+- platform: min_max
+  unique_id: bedroom_humidity
+  name: "Bedroom Humidity"
+  type: mean
+  entity_ids:
+    - sensor.fan_1d90_humidity
+    - sensor.clock_3006_humidity
+- platform: min_max
+  unique_id: bedroom_illuminance
+  name: "Bedroom Illuminance"
+  type: mean
+  entity_ids:
+    - sensor.clock_3006_illuminance
+- platform: min_max
+  unique_id: bedroom_pm_10
+  name: "Bedroom PM10"
+  type: mean
+  entity_ids:
+    - sensor.fan_1d90_pm_10
+- platform: min_max
+  unique_id: bedroom_pm_2_5
+  name: "Bedroom PM2.5"
+  type: mean
+  entity_ids:
+    - sensor.fan_1d90_pm_2_5
+- platform: min_max
+  unique_id: bedroom_volatile_organic_compounds
+  name: "Bedroom Volatile Organic Compounds"
+  type: mean
+  entity_ids:
+    - sensor.fan_1d90_volatile_organic_compounds
+- platform: min_max
+  unique_id: bedroom_nitrogen_dioxide
+  name: "Bedroom Nitrogen Dioxide"
+  type: mean
+  entity_ids:
+    - sensor.fan_1d90_nitrogen_dioxide

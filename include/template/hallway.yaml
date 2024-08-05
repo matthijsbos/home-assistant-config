@@ -1,0 +1,63 @@
+- trigger:
+    - platform: state
+      entity_id: sensor.hallway_illuminance
+    - platform: state
+      entity_id: light.hallway_lights
+      to: "on"
+  sensor:
+    - unique_id: "hallway_illuminance_lights_off"
+      name: "Hallway Illuminance Lights Off"
+      unit_of_measurement: "lx"
+      state_class: measurement
+      device_class: illuminance
+      state: >
+        {% if is_state('light.hallway_lights', 'on') %}
+          {{ state_attr('sensor.hallway_illuminance_lights_off', 'last_lights_off_illuminance') }}
+        {% else %}
+          {{ states('sensor.hallway_illuminance') }}
+        {% endif %}
+      attributes:
+        last_lights_off_illuminance: >
+          {% if is_state('light.hallway_lights', 'off') %}
+            {{ states('sensor.hallway_illuminance') }}
+          {% else %}
+            {{ state_attr('sensor.hallway_illuminance_lights_off', 'last_lights_off_illuminance') }}
+          {% endif %}
+      availability: >
+        {% if is_state('light.hallway_lights', 'on') and state_attr('sensor.hallway_illuminance_lights_off', 'last_lights_off_illuminance') == None %}
+          false
+        {% else %}
+          true
+        {% endif %}
+- binary_sensor:
+    - unique_id: hallway_daylight
+      name: "Hallway Daylight"
+      device_class: light
+      state: >
+        {% set threshold = states('input_number.hallway_daylight_illuminance_threshold') | float %}
+        {% set illuminance = states('sensor.hallway_illuminance_lights_off') %}
+        {% if illuminance in ['unknown', 'unavailable'] %}
+          {% set illuminance = states('sensor.hallway_illuminance') %}
+        {% endif %}
+        {% if illuminance in ['unknown', 'unavailable'] %}
+          true
+        {% else %}
+          {{ illuminance | float > threshold }}
+        {% endif %}
+- trigger:
+    - platform: state
+      entity_id: binary_sensor.front_door
+  binary_sensor:
+    - name: "Front Door Occupancy"
+      unique_id: "front_door_occupancy"
+      device_class: occupancy
+      state: on
+      auto_off:
+        seconds: 5
+- binary_sensor:
+    - name: "Front Door Occupancy Delayed"
+      unique_id: "front_door_occupancy_delayed"
+      device_class: occupancy
+      state: "{{ is_state('binary_sensor.front_door_occupancy', 'on') }}"
+      delay_off:
+        minutes: 1

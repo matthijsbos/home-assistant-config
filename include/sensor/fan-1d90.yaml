@@ -1,0 +1,41 @@
+- platform: template
+  sensors:
+    fan_1d90_volatile_organic_compounds:
+      unit_of_measurement: "μg/m³"
+      value_template: >
+        {% set voc_index = states('sensor.fan_1d90_volatile_organic_compounds_index') %}
+        {% if voc_index == 'unknown' or voc_index == 'unavailable' %}
+          {{ states('sensor.fan_1d90_volatile_organic_compounds') }}
+        {% else %}
+          {% set voc_index = voc_index | float(default=-1) %}
+          {% if voc_index <= 3 %}
+            {{ (100 * voc_index) | round(2) }}
+          {% elif voc_index <= 6 %}
+            {{ (100 * (voc_index - 3) + 300) | round(2) }}
+          {% elif voc_index <= 8 %}
+            {{ (250 * (voc_index - 6) + 500) | round(2) }}
+          {% else %}
+            {{ (500 * (voc_index - 8) + 1000) | round(2) }}
+          {% endif %}
+        {% endif %}
+- platform: template
+  sensors:
+    fan_1d90_nitrogen_dioxide:
+      friendly_name: "fan-1d90 NO2 (ppb)"
+      unit_of_measurement: "ppb"
+      value_template: >
+        {% set no2_index = states('sensor.fan_1d90_nitrogen_dioxide_index') %}
+        {% if no2_index == 'unknown' or no2_index == 'unavailable' %}
+          {{ states('sensor.fan_1d90_nitrogen_dioxide') }}
+        {% else %}
+          {% set no2_index = no2_index | float(default=-1) %}
+          {% if no2_index <= 3 %}
+            {{ ((50 / 3) * no2_index) | round(2) }}
+          {% elif no2_index <= 6 %}
+            {{ (25 * (no2_index - 3) + 50) | round(2) }}
+          {% elif no2_index <= 8 %}
+            {{ (50 * (no2_index - 6) + 100) | round(2) }}
+          {% else %}
+            {{ (100 * (no2_index - 8) + 200) | round(2) }}
+          {% endif %}
+        {% endif %}

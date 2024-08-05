@@ -1,0 +1,14 @@
+- platform: group
+  unique_id: front_door
+  name: "Front Door"
+  device_class: door
+  entities:
+    - binary_sensor.contact_0215_door
+- platform: group
+  unique_id: hallway_occupancy
+  name: "Hallway Occupancy"
+  device_class: occupancy
+  entities:
+    - binary_sensor.occupancy_9c01_occupancy
+    - binary_sensor.living_room_doorway_occupancy_delayed
+    - binary_sensor.front_door_occupancy_delayed

@@ -1,0 +1,58 @@
+- platform: group
+  unique_id: living_room_lights
+  name: "Living Room Lights"
+  entities:
+    - light.light_ec96_light
+
+- platform: template
+  lights:
+    living_room_sofa_windowsill_light:
+      unique_id: living_room_sofa_windowsill_light
+      friendly_name: "Living Room Sofa Windowsill Light"
+      value_template: "{{ is_state('switch.switch_50b5', 'on') }}"
+      turn_on:
+        service: switch.turn_on
+        data:
+          entity_id: switch.switch_50b5
+      turn_off:
+        service: switch.turn_off
+        data:
+          entity_id: switch.switch_50b5
+      availability_template: "{{ is_state('switch.switch_50b5', 'unavailable') == False }}"
+- platform: template
+  lights:
+    living_room_3d_printer_light:
+      unique_id: living_room_3d_printer_light
+      friendly_name: "Living Room 3D Printer Light"
+      value_template: "{{ is_state('switch.switch_ac16', 'on') }}"
+      turn_on:
+        service: switch.turn_on
+        data:
+          entity_id: switch.switch_ac16
+      turn_off:
+        service: switch.turn_off
+        data:
+          entity_id: switch.switch_ac16
+      availability_template: "{{ is_state('switch.switch_ac16', 'unavailable') == False }}"
+- platform: group
+  unique_id: living_room_desk_reading_light
+  name: "Living Room Desk Reading Light"
+  entities:
+    - light.light_2a1e_light
+- platform: group
+  unique_id: living_room_desk_windowsill_light
+  name: "Living Room Desk Windowsill Light"
+  entities:
+    - light.light_1d46_light
+- platform: group
+  unique_id: living_room_tv_windowsill_light
+  name: "Living Room TV Windowsill Light"
+  entities:
+    - light.light_0b62_light
+- platform: group
+  unique_id: living_room_accent_lights
+  name: "Living Room Accent Lights"
+  entities:
+    - light.living_room_desk_windowsill_light
+    - light.living_room_tv_windowsill_light
+    - light.living_room_sofa_windowsill_light

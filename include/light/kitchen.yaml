@@ -1,0 +1,10 @@
+- platform: group
+  unique_id: kitchen_lights_spots
+  name: Kitchen Lights Spots
+  entities:
+    - light.light_7a86_light
+- platform: group
+  unique_id: kitchen_lights
+  name: "Kitchen Lights"
+  entities:
+    - light.light_b55c_light_1

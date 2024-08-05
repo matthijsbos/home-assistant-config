@@ -1,0 +1,4 @@
+- platform: group
+  name: "Living Room Fan"
+  entities:
+    - fan.fan_6ab8_fan_6ab8

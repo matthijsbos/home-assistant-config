@@ -1,0 +1,6 @@
+- platform: group
+  unique_id: kitchen_occupancy
+  name: "Kitchen Occupancy"
+  device_class: occupancy
+  entities:
+    - binary_sensor.occupancy_952c_occupancy

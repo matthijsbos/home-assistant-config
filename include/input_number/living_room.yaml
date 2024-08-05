@@ -1,0 +1,28 @@
+living_room_daylight_illuminance_threshold:
+  name: "Living Room Daylight Illuminance Threshold"
+  min: 1
+  max: 100
+  step: 1
+  mode: box
+  unit_of_measurement: lx
+living_room_lights_off_delay:
+  name: "Living Room Lights Off Delay"
+  min: 0
+  max: 60
+  step: 1
+  mode: box
+  unit_of_measurement: min
+living_room_dashboard_display_off_delay:
+  name: "Living Room Dashboard Display Off Delay"
+  min: 0
+  max: 60
+  step: 1
+  mode: box
+  unit_of_measurement: s
+laptop_display_off_delay:
+  name: "Laptop Display Off Delay"
+  min: 0
+  max: 300
+  step: 10
+  mode: box
+  unit_of_measurement: s

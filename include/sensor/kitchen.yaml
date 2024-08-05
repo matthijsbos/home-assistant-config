@@ -1,0 +1,6 @@
+- platform: min_max
+  unique_id: kitchen_illuminance
+  name: "Kitchen Illuminance"
+  type: mean
+  entity_ids:
+    - sensor.occupancy_952c_illuminance

@@ -1,0 +1,14 @@
+- platform: min_max
+  unique_id: living_room_illuminance
+  name: "Living Room Illuminance"
+  type: mean
+  entity_ids:
+    - sensor.occupancy_7ae8_light_sensor_light_level
+- platform: min_max
+  unique_id: living_room_temperature
+  name: "Living Room Temperature"
+  type: mean
+  entity_ids:
+    - sensor.fan_6ab8_temperature
+    - sensor.therm_b31f_therm_b31f
+    - sensor.therm_977c_therm_977c

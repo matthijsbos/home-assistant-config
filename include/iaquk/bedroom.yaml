@@ -1,0 +1,11 @@
+# https://github.com/Limych/ha-iaquk?tab=readme-ov-file#configuration-variables
+bedroom:
+  name: "Bedroom Air Quality Index"
+  sources:
+    temperature: sensor.bedroom_temperature
+    humidity: sensor.bedroom_humidity
+    pm:
+      - sensor.bedroom_pm_10
+      - sensor.bedroom_pm_2_5
+    tvoc: sensor.bedroom_volatile_organic_compounds
+    no2: sensor.bedroom_nitrogen_dioxide

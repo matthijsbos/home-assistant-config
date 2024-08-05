@@ -1,0 +1,59 @@
+- platform: group
+  unique_id: living_room_occupancy
+  name: "Living Room Occupancy"
+  device_class: occupancy
+  entities:
+    - binary_sensor.occupancy_7ae8_presence_sensor_1
+- platform: group
+  unique_id: living_room_sofa_occupancy
+  name: "Living Room Sofa Occupancy"
+  device_class: occupancy
+  entities:
+    - binary_sensor.occupancy_7ae8_presence_sensor_1
+- platform: group
+  unique_id: living_room_desk_occupancy
+  name: "Living Room Desk Occupancy"
+  device_class: occupancy
+  entities:
+    - binary_sensor.occupancy_7ae8_presence_sensor_3
+    - binary_sensor.occupancy_7ae8_presence_sensor_4
+- platform: group
+  unique_id: living_room_dashboard_occupancy
+  name: "Living Room Dashboard Occupancy"
+  device_class: occupancy
+  entities:
+    - binary_sensor.occupancy_7ae8_presence_sensor_4
+    - binary_sensor.occupancy_7ae8_presence_sensor_5
+    - binary_sensor.occupancy_7ae8_presence_sensor_6
+- platform: group
+  unique_id: living_room_3d_printer_occupancy
+  name: "Living Room 3D Printer Occupancy"
+  device_class: occupancy
+  entities:
+    - binary_sensor.occupancy_7ae8_presence_sensor_5
+    - binary_sensor.occupancy_7ae8_presence_sensor_6
+- platform: template
+  sensors:
+    living_room_doorway_occupancy:
+      unique_id: living_room_doorway_occupancy
+      friendly_name: "Living Room Doorway Occupancy"
+      device_class: occupancy
+      value_template: >-
+        {{ is_state('binary_sensor.occupancy_7ae8_presence_sensor_6', 'on') }}
+- platform: template
+  sensors:
+    living_room_doorway_occupancy_delayed:
+      unique_id: living_room_doorway_occupancy_delayed
+      friendly_name: "Living Room Doorway Occupancy Delayed"
+      device_class: occupancy
+      value_template: >-
+        {{ is_state('binary_sensor.living_room_doorway_occupancy', 'on') }}
+      delay_off: "00:01:00"
+- platform: template
+  sensors:
+    laptop_docked:
+      unique_id: laptop_docked
+      friendly_name: "Laptop Docked"
+      device_class: connectivity
+      value_template: >-
+        {{ is_state('sensor.laptop_5647_docked', 'Docked') }}
