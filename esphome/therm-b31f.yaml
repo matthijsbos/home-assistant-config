@@ -1,0 +1,41 @@
+substitutions:
+  device_name: therm-b31f
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${device_name}  
+
+esp8266:
+  board: esp01_1m
+
+logger:
+
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+    ssid: ${device_name}
+    password: !secret wifi_fallback_ap_password
+
+captive_portal:
+    
+one_wire:
+  - platform: gpio
+    pin: GPIO13
+
+sensor:
+  - platform: dallas_temp
+    name: None
+
+status_led:
+  pin:
+    number: GPIO2
+    inverted: true
