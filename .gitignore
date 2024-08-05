@@ -45,3 +45,6 @@ www/community
 
 # Temporary ignores
 .old_config
+
+# CUSTOM
+.shopping_list.json
