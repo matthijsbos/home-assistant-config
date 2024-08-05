@@ -1,0 +1,841 @@
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+binary_sensor:
+  - platform: group
+    unique_id: front_door
+    name: "Front Door"
+    device_class: door
+    entities:
+      - binary_sensor.contact_0215_door
+  - platform: group
+    unique_id: kitchen_occupancy
+    name: "Kitchen Occupancy"
+    device_class: occupancy
+    entities:
+      - binary_sensor.occupancy_952c_occupancy
+  - platform: group
+    unique_id: living_room_occupancy
+    name: "Living Room Occupancy"
+    device_class: occupancy
+    entities:
+      - binary_sensor.occupancy_7ae8_presence_sensor_1
+  - platform: group
+    unique_id: living_room_sofa_occupancy
+    name: "Living Room Sofa Occupancy"
+    device_class: occupancy
+    entities:
+      - binary_sensor.occupancy_7ae8_presence_sensor_1
+  - platform: group
+    unique_id: living_room_desk_occupancy
+    name: "Living Room Desk Occupancy"
+    device_class: occupancy
+    entities:
+      - binary_sensor.occupancy_7ae8_presence_sensor_3
+      - binary_sensor.occupancy_7ae8_presence_sensor_4
+  - platform: group
+    unique_id: living_room_dashboard_occupancy
+    name: "Living Room Dashboard Occupancy"
+    device_class: occupancy
+    entities:
+      - binary_sensor.occupancy_7ae8_presence_sensor_4
+      - binary_sensor.occupancy_7ae8_presence_sensor_5
+      - binary_sensor.occupancy_7ae8_presence_sensor_6
+  - platform: group
+    unique_id: living_room_3d_printer_occupancy
+    name: "Living Room 3D Printer Occupancy"
+    device_class: occupancy
+    entities:
+      - binary_sensor.occupancy_7ae8_presence_sensor_5
+      - binary_sensor.occupancy_7ae8_presence_sensor_6
+  - platform: template
+    sensors:
+      living_room_doorway_occupancy:
+        unique_id: living_room_doorway_occupancy
+        friendly_name: "Living Room Doorway Occupancy"
+        device_class: occupancy
+        value_template: >-
+          {{ is_state('binary_sensor.occupancy_7ae8_presence_sensor_6', 'on') }}
+  - platform: template
+    sensors:
+      living_room_doorway_occupancy_delayed:
+        unique_id: living_room_doorway_occupancy_delayed
+        friendly_name: "Living Room Doorway Occupancy Delayed"
+        device_class: occupancy
+        value_template: >-
+          {{ is_state('binary_sensor.living_room_doorway_occupancy', 'on') }}
+        delay_off: "00:01:00"
+  - platform: group
+    unique_id: hallway_occupancy
+    name: "Hallway Occupancy"
+    device_class: occupancy
+    entities:
+      - binary_sensor.occupancy_9c01_occupancy
+      - binary_sensor.living_room_doorway_occupancy_delayed
+      - binary_sensor.front_door_occupancy_delayed
+  - platform: template
+    sensors:
+      laptop_docked:
+        unique_id: laptop_docked
+        friendly_name: "Laptop Docked"
+        device_class: connectivity
+        value_template: >-
+          {{ is_state('sensor.laptop_5647_docked', 'Docked') }}
+
+# https://www.home-assistant.io/integrations/min_max
+# https://www.home-assistant.io/integrations/statistics/
+sensor:
+  - platform: min_max
+    unique_id: bedroom_temperature
+    name: "Bedroom Temperature"
+    type: mean
+    entity_ids:
+      - sensor.fan_1d90_temperature
+      - sensor.clock_3006_temperature
+  - platform: min_max
+    unique_id: bedroom_humidity
+    name: "Bedroom Humidity"
+    type: mean
+    entity_ids:
+      - sensor.fan_1d90_humidity
+      - sensor.clock_3006_humidity
+  - platform: min_max
+    unique_id: bedroom_illuminance
+    name: "Bedroom Illuminance"
+    type: mean
+    entity_ids:
+      - sensor.clock_3006_illuminance
+  - platform: min_max
+    unique_id: bedroom_pm_10
+    name: "Bedroom PM10"
+    type: mean
+    entity_ids:
+      - sensor.fan_1d90_pm_10
+  - platform: min_max
+    unique_id: bedroom_pm_2_5
+    name: "Bedroom PM2.5"
+    type: mean
+    entity_ids:
+      - sensor.fan_1d90_pm_2_5
+  - platform: template
+    sensors:
+      fan_1d90_volatile_organic_compounds:
+        unit_of_measurement: "μg/m³"
+        value_template: >
+          {% set voc_index = states('sensor.fan_1d90_volatile_organic_compounds_index') %}
+          {% if voc_index == 'unknown' or voc_index == 'unavailable' %}
+            {{ states('sensor.fan_1d90_volatile_organic_compounds') }}
+          {% else %}
+            {% set voc_index = voc_index | float(default=-1) %}
+            {% if voc_index <= 3 %}
+              {{ (100 * voc_index) | round(2) }}
+            {% elif voc_index <= 6 %}
+              {{ (100 * (voc_index - 3) + 300) | round(2) }}
+            {% elif voc_index <= 8 %}
+              {{ (250 * (voc_index - 6) + 500) | round(2) }}
+            {% else %}
+              {{ (500 * (voc_index - 8) + 1000) | round(2) }}
+            {% endif %}
+          {% endif %}
+  - platform: template
+    sensors:
+      fan_1d90_nitrogen_dioxide:
+        friendly_name: "fan-1d90 NO2 (ppb)"
+        unit_of_measurement: "ppb"
+        value_template: >
+          {% set no2_index = states('sensor.fan_1d90_nitrogen_dioxide_index') %}
+          {% if no2_index == 'unknown' or no2_index == 'unavailable' %}
+            {{ states('sensor.fan_1d90_nitrogen_dioxide') }}
+          {% else %}
+            {% set no2_index = no2_index | float(default=-1) %}
+            {% if no2_index <= 3 %}
+              {{ ((50 / 3) * no2_index) | round(2) }}
+            {% elif no2_index <= 6 %}
+              {{ (25 * (no2_index - 3) + 50) | round(2) }}
+            {% elif no2_index <= 8 %}
+              {{ (50 * (no2_index - 6) + 100) | round(2) }}
+            {% else %}
+              {{ (100 * (no2_index - 8) + 200) | round(2) }}
+            {% endif %}
+          {% endif %}
+  - platform: min_max
+    unique_id: bedroom_volatile_organic_compounds
+    name: "Bedroom Volatile Organic Compounds"
+    type: mean
+    entity_ids:
+      - sensor.fan_1d90_volatile_organic_compounds
+  - platform: min_max
+    unique_id: bedroom_nitrogen_dioxide
+    name: "Bedroom Nitrogen Dioxide"
+    type: mean
+    entity_ids:
+      - sensor.fan_1d90_nitrogen_dioxide
+  - platform: min_max
+    unique_id: living_room_illuminance
+    name: "Living Room Illuminance"
+    type: mean
+    entity_ids:
+      - sensor.occupancy_7ae8_light_sensor_light_level
+  - platform: min_max
+    unique_id: hallway_illuminance
+    name: "Hallway Illuminance"
+    type: mean
+    entity_ids:
+      - sensor.occupancy_9c01_illuminance
+  - platform: min_max
+    unique_id: kitchen_illuminance
+    name: "Kitchen Illuminance"
+    type: mean
+    entity_ids:
+      - sensor.occupancy_952c_illuminance
+  - platform: min_max
+    unique_id: living_room_temperature
+    name: "Living Room Temperature"
+    type: mean
+    entity_ids:
+      - sensor.fan_6ab8_temperature
+      - sensor.therm_b31f_therm_b31f
+      - sensor.therm_977c_therm_977c
+
+light:
+  - platform: group
+    unique_id: bedroom_lights_spots
+    name: Bedroom Lights Spots
+    entities:
+      - light.light_09e6_light
+      - light.light_40a4_light
+  - platform: group
+    unique_id: kitchen_lights_spots
+    name: Kitchen Lights Spots
+    entities:
+      - light.light_7a86_light
+  - platform: group
+    unique_id: kitchen_lights
+    name: "Kitchen Lights"
+    entities:
+      - light.light_b55c_light_1
+
+  - platform: template
+    lights:
+      hallway_lights:
+        unique_id: hallway_lights
+        friendly_name: "Hallway Lights"
+        value_template: "{{ is_state('switch.switch_f37c', 'on') }}"
+        turn_on:
+          service: switch.turn_on
+          data:
+            entity_id: switch.switch_f37c
+        turn_off:
+          service: switch.turn_off
+          data:
+            entity_id: switch.switch_f37c
+        icon_template: >-
+          {% if is_state('switch.hallway_lights_auto', 'on') %}
+            {% if is_state('switch.switch_f37c', 'on') %}
+              mdi:lightbulb-auto
+            {% else %}
+              mdi:lightbulb-auto-outline
+            {% endif %}
+          {% else %}
+            {% if is_state('switch.switch_f37c', 'on') %}
+              mdi:lightbulb
+            {% else %}
+              mdi:lightbulb-outline
+            {% endif %}
+          {% endif %}
+  - platform: template
+    lights:
+      bedroom_lights:
+        unique_id: bedroom_lights
+        friendly_name: "Bedroom Lights"
+        value_template: "{{ is_state('switch.switch_67a8', 'on') }}"
+        turn_on:
+          service: switch.turn_on
+          data:
+            entity_id: switch.switch_67a8
+        turn_off:
+          service: switch.turn_off
+          data:
+            entity_id: switch.switch_67a8
+        icon_template: >-
+          {% if is_state('switch.bedroom_lights_auto', 'on') %}
+            {% if is_state('switch.switch_67a8', 'on') %}
+              mdi:lightbulb-auto
+            {% else %}
+              mdi:lightbulb-auto-outline
+            {% endif %}
+          {% else %}
+            {% if is_state('switch.switch_67a8', 'on') %}
+              mdi:lightbulb
+            {% else %}
+              mdi:lightbulb-outline
+            {% endif %}
+          {% endif %}
+  - platform: template
+    lights:
+      bedroom_reading_light:
+        unique_id: bedroom_reading_light
+        friendly_name: "Bedroom Reading Light"
+        value_template: "{{ is_state('switch.switch_b941', 'on') }}"
+        turn_on:
+          service: switch.turn_on
+          data:
+            entity_id: switch.switch_b941
+        turn_off:
+          service: switch.turn_off
+          data:
+            entity_id: switch.switch_b941
+        availability_template: "{{ is_state('switch.switch_b941', 'unavailable') == False }}"
+  - platform: group
+    unique_id: living_room_lights
+    name: "Living Room Lights"
+    entities:
+      - light.light_ec96_light
+
+  - platform: template
+    lights:
+      living_room_sofa_windowsill_light:
+        unique_id: living_room_sofa_windowsill_light
+        friendly_name: "Living Room Sofa Windowsill Light"
+        value_template: "{{ is_state('switch.switch_50b5', 'on') }}"
+        turn_on:
+          service: switch.turn_on
+          data:
+            entity_id: switch.switch_50b5
+        turn_off:
+          service: switch.turn_off
+          data:
+            entity_id: switch.switch_50b5
+        availability_template: "{{ is_state('switch.switch_50b5', 'unavailable') == False }}"
+  - platform: template
+    lights:
+      living_room_3d_printer_light:
+        unique_id: living_room_3d_printer_light
+        friendly_name: "Living Room 3D Printer Light"
+        value_template: "{{ is_state('switch.switch_ac16', 'on') }}"
+        turn_on:
+          service: switch.turn_on
+          data:
+            entity_id: switch.switch_ac16
+        turn_off:
+          service: switch.turn_off
+          data:
+            entity_id: switch.switch_ac16
+        availability_template: "{{ is_state('switch.switch_ac16', 'unavailable') == False }}"
+  - platform: group
+    unique_id: living_room_desk_reading_light
+    name: "Living Room Desk Reading Light"
+    entities:
+      - light.light_2a1e_light
+  - platform: group
+    unique_id: living_room_desk_windowsill_light
+    name: "Living Room Desk Windowsill Light"
+    entities:
+      - light.light_1d46_light
+  - platform: group
+    unique_id: living_room_tv_windowsill_light
+    name: "Living Room TV Windowsill Light"
+    entities:
+      - light.light_0b62_light
+  - platform: group
+    unique_id: living_room_accent_lights
+    name: "Living Room Accent Lights"
+    entities:
+      - light.living_room_desk_windowsill_light
+      - light.living_room_tv_windowsill_light
+      - light.living_room_sofa_windowsill_light
+template:
+  - button:
+      - unique_id: laundry_timer_start_2_hours
+        name: "Laundry Timer 2 Hours"
+        icon: mdi:washing-machine
+        press:
+          - service: timer.start
+            data:
+              entity_id: timer.laundry_timer
+              duration: "02:00:00"
+      - unique_id: laundry_timer_start_2_5_hours
+        name: "Laundry Timer 2.5 Hours"
+        icon: mdi:washing-machine
+        press:
+          - service: timer.start
+            data:
+              entity_id: timer.laundry_timer
+              duration: "02:30:00"
+      - unique_id: laundry_timer_start_3_hours
+        name: "Laundry Timer 3 Hours"
+        icon: mdi:washing-machine
+        press:
+          - service: timer.start
+            data:
+              entity_id: timer.laundry_timer
+              duration: "03:00:00"
+      - unique_id: laundry_timer_cancel
+        name: "Laundry Timer Cancel"
+        icon: mdi:washing-machine-off
+        press:
+          - service: timer.cancel
+            data:
+              entity_id: timer.laundry_timer
+      - unique_id: dryer_timer_start_1_hours
+        name: "Dryer Timer 1 Hours"
+        icon: mdi:tumble-dryer
+        press:
+          - service: timer.start
+            data:
+              entity_id: timer.dryer_timer
+              duration: "01:00:00"
+      - unique_id: dryer_timer_cancel
+        name: "Dryer Timer Cancel"
+        icon: mdi:tumble-dryer-off
+        press:
+          - service: timer.cancel
+            data:
+              entity_id: timer.dryer_timer
+  - trigger:
+      - platform: state
+        entity_id: sensor.kitchen_illuminance
+      - platform: state
+        entity_id: light.kitchen_lights
+        to: "on"
+    sensor:
+      - unique_id: "kitchen_illuminance_lights_off"
+        name: "Kitchen Illuminance Lights Off"
+        unit_of_measurement: "lx"
+        state_class: measurement
+        device_class: illuminance
+        state: >
+          {% if is_state('light.kitchen_lights', 'on') %}
+            {{ state_attr('sensor.kitchen_illuminance_lights_off', 'last_lights_off_illuminance') }}
+          {% else %}
+            {{ states('sensor.kitchen_illuminance') }}
+          {% endif %}
+        attributes:
+          last_lights_off_illuminance: >
+            {% if is_state('light.kitchen_lights', 'off') %}
+              {{ states('sensor.kitchen_illuminance') }}
+            {% else %}
+              {{ state_attr('sensor.kitchen_illuminance_lights_off', 'last_lights_off_illuminance') }}
+            {% endif %}
+        availability: >
+          {% if is_state('light.kitchen_lights', 'on') and state_attr('sensor.kitchen_illuminance_lights_off', 'last_lights_off_illuminance') == None %}
+            false
+          {% else %}
+            true
+          {% endif %}
+  - trigger:
+      - platform: state
+        entity_id: sensor.hallway_illuminance
+      - platform: state
+        entity_id: light.hallway_lights
+        to: "on"
+    sensor:
+      - unique_id: "hallway_illuminance_lights_off"
+        name: "Hallway Illuminance Lights Off"
+        unit_of_measurement: "lx"
+        state_class: measurement
+        device_class: illuminance
+        state: >
+          {% if is_state('light.hallway_lights', 'on') %}
+            {{ state_attr('sensor.hallway_illuminance_lights_off', 'last_lights_off_illuminance') }}
+          {% else %}
+            {{ states('sensor.hallway_illuminance') }}
+          {% endif %}
+        attributes:
+          last_lights_off_illuminance: >
+            {% if is_state('light.hallway_lights', 'off') %}
+              {{ states('sensor.hallway_illuminance') }}
+            {% else %}
+              {{ state_attr('sensor.hallway_illuminance_lights_off', 'last_lights_off_illuminance') }}
+            {% endif %}
+        availability: >
+          {% if is_state('light.hallway_lights', 'on') and state_attr('sensor.hallway_illuminance_lights_off', 'last_lights_off_illuminance') == None %}
+            false
+          {% else %}
+            true
+          {% endif %}
+  - trigger:
+      - platform: state
+        entity_id: sensor.bedroom_illuminance
+      - platform: state
+        entity_id: light.bedroom_lights
+        to: "on"
+    sensor:
+      - unique_id: "bedroom_illuminance_lights_off"
+        name: "Bedroom Illuminance Lights Off"
+        unit_of_measurement: "lx"
+        state_class: measurement
+        device_class: illuminance
+        state: >
+          {% if is_state('light.bedroom_lights', 'on') %}
+            {{ state_attr('sensor.bedroom_illuminance_lights_off', 'last_lights_off_illuminance') }}
+          {% else %}
+            {{ states('sensor.bedroom_illuminance') }}
+          {% endif %}
+        attributes:
+          last_lights_off_illuminance: >
+            {% if is_state('light.bedroom_lights', 'off') %}
+              {{ states('sensor.bedroom_illuminance') }}
+            {% else %}
+              {{ state_attr('sensor.bedroom_illuminance_lights_off', 'last_lights_off_illuminance') }}
+            {% endif %}
+        availability: >
+          {% if is_state('light.bedroom_lights', 'on') and state_attr('sensor.bedroom_illuminance_lights_off', 'last_lights_off_illuminance') == None %}
+            false
+          {% else %}
+            true
+          {% endif %}w
+  - trigger:
+      - platform: state
+        entity_id: sensor.living_room_illuminance
+      - platform: state
+        entity_id: light.living_room_lights
+        to: "on"
+    sensor:
+      - unique_id: "living_room_illuminance_lights_off"
+        name: "Living Room Illuminance Lights Off"
+        unit_of_measurement: "lx"
+        state_class: measurement
+        device_class: illuminance
+        state: >
+          {% if is_state('light.living_room_lights', 'on') %}
+            {{ state_attr('sensor.living_room_illuminance_lights_off', 'last_lights_off_illuminance') }}
+          {% else %}
+            {{ states('sensor.living_room_illuminance') }}
+          {% endif %}
+        attributes:
+          last_lights_off_illuminance: >
+            {% if is_state('light.living_room_lights', 'off') %}
+              {{ states('sensor.living_room_illuminance') }}
+            {% else %}
+              {{ state_attr('sensor.living_room_illuminance_lights_off', 'last_lights_off_illuminance') }}
+            {% endif %}
+        availability: >
+          {% if is_state('light.living_room_lights', 'on') and state_attr('sensor.living_room_illuminance_lights_off', 'last_lights_off_illuminance') == None %}
+            false
+          {% else %}
+            true
+          {% endif %}
+  - binary_sensor:
+      - unique_id: kitchen_daylight
+        name: "Kitchen Daylight"
+        device_class: light
+        state: >
+          {% set threshold = states('input_number.kitchen_daylight_illuminance_threshold') | float %}
+          {% set illuminance = states('sensor.kitchen_illuminance_lights_off') %}
+          {% if illuminance in ['unknown', 'unavailable'] %}
+            {% set illuminance = states('sensor.kitchen_illuminance') %}
+          {% endif %}
+          {% if illuminance in ['unknown', 'unavailable'] %}
+            true
+          {% else %}
+            {{ illuminance | float > threshold }}
+          {% endif %}
+  - binary_sensor:
+      - unique_id: hallway_daylight
+        name: "Hallway Daylight"
+        device_class: light
+        state: >
+          {% set threshold = states('input_number.hallway_daylight_illuminance_threshold') | float %}
+          {% set illuminance = states('sensor.hallway_illuminance_lights_off') %}
+          {% if illuminance in ['unknown', 'unavailable'] %}
+            {% set illuminance = states('sensor.hallway_illuminance') %}
+          {% endif %}
+          {% if illuminance in ['unknown', 'unavailable'] %}
+            true
+          {% else %}
+            {{ illuminance | float > threshold }}
+          {% endif %}
+  - binary_sensor:
+      - unique_id: bedroom_daylight
+        name: "Bedroom Daylight"
+        device_class: light
+        state: >
+          {% set threshold = states('input_number.bedroom_daylight_illuminance_threshold') | float %}
+          {% set illuminance = states('sensor.bedroom_illuminance_lights_off') %}
+          {% if illuminance in ['unknown', 'unavailable'] %}
+            {% set illuminance = states('sensor.bedroom_illuminance') %}
+          {% endif %}
+          {% if illuminance in ['unknown', 'unavailable'] %}
+            true
+          {% else %}
+            {{ illuminance | float > threshold }}
+          {% endif %}
+  - binary_sensor:
+      - unique_id: living_room_daylight
+        name: "Living Room Daylight"
+        device_class: light
+        state: >
+          {% set threshold = states('input_number.living_room_daylight_illuminance_threshold') | float %}
+          {% set illuminance = states('sensor.living_room_illuminance_lights_off') %}
+          {% if illuminance in ['unknown', 'unavailable'] %}
+            {% set illuminance = states('sensor.living_room_illuminance') %}
+          {% endif %}
+          {% if illuminance in ['unknown', 'unavailable'] %}
+            true
+          {% else %}
+            {{ illuminance | float > threshold }}
+          {% endif %}
+  - trigger:
+      - platform: state
+        entity_id: binary_sensor.front_door
+    binary_sensor:
+      - name: "Front Door Occupancy"
+        unique_id: "front_door_occupancy"
+        device_class: occupancy
+        state: on
+        auto_off:
+          seconds: 5
+  - binary_sensor:
+      - name: "Front Door Occupancy Delayed"
+        unique_id: "front_door_occupancy_delayed"
+        device_class: occupancy
+        state: "{{ is_state('binary_sensor.front_door_occupancy', 'on') }}"
+        delay_off:
+          minutes: 1
+timer:
+  laundry_timer:
+    name: "Laundry Timer"
+    restore: true
+    icon: mdi:washing-machine
+  dryer_timer:
+    name: "Dryer Timer"
+    restore: true
+    icon: mdi:tumble-dryer
+
+input_number:
+  kitchen_daylight_illuminance_threshold:
+    name: "Kitchen Daylight Illuminance Threshold"
+    min: 1
+    max: 100
+    step: 1
+    mode: box
+    unit_of_measurement: lx
+  kitchen_lights_off_delay:
+    name: "Kitchen Lights Off Delay"
+    min: 1
+    max: 60
+    step: 1
+    mode: box
+    unit_of_measurement: min
+  hallway_daylight_illuminance_threshold:
+    name: "Hallway Daylight Illuminance Threshold"
+    min: 1
+    max: 100
+    step: 1
+    mode: box
+    unit_of_measurement: lx
+  hallway_lights_off_delay:
+    name: "Hallway Lights Off Delay"
+    min: 1
+    max: 60
+    step: 1
+    mode: box
+    unit_of_measurement: min
+  bedroom_daylight_illuminance_threshold:
+    name: "Bedroom Daylight Illuminance Threshold"
+    min: 1
+    max: 100
+    step: 1
+    mode: box
+    unit_of_measurement: lx
+  bedroom_lights_off_delay:
+    name: "Bedroom Lights Off Delay"
+    min: 1
+    max: 60
+    step: 1
+    mode: box
+    unit_of_measurement: min
+  living_room_daylight_illuminance_threshold:
+    name: "Living Room Daylight Illuminance Threshold"
+    min: 1
+    max: 100
+    step: 1
+    mode: box
+    unit_of_measurement: lx
+  living_room_lights_off_delay:
+    name: "Living Room Lights Off Delay"
+    min: 0
+    max: 60
+    step: 1
+    mode: box
+    unit_of_measurement: min
+  living_room_dashboard_display_off_delay:
+    name: "Living Room Dashboard Display Off Delay"
+    min: 0
+    max: 60
+    step: 1
+    mode: box
+    unit_of_measurement: s
+  laptop_display_off_delay:
+    name: "Laptop Display Off Delay"
+    min: 0
+    max: 300
+    step: 10
+    mode: box
+    unit_of_measurement: s
+
+switch:
+  - platform: group
+    unique_id: living_room_docking_station
+    name: "Living Room Docking Station"
+    entities:
+      - switch.switch_10ff
+  - platform: group
+    unique_id: living_room_tv_power
+    name: "Living Room TV Power"
+    entities:
+      - switch.switch_a391
+  - platform: group
+    unique_id: 3d_printer_power
+    name: "3D Printer Power"
+    entities:
+      - switch.switch_10ff
+  - platform: group
+    unique_id: bedroom_mosquito_repeller
+    name: "Bedroom Mosquito Repeller"
+    entities:
+      - switch.switch_2653
+  - platform: template
+    switches:
+      living_room_dashboard_display:
+        unique_id: living_room_dashboard_display
+        friendly_name: "Living Room Dashboard Display"
+        value_template: "{{ is_state('sensor.dashboard_7e2b_displaypower', 'PowerOn') }}"
+        turn_on:
+          service: button.press
+          data:
+            entity_id: button.dashboard_7e2b_displaywake
+        turn_off:
+          service: button.press
+          data:
+            entity_id: button.dashboard_7e2b_displaysleep
+  - platform: template
+    switches:
+      laptop_display:
+        unique_id: laptop_display
+        friendly_name: "Laptop Display"
+        value_template: "{{ is_state('sensor.laptop_5647_displaypower', 'PowerOn') }}"
+        turn_on:
+          service: button.press
+          data:
+            entity_id: button.laptop_5647_displaywake
+        turn_off:
+          service: button.press
+          data:
+            entity_id: button.laptop_5647_displaysleep
+
+  - platform: template
+    switches:
+      hallway_lights_auto:
+        unique_id: hallway_lights_auto
+        friendly_name: "Hallway Lights Auto"
+        turn_on:
+          - service: automation.turn_on
+            data:
+              entity_id: automation.hallway_lights_on
+          - service: automation.turn_on
+            data:
+              entity_id: automation.hallway_lights_off
+        turn_off:
+          - service: automation.turn_off
+            data:
+              entity_id: automation.hallway_lights_on
+          - service: automation.turn_off
+            data:
+              entity_id: automation.hallway_lights_off
+        value_template: >
+          {{ is_state('automation.hallway_lights_on', 'on') and is_state('automation.hallway_lights_off', 'on') }}
+        icon_template: mdi:lightbulb-auto
+  - platform: template
+    switches:
+      kitchen_lights_auto:
+        unique_id: kitchen_lights_auto
+        friendly_name: "Kitchen Lights Auto"
+        turn_on:
+          - service: automation.turn_on
+            data:
+              entity_id: automation.kitchen_lights_on
+          - service: automation.turn_on
+            data:
+              entity_id: automation.kitchen_lights_off
+        turn_off:
+          - service: automation.turn_off
+            data:
+              entity_id: automation.kitchen_lights_on
+          - service: automation.turn_off
+            data:
+              entity_id: automation.kitchen_lights_off
+        value_template: >
+          {{ is_state('automation.kitchen_lights_on', 'on') and is_state('automation.kitchen_lights_off', 'on') }}
+        icon_template: mdi:lightbulb-auto
+  - platform: template
+    switches:
+      bedroom_lights_auto:
+        unique_id: bedroom_lights_auto
+        friendly_name: "Bedroom Lights Auto"
+        turn_on:
+          - service: automation.turn_on
+            data:
+              entity_id: automation.bedroom_lights_on
+          - service: automation.turn_on
+            data:
+              entity_id: automation.bedroom_lights_off
+        turn_off:
+          - service: automation.turn_off
+            data:
+              entity_id: automation.bedroom_lights_on
+          - service: automation.turn_off
+            data:
+              entity_id: automation.bedroom_lights_off
+        value_template: >
+          {{ is_state('automation.bedroom_lights_on', 'on') and is_state('automation.bedroom_lights_off', 'on') }}
+        icon_template: mdi:lightbulb-auto
+  - platform: template
+    switches:
+      living_room_lights_auto:
+        unique_id: living_room_lights_auto
+        friendly_name: "Living Room Lights Auto"
+        turn_on:
+          - service: automation.turn_on
+            data:
+              entity_id: automation.living_room_lights_on
+          - service: automation.turn_on
+            data:
+              entity_id: automation.living_room_lights_off
+        turn_off:
+          - service: automation.turn_off
+            data:
+              entity_id: automation.living_room_lights_on
+          - service: automation.turn_off
+            data:
+              entity_id: automation.living_room_lights_off
+        value_template: >
+          {{ is_state('automation.living_room_lights_on', 'on') and is_state('automation.living_room_lights_off', 'on') }}
+        icon_template: mdi:lightbulb-auto
+# https://github.com/Limych/ha-iaquk?tab=readme-ov-file#configuration-variables
+iaquk:
+  bedroom:
+    name: "Bedroom Air Quality Index"
+    sources:
+      temperature: sensor.bedroom_temperature
+      humidity: sensor.bedroom_humidity
+      pm:
+        - sensor.bedroom_pm_10
+        - sensor.bedroom_pm_2_5
+      tvoc: sensor.bedroom_volatile_organic_compounds
+      no2: sensor.bedroom_nitrogen_dioxide
+
+fan:
+  - platform: group
+    name: "Living Room Fan"
+    entities:
+      - fan.fan_6ab8_fan_6ab8

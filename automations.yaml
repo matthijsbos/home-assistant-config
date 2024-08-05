@@ -1,0 +1,1025 @@
+- id: '1715778689765'
+  alias: Living Room Dashboard Display Wake
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.living_room_dashboard_occupancy
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: switch.living_room_dashboard_display
+    state: 'off'
+  action:
+  - service: switch.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.living_room_dashboard_display
+  mode: single
+- id: '1715778727157'
+  alias: Living Room Dashboard Display Sleep
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.living_room_dashboard_occupancy
+    to: 'off'
+    for:
+      seconds: '{{  states(''input_number.living_room_dashboard_display_off_delay'')|int
+        }}'
+  condition:
+  - condition: state
+    entity_id: switch.living_room_dashboard_display
+    state: 'on'
+  action:
+  - service: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.living_room_dashboard_display
+  mode: single
+- id: '1715781035946'
+  alias: Living Room Docked Laptop Display Sleep
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.living_room_desk_occupancy
+    to: 'off'
+    for:
+      seconds: '{{  states(''input_number.laptop_display_off_delay'')|int }}'
+  - platform: state
+    entity_id:
+    - switch.laptop_display
+    to: 'on'
+    for:
+      seconds: '{{  states(''input_number.laptop_display_off_delay'')|int }}'
+  condition:
+  - condition: state
+    entity_id: binary_sensor.laptop_docked
+    state: 'on'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 0
+  - condition: state
+    entity_id: switch.laptop_display
+    state: 'on'
+    for:
+      seconds: '{{  states(''input_number.laptop_display_off_delay'')|int }}'
+  - condition: state
+    entity_id: binary_sensor.living_room_desk_occupancy
+    state: 'off'
+    for:
+      seconds: '{{  states(''input_number.laptop_display_off_delay'')|int }}'
+  action:
+  - service: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.laptop_display
+  mode: single
+- id: '1715781074719'
+  alias: Living Room Docked Laptop Display Wake
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.living_room_desk_occupancy
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: binary_sensor.laptop_docked
+    state: 'on'
+  - condition: state
+    entity_id: switch.laptop_display
+    state: 'off'
+  action:
+  - service: switch.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.laptop_display
+  mode: single
+- id: '1715787983168'
+  alias: Living Room TV Youtube Auto-Pause
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.living_room_occupancy
+    to: 'off'
+  condition:
+  - condition: device
+    device_id: 1c6580cf287963b48caad619f2d5a1b2
+    domain: media_player
+    entity_id: a4ec7014f506f908a4236dfa1ca43898
+    type: is_playing
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: media_player.tv_0f54_remote
+      attribute: app_id
+      state: com.google.android.youtube.tv
+  action:
+  - service: media_player.media_pause
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - media_player.tv_0f54_cast
+      - media_player.tv_0f54_remote
+  mode: single
+- id: '1715788081710'
+  alias: Living Room TV Youtube Auto-Play
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.living_room_occupancy
+    to: 'on'
+  condition:
+  - condition: device
+    device_id: 1c6580cf287963b48caad619f2d5a1b2
+    domain: media_player
+    entity_id: a4ec7014f506f908a4236dfa1ca43898
+    type: is_paused
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: media_player.tv_0f54_remote
+      attribute: app_id
+      state: com.google.android.youtube.tv
+  action:
+  - service: media_player.media_play
+    target:
+      entity_id:
+      - media_player.tv
+      - media_player.tv_0f54_cast
+    data: {}
+  mode: single
+- id: hallway_lights_off
+  alias: Hallway Lights Off
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.hallway_occupancy
+    to: 'off'
+    for:
+      minutes: '{{ states(''input_number.hallway_lights_off_delay'') | int - 1 }}'
+  - platform: state
+    entity_id:
+    - light.hallway_lights
+    to: 'on'
+    for:
+      minutes: '{{ states(''input_number.hallway_lights_off_delay'') | int }}'
+  - platform: state
+    entity_id:
+    - switch.hallway_lights_auto
+    to: 'on'
+  - platform: state
+    entity_id:
+    - input_number.hallway_lights_off_delay
+  - platform: state
+    entity_id:
+    - binary_sensor.hallway_daylight
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: light.hallway_lights
+    state: 'on'
+    for:
+      minutes: '{{ states(''input_number.hallway_lights_off_delay'') | int }}'
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: binary_sensor.hallway_occupancy
+      state: 'off'
+      for:
+        minutes: '{{ states(''input_number.hallway_lights_off_delay'') | int - 1 }}'
+    - condition: state
+      entity_id: binary_sensor.hallway_daylight
+      state: 'on'
+  action:
+  - service: light.turn_off
+    target:
+      entity_id: light.hallway_lights
+    data: {}
+  mode: single
+- id: hallway_lights_on
+  alias: Hallway lights on
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.hallway_occupancy
+    to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.hallway_daylight
+    from: 'off'
+  - platform: state
+    entity_id:
+    - switch.hallway_lights_auto
+    to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.living_room_doorway_occupancy
+    to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.front_door_occupancy
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: binary_sensor.hallway_daylight
+    state: 'off'
+  - condition: state
+    entity_id: binary_sensor.hallway_occupancy
+    state: 'on'
+  action:
+  - service: light.turn_on
+    target:
+      entity_id: light.hallway_lights
+    data: {}
+  mode: single
+- id: kitchen_lights_off
+  alias: Kitchen Lights Off
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.kitchen_occupancy
+    to: 'off'
+    for:
+      minutes: '{{ states(''input_number.kitchen_lights_off_delay'') | int - 1 }}'
+  - platform: state
+    entity_id:
+    - light.kitchen_lights
+    to: 'on'
+    for:
+      minutes: '{{ states(''input_number.kitchen_lights_off_delay'') | int }}'
+  - platform: state
+    entity_id:
+    - switch.kitchen_lights_auto
+    to: 'on'
+  - platform: state
+    entity_id:
+    - input_number.kitchen_lights_off_delay
+  - platform: state
+    entity_id:
+    - binary_sensor.kitchen_daylight
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: light.kitchen_lights
+    state: 'on'
+    for:
+      minutes: '{{ states(''input_number.kitchen_lights_off_delay'') | int }}'
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: binary_sensor.kitchen_occupancy
+      state: 'off'
+      for:
+        minutes: '{{ states(''input_number.kitchen_lights_off_delay'') | int - 1 }}'
+    - condition: state
+      entity_id: binary_sensor.kitchen_daylight
+      state: 'on'
+  action:
+  - service: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.kitchen_lights
+  mode: single
+- id: kitchen_lights_on
+  alias: Kitchen Lights On
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.kitchen_occupancy
+    to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.kitchen_daylight
+    to: 'off'
+  - platform: state
+    entity_id:
+    - switch.kitchen_lights_auto
+    to: 'on'
+    enabled: true
+  condition:
+  - condition: state
+    entity_id: binary_sensor.kitchen_daylight
+    state: 'off'
+  - condition: state
+    entity_id: binary_sensor.kitchen_occupancy
+    state: 'on'
+  action:
+  - service: light.turn_on
+    data: {}
+    target:
+      entity_id: light.kitchen_lights
+  mode: single
+- id: bedroom_lights_off
+  alias: Bedroom Lights Off
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - light.bedroom_lights
+    to: 'on'
+    for:
+      minutes: '{{ states(''input_number.bedroom_lights_off_delay'') | int }}'
+  - platform: state
+    entity_id:
+    - switch.bedroom_lights_auto
+    to: 'on'
+  - platform: state
+    entity_id:
+    - input_number.bedroom_lights_off_delay
+  - platform: state
+    entity_id:
+    - binary_sensor.bedroom_daylight
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: light.bedroom_lights
+    state: 'on'
+    for:
+      minutes: '{{ states(''input_number.bedroom_lights_off_delay'') | int }}'
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: binary_sensor.bedroom_daylight
+      state: 'on'
+    enabled: false
+  action:
+  - service: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.bedroom_lights
+  mode: single
+- id: bedroom_lights_on
+  alias: Bedroom Lights On
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.bedroom_daylight
+    to: 'off'
+  - platform: state
+    entity_id:
+    - switch.bedroom_lights_auto
+    to: 'on'
+    enabled: true
+  condition:
+  - condition: state
+    entity_id: binary_sensor.bedroom_daylight
+    state: 'off'
+  action:
+  - service: light.turn_on
+    data: {}
+    target:
+      entity_id: light.bedroom_lights
+  mode: single
+- id: '1716473547910'
+  alias: Bedroom Fan Off
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.front_door
+    to: 'on'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+  - platform: state
+    entity_id:
+    - switch.bedroom_mosquito_repeller
+  condition: []
+  action:
+  - type: turn_off
+    device_id: d9f60f6e439d7d04d0a14366940cf5e4
+    entity_id: c647751fa2efaef897f9c4d6b2764174
+    domain: fan
+  mode: single
+- id: living_room_lights_off
+  alias: Living Room Lights Off
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.living_room_occupancy
+    to: 'off'
+    for:
+      minutes: '{{ states(''input_number.living_room_lights_off_delay'') | int }}'
+  - platform: state
+    entity_id:
+    - light.living_room_lights
+    to: 'on'
+    for:
+      minutes: '{{ states(''input_number.living_room_lights_off_delay'') | int }}'
+  - platform: state
+    entity_id:
+    - switch.living_room_lights_auto
+    to: 'on'
+  - platform: state
+    entity_id:
+    - input_number.living_room_lights_off_delay
+  - platform: state
+    entity_id:
+    - binary_sensor.living_room_daylight
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: light.living_room_lights
+    state: 'on'
+    for:
+      minutes: '{{ states(''input_number.living_room_lights_off_delay'') | int }}'
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: binary_sensor.living_room_occupancy
+      state: 'off'
+      for:
+        minutes: '{{ states(''input_number.living_room_lights_off_delay'') | int }}'
+    - condition: state
+      entity_id: binary_sensor.living_room_daylight
+      state: 'on'
+  action:
+  - service: light.turn_off
+    data: {}
+    target:
+      entity_id:
+      - light.living_room_lights
+      - light.living_room_accent_lights
+  mode: single
+- id: living_room_lights_on
+  alias: Living Room Lights On
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.living_room_occupancy
+    to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.living_room_daylight
+    to: 'off'
+  - platform: state
+    entity_id:
+    - switch.living_room_lights_auto
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: binary_sensor.living_room_daylight
+    state: 'off'
+  - condition: state
+    entity_id: binary_sensor.living_room_occupancy
+    state: 'on'
+  action:
+  - service: light.turn_on
+    data: {}
+    target:
+      entity_id:
+      - light.living_room_lights
+      - light.living_room_accent_lights
+  mode: single
+- id: '1716639471327'
+  alias: Send notification when laundry timer has finished
+  description: ''
+  trigger:
+  - platform: event
+    event_type: ' timer.finished'
+    event_data:
+      entity_id: timer.laundry_timer
+  condition: []
+  action:
+  - service: notify.notify
+    metadata: {}
+    data:
+      message: The laundry is done!
+      title: Laundry Timer
+  mode: single
+- id: '1716645391338'
+  alias: Send notification when dryer timer has finished
+  description: ''
+  trigger:
+  - platform: event
+    event_type: ' timer.finished'
+    event_data:
+      entity_id: dryer_timer
+  condition: []
+  action:
+  - service: notify.notify
+    metadata: {}
+    data:
+      message: The dryer is done!
+      title: Dryer Timer
+  mode: single
+- id: '1716715924876'
+  alias: Living Room Docking Station On
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.living_room_occupancy
+    to: 'on'
+  condition: []
+  action:
+  - service: switch.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.living_room_docking_station
+  mode: single
+- id: '1716716038346'
+  alias: Living Room TV Power On
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.living_room_occupancy
+    to: 'on'
+  condition: []
+  action:
+  - service: switch.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.living_room_tv_power
+  mode: single
+- id: '1716716274495'
+  alias: Living Room TV Power Off
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.living_room_occupancy
+    to: 'off'
+    for:
+      hours: 1
+      minutes: 0
+      seconds: 0
+  condition:
+  - condition: state
+    entity_id: media_player.tv_0f54_remote
+    state: 'off'
+  action:
+  - service: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.living_room_tv_power
+  mode: single
+- id: '1716716358957'
+  alias: Living Room Docking Station Off
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.living_room_occupancy
+    to: 'off'
+    for:
+      hours: 1
+      minutes: 0
+      seconds: 0
+  condition:
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: binary_sensor.laptop_docked
+      state: 'on'
+      for:
+        hours: 0
+        minutes: 0
+        seconds: 0
+  action:
+  - service: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.living_room_docking_station
+  mode: single
+- id: '1717175760685'
+  alias: Bedroom Fan On
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.front_door
+    to: 'off'
+  - platform: state
+    entity_id:
+    - sensor.bedroom_iaq_index
+  condition:
+  - condition: state
+    entity_id: binary_sensor.front_door
+    state: 'off'
+  - condition: numeric_state
+    entity_id: sensor.bedroom_iaq_index
+    below: 50
+  - condition: state
+    entity_id: fan.fan_1d90
+    state: 'off'
+  action:
+  - service: fan.turn_on
+    metadata: {}
+    data: {}
+    target:
+      device_id: d9f60f6e439d7d04d0a14366940cf5e4
+  mode: single
+- id: '1717181154454'
+  alias: Bedroom Bedtime
+  description: ''
+  trigger: []
+  condition: []
+  action:
+  - service: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - light.bedroom_lights
+      - light.bedroom_reading_light
+  - service: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.bedroom_mosquito_repeller
+  - type: toggle
+    device_id: d31e007475f48da84ec9406b72785700
+    entity_id: 5b48a3d54783281449ca0208f1839143
+    domain: switch
+  - service: switch.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.fan_1d90_night_mode
+  mode: single
+- id: '1719322575405'
+  alias: Living Room Fan On
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.living_room_occupancy
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: binary_sensor.living_room_occupancy
+    state: 'on'
+  action:
+  - service: scene.turn_on
+    target:
+      entity_id: scene.living_room_fan_state
+    data: {}
+  - service: scene.delete
+    target:
+      entity_id: scene.living_room_fan_state
+  mode: single
+- id: '1719322611405'
+  alias: Living Room Fan Off
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.living_room_occupancy
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+  condition:
+  - condition: state
+    entity_id: binary_sensor.living_room_occupancy
+    state: 'off'
+  action:
+  - service: scene.create
+    data:
+      scene_id: living_room_fan_state
+      snapshot_entities:
+      - fan.living_room_fan
+  - service: fan.turn_off
+    target:
+      entity_id:
+      - fan.living_room_fan
+    data: {}
+  mode: single
+- id: '1719610365051'
+  alias: Bedroom Mosquito Repelling Start
+  description: ''
+  trigger:
+  - platform: time
+    at: '21:00:00'
+  - platform: state
+    entity_id:
+    - binary_sensor.front_door
+  condition:
+  - condition: state
+    entity_id: binary_sensor.front_door
+    state: 'off'
+  - condition: time
+    after: '21:00:00'
+  action:
+  - service: switch.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.bedroom_mosquito_repeller
+  mode: single
+- id: '1719610469629'
+  alias: Bedroom Mosquito Repelling Stop
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - switch.bedroom_mosquito_repeller
+    to: 'on'
+    for:
+      hours: 2
+      minutes: 0
+      seconds: 0
+  - platform: state
+    entity_id:
+    - fan.fan_1d90
+    to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.front_door
+    to: 'on'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+  condition: []
+  action:
+  - service: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.bedroom_mosquito_repeller
+  mode: single
+- id: '1721088136807'
+  alias: Bedroom Buttons
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - event.btn_74ad_button_5_pressed
+    id: btn5
+  - platform: state
+    entity_id:
+    - event.btn_74ad_button_4_pressed
+    id: btn4
+  - platform: state
+    entity_id:
+    - event.btn_74ad_button_3_pressed
+    id: btn3
+  - platform: state
+    entity_id:
+    - event.btn_74ad_button_2_pressed
+    id: btn2
+  - platform: state
+    entity_id:
+    - event.btn_74ad_button_1_pressed
+    id: btn1
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - btn1
+      sequence:
+      - service: light.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.bedroom_reading_light
+    - conditions:
+      - condition: trigger
+        id:
+        - btn2
+      sequence:
+      - service: light.toggle
+        target:
+          entity_id: light.bedroom_lights
+        data: {}
+    - conditions:
+      - condition: trigger
+        id:
+        - btn3
+      sequence:
+      - service: automation.trigger
+        target:
+          entity_id: automation.bedroom_bedtime
+        data:
+          skip_condition: true
+    - conditions:
+      - condition: trigger
+        id:
+        - btn4
+      sequence:
+      - service: fan.increase_speed
+        metadata: {}
+        data: {}
+        target:
+          area_id: bedroom
+    - conditions:
+      - condition: trigger
+        id:
+        - btn5
+      sequence:
+      - service: fan.decrease_speed
+        metadata: {}
+        data:
+          percentage_step: 10
+        target:
+          area_id: bedroom
+  mode: single
+- id: '1722624465658'
+  alias: Living Room 3D Printer Light
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.living_room_3d_printer_occupancy
+  - platform: state
+    entity_id:
+    - binary_sensor.living_room_daylight
+    to: 'off'
+  - platform: state
+    entity_id:
+    - binary_sensor.living_room_3d_printer_occupancy
+    to: 'on'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 5
+    id: Occupancy Detected
+  - platform: state
+    entity_id:
+    - binary_sensor.prusamini_printing
+    to: 'on'
+    from: 'off'
+    id: Print Initializing
+  - platform: state
+    entity_id:
+    - binary_sensor.prusamini_printing
+    to: 'on'
+    from: 'off'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    id: Print Underway
+  - platform: state
+    entity_id:
+    - binary_sensor.prusamini_printing
+    to: 'off'
+    from: 'on'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 0
+    id: Print Done
+  - platform: state
+    entity_id:
+    - binary_sensor.prusamini_printing
+    to: 'off'
+    from: 'on'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    id: Print Shutdown
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - occupancy-detected
+      - condition: state
+        entity_id: binary_sensor.prusamini_printing
+        state: 'on'
+      - condition: state
+        entity_id: binary_sensor.living_room_daylight
+        state: 'off'
+        enabled: true
+      sequence:
+      - service: light.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.living_room_3d_printer_light
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.prusamini_printing
+        state: 'off'
+      sequence: []
+    - conditions:
+      - condition: trigger
+        id:
+        - print-started
+      sequence: []
+    default:
+    - service: light.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id: light.living_room_3d_printer_light
+  mode: single
+- id: '1722625211207'
+  alias: Living Room Desk Reading Light
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.living_room_desk_occupancy
+    to: 'on'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 0
+  - platform: state
+    entity_id:
+    - binary_sensor.living_room_desk_occupancy
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 10
+  - platform: state
+    entity_id:
+    - binary_sensor.living_room_desk_occupancy
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+  - platform: state
+    entity_id:
+    - binary_sensor.living_room_daylight
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.living_room_daylight
+        state: 'on'
+      sequence:
+      - service: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.living_room_desk_reading_light
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.living_room_desk_occupancy
+        state: 'on'
+        for:
+          hours: 0
+          minutes: 0
+          seconds: 0
+      sequence:
+      - service: scene.turn_on
+        metadata: {}
+        target:
+          entity_id: scene.desk_present
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.living_room_desk_occupancy
+        state: 'off'
+        for:
+          hours: 0
+          minutes: 1
+          seconds: 0
+      sequence:
+      - service: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.living_room_desk_reading_light
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.living_room_desk_occupancy
+        state: 'off'
+        for:
+          hours: 0
+          minutes: 0
+          seconds: 10
+      sequence:
+      - service: scene.turn_on
+        metadata: {}
+        target:
+          entity_id: scene.desk_unoccupied
+  mode: single

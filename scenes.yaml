@@ -1,0 +1,92 @@
+- id: '1722028640258'
+  name: Desk occupied
+  entities:
+    light.living_room_desk_reading_light:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - color_temp
+      color_mode: color_temp
+      brightness: 76
+      color_temp_kelvin: 2808
+      color_temp: 356
+      hs_color:
+      - 28.172
+      - 62.378
+      rgb_color:
+      - 255
+      - 170
+      - 95
+      xy_color:
+      - 0.516
+      - 0.386
+      entity_id:
+      - light.light_2a1e_light
+      icon: mdi:lightbulb-group
+      friendly_name: Living Room Desk Reading Light
+      supported_features: 32
+      state: 'on'
+  metadata:
+    light.living_room_desk_reading_light:
+      entity_only: true
+- id: '1722028671424'
+  name: Desk unoccupied
+  entities:
+    light.living_room_desk_reading_light:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - color_temp
+      color_mode: color_temp
+      brightness: 25
+      color_temp_kelvin: 2212
+      color_temp: 452
+      hs_color:
+      - 29.754
+      - 84.103
+      rgb_color:
+      - 255
+      - 146
+      - 40
+      xy_color:
+      - 0.579
+      - 0.387
+      entity_id:
+      - light.light_2a1e_light
+      icon: mdi:lightbulb-group
+      friendly_name: Living Room Desk Reading Light
+      supported_features: 32
+      state: 'on'
+  metadata:
+    light.living_room_desk_reading_light:
+      entity_only: true
+- id: '1722032196919'
+  name: 'Reading Light off '
+  entities:
+    light.living_room_desk_reading_light:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - color_temp
+      color_mode:
+      brightness:
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      rgb_color:
+      xy_color:
+      entity_id:
+      - light.light_2a1e_light
+      icon: mdi:lightbulb-group
+      friendly_name: Living Room Desk Reading Light
+      supported_features: 32
+      state: 'off'
+  metadata:
+    light.living_room_desk_reading_light:
+      entity_only: true
