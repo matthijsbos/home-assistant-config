@@ -1,0 +1,153 @@
+substitutions:
+  device_name: fan-6ab8
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${device_name}
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+logger:
+
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+    ssid: ${device_name}
+    password: !secret wifi_fallback_ap_password
+
+captive_portal:
+
+output:
+  - platform: gpio
+    pin: GPIO26
+    id: relay_pin_1
+  - platform: gpio
+    pin: GPIO25
+    id: relay_pin_2
+  - platform: gpio
+    pin: GPIO33
+    id: relay_pin_3
+  - platform: gpio
+    pin: GPIO32
+    id: relay_pin_4
+
+status_led:
+  pin:
+    number: GPIO23
+    inverted: true
+
+fan:
+  - platform: template
+    id: fan_6ab8
+    name: None
+    restore_mode: ALWAYS_OFF
+    speed_count: 3
+    has_oscillating : true
+    on_turn_on:
+      - lambda: |-
+          if (id(fan_6ab8).speed == 1) {
+            id(relay_pin_1).turn_on();
+            id(relay_pin_2).turn_off();
+            id(relay_pin_3).turn_off();
+          } else if (id(fan_6ab8).speed == 2) {
+            id(relay_pin_1).turn_off();
+            id(relay_pin_2).turn_on();
+            id(relay_pin_3).turn_off();
+          } else if (id(fan_6ab8).speed == 3) {
+            id(relay_pin_1).turn_off();
+            id(relay_pin_2).turn_off();
+            id(relay_pin_3).turn_on();
+          } else {
+            id(relay_pin_1).turn_off();
+            id(relay_pin_2).turn_off();
+            id(relay_pin_3).turn_off();
+          }
+          if (id(fan_6ab8).oscillating) {
+            id(relay_pin_4).turn_on();
+          } else {
+            id(relay_pin_4).turn_off();
+          }
+    on_turn_off:
+      - output.turn_off: relay_pin_1
+      - output.turn_off: relay_pin_2
+      - output.turn_off: relay_pin_3
+      - output.turn_off: relay_pin_4
+    on_speed_set :
+      - lambda: |-
+          if (id(fan_6ab8).state && id(fan_6ab8).speed == 1) {
+            id(relay_pin_1).turn_on();
+            id(relay_pin_2).turn_off();
+            id(relay_pin_3).turn_off();
+          } else if (id(fan_6ab8).state && id(fan_6ab8).speed == 2) {
+            id(relay_pin_1).turn_off();
+            id(relay_pin_2).turn_on();
+            id(relay_pin_3).turn_off();
+          } else if (id(fan_6ab8).state && id(fan_6ab8).speed == 3) {
+            id(relay_pin_1).turn_off();
+            id(relay_pin_2).turn_off();
+            id(relay_pin_3).turn_on();
+          } else {
+            id(relay_pin_1).turn_off();
+            id(relay_pin_2).turn_off();
+            id(relay_pin_3).turn_off();
+          }
+    on_oscillating_set:
+      - lambda: |-
+          if (id(fan_6ab8).state && id(fan_6ab8).oscillating) {
+            id(relay_pin_4).turn_on();
+          } else {
+            id(relay_pin_4).turn_off();
+          }
+
+one_wire:
+  - platform: gpio
+    pin: GPIO27
+
+sensor:
+  - platform: dallas_temp
+    name: "Temperature"
+
+# Buttons for Fan Control
+binary_sensor:
+  - platform: gpio
+    internal: true
+    pin:
+      number: GPIO13
+      mode: INPUT_PULLUP
+      inverted: true
+    name: "Fan Speed Button"
+    on_press:
+      then:
+        - fan.cycle_speed:
+            id: fan_6ab8
+            off_speed_cycle: true
+  - platform: gpio
+    internal: true
+    pin:
+      number: GPIO14
+      mode: INPUT_PULLUP
+      inverted: true
+    name: "Fan Oscillation Button"
+    on_press:
+      lambda: |-
+        if (id(fan_6ab8).oscillating) {
+          auto call = id(fan_6ab8).turn_on();
+          call.set_oscillating(false);
+          call.perform();
+        } else {
+          auto call = id(fan_6ab8).turn_on();
+          call.set_oscillating(true);
+          call.perform();
+        }
