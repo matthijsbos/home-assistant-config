@@ -58,3 +58,84 @@
       value_template: >
         {{ is_state('automation.living_room_lights_on', 'on') and is_state('automation.living_room_lights_off', 'on') }}
       icon_template: mdi:lightbulb-auto
+- platform: template
+  switches:
+    living_room_fan_off:
+      friendly_name: "Living Room Fan Off"
+      value_template: "{{ is_state('fan.living_room_fan', 'off') }}"
+      turn_on:
+        service: fan.turn_off
+        target:
+          entity_id: fan.living_room_fan
+      turn_off:
+        service: fan.turn_on
+        target:
+          entity_id: fan.living_room_fan
+      icon_template: mdi:fan-off
+
+    living_room_fan_speed_1:
+      friendly_name: "Living Room Fan Speed 1"
+      value_template: "{{ is_state('fan.living_room_fan', 'on') and state_attr('fan.living_room_fan', 'percentage') == 33 }}"
+      turn_on:
+        service: fan.set_percentage
+        target:
+          entity_id: fan.living_room_fan
+        data:
+          percentage: 33
+      turn_off:
+        service: fan.turn_off
+        target:
+          entity_id: fan.living_room_fan
+      icon_template: mdi:fan-speed-1
+
+    living_room_fan_speed_2:
+      friendly_name: "Living Room Fan Speed 2"
+      value_template: "{{ is_state('fan.living_room_fan', 'on') and state_attr('fan.living_room_fan', 'percentage') == 66 }}"
+      turn_on:
+        service: fan.set_percentage
+        target:
+          entity_id: fan.living_room_fan
+        data:
+          percentage: 66
+      turn_off:
+        service: fan.turn_off
+        target:
+          entity_id: fan.living_room_fan
+      icon_template: mdi:fan-speed-2
+
+    living_room_fan_speed_3:
+      friendly_name: "Living Room Fan Speed 3"
+      value_template: "{{ is_state('fan.living_room_fan', 'on') and state_attr('fan.living_room_fan', 'percentage') == 100 }}"
+      turn_on:
+        service: fan.set_percentage
+        target:
+          entity_id: fan.living_room_fan
+        data:
+          percentage: 100
+      turn_off:
+        service: fan.turn_off
+        target:
+          entity_id: fan.living_room_fan
+      icon_template: mdi:fan-speed-3
+
+    living_room_fan_oscillating:
+      friendly_name: "Living Room Fan Oscillating"
+      value_template: "{{ is_state_attr('fan.living_room_fan', 'oscillating', true) }}"
+      turn_on:
+        service: fan.oscillate
+        target:
+          entity_id: fan.living_room_fan
+        data:
+          oscillating: true
+      turn_off:
+        service: fan.oscillate
+        target:
+          entity_id: fan.living_room_fan
+        data:
+          oscillating: false
+      icon_template: >
+        {% if is_state_attr('fan.living_room_fan', 'oscillating', true) %}
+          mdi:arrow-oscillating
+        {% else %}
+          mdi:arrow-oscillating-off
+        {% endif %}
