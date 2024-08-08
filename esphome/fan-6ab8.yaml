@@ -29,6 +29,7 @@ wifi:
 
 captive_portal:
 
+# Relay pins
 output:
   - platform: gpio
     pin: GPIO26
@@ -43,48 +44,105 @@ output:
     pin: GPIO32
     id: relay_pin_4
 
+# LED
 status_led:
   pin:
     number: GPIO23
     inverted: true
 
+# Fan Component
 fan:
   - platform: template
     id: fan_6ab8
     name: None
     restore_mode: ALWAYS_OFF
     speed_count: 3
-    has_oscillating : true
+    has_oscillating: true
     on_turn_on:
-      - lambda: |-
-          if (id(fan_6ab8).speed == 1) {
-            id(relay_pin_1).turn_on();
-            id(relay_pin_2).turn_off();
-            id(relay_pin_3).turn_off();
-          } else if (id(fan_6ab8).speed == 2) {
-            id(relay_pin_1).turn_off();
-            id(relay_pin_2).turn_on();
-            id(relay_pin_3).turn_off();
-          } else if (id(fan_6ab8).speed == 3) {
-            id(relay_pin_1).turn_off();
-            id(relay_pin_2).turn_off();
-            id(relay_pin_3).turn_on();
-          } else {
-            id(relay_pin_1).turn_off();
-            id(relay_pin_2).turn_off();
-            id(relay_pin_3).turn_off();
-          }
-          if (id(fan_6ab8).oscillating) {
-            id(relay_pin_4).turn_on();
-          } else {
-            id(relay_pin_4).turn_off();
-          }
+      - script.execute: update_fan_relays
+      - script.execute: update_oscillation_relays
     on_turn_off:
+      - script.execute: disable_fan_relays
+      - script.execute: update_oscillation_relays
+    on_speed_set:
+      # Disable all relays ans and delay between coil change, to avoid coil induction spikes
+      - script.execute: disable_fan_relays
+      - delay: 250ms
+      - script.execute: update_fan_relays
+    on_oscillating_set:
+      - script.execute: update_oscillation_relays
+      
+# Temperature sensor
+one_wire:
+  - platform: gpio
+    pin: GPIO27
+
+sensor:
+  - platform: dallas_temp
+    name: "Temperature"
+
+# Buttons for Fan Control
+binary_sensor:
+  - id: fan_speed_button
+    platform: gpio
+    internal: true
+    pin:
+      number: GPIO13
+      mode: INPUT_PULLUP
+      inverted: true
+    name: "Fan Speed Button"
+    filters:
+      - delayed_on: 25ms
+      - delayed_off: 25ms    
+    on_press:
+      then:
+        - wait_until:
+            condition:
+              binary_sensor.is_off: fan_speed_button
+            timeout: 350ms
+        - if:
+            condition:
+              binary_sensor.is_on: fan_speed_button
+            then:
+              - fan.turn_off: fan_6ab8
+            else:
+              - fan.cycle_speed:
+                  id: fan_6ab8
+                  off_speed_cycle: true
+
+  - platform: gpio
+    internal: true
+    pin:
+      number: GPIO14
+      mode: INPUT_PULLUP
+      inverted: true
+    filters:
+      - delayed_on: 25ms
+      - delayed_off: 25ms
+    name: "Fan Oscillation Button"
+    on_press:
+      lambda: |-
+        if (id(fan_6ab8).oscillating) {
+          auto call = id(fan_6ab8).turn_on();
+          call.set_oscillating(false);
+          call.perform();
+        } else {
+          auto call = id(fan_6ab8).turn_on();
+          call.set_oscillating(true);
+          call.perform();
+        }
+
+# Scripts
+script:
+  - id: disable_fan_relays
+    mode: queued
+    then:
       - output.turn_off: relay_pin_1
       - output.turn_off: relay_pin_2
       - output.turn_off: relay_pin_3
-      - output.turn_off: relay_pin_4
-    on_speed_set :
+  - id: update_fan_relays
+    mode: queued
+    then:
       - lambda: |-
           if (id(fan_6ab8).state && id(fan_6ab8).speed == 1) {
             id(relay_pin_1).turn_on();
@@ -99,55 +157,14 @@ fan:
             id(relay_pin_2).turn_off();
             id(relay_pin_3).turn_on();
           } else {
-            id(relay_pin_1).turn_off();
-            id(relay_pin_2).turn_off();
-            id(relay_pin_3).turn_off();
+            id(disable_fan_relays).execute();
           }
-    on_oscillating_set:
+  - id: update_oscillation_relays
+    mode: queued
+    then:
       - lambda: |-
           if (id(fan_6ab8).state && id(fan_6ab8).oscillating) {
             id(relay_pin_4).turn_on();
           } else {
             id(relay_pin_4).turn_off();
           }
-
-one_wire:
-  - platform: gpio
-    pin: GPIO27
-
-sensor:
-  - platform: dallas_temp
-    name: "Temperature"
-
-# Buttons for Fan Control
-binary_sensor:
-  - platform: gpio
-    internal: true
-    pin:
-      number: GPIO13
-      mode: INPUT_PULLUP
-      inverted: true
-    name: "Fan Speed Button"
-    on_press:
-      then:
-        - fan.cycle_speed:
-            id: fan_6ab8
-            off_speed_cycle: true
-  - platform: gpio
-    internal: true
-    pin:
-      number: GPIO14
-      mode: INPUT_PULLUP
-      inverted: true
-    name: "Fan Oscillation Button"
-    on_press:
-      lambda: |-
-        if (id(fan_6ab8).oscillating) {
-          auto call = id(fan_6ab8).turn_on();
-          call.set_oscillating(false);
-          call.perform();
-        } else {
-          auto call = id(fan_6ab8).turn_on();
-          call.set_oscillating(true);
-          call.perform();
-        }
