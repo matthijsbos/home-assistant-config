@@ -1,0 +1,161 @@
+blueprint:
+  name: Occupancy Controlled Device
+  description: Automates entities based on occupancy and daylight sensors
+  domain: automation
+  homeassistant:
+    min_version: "2024.8.0"
+  input:
+    occupancy_sensor:
+      name: Occupancy Sensor
+      description: The sensor detecting occupancy
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class: occupancy
+    daylight_sensor:
+      name: Daylight Sensor
+      description: The sensor detecting daylight
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class: light
+    default_scene_occupied:
+      name: Default Scene (Occupied)
+      description: The scene to activate when occupancy is detected
+      selector:
+        entity:
+          domain: scene
+    temporary_scene_name:
+      name: Temporary Scene Name
+      description: The entity name where the state is temporarily saved
+      selector:
+        text:
+          prefix: "scene."
+    off_delay_duration:
+      name: Off Delay
+      description: >
+        The duration of time to delay before turning off the targets after 
+        unoccupied.
+      selector:
+        duration:
+      default:
+        hours: 0
+        minutes: 2
+        seconds: 0
+    temporary_scene_expiration_duration:
+      name: Temporary Scene Expiration Duration
+      description: >
+        The duration of time after which the temporary scene is ingored and the 
+        default scene is used on occupation.
+      selector:
+        duration:
+      default:
+        hours: 1
+        minutes: 0
+        seconds: 0
+
+variables:
+  # save in variable so that it can be used in templates
+  temporary_scene_name: !input temporary_scene_name
+  temporary_scene_expiration_duration: !input temporary_scene_expiration_duration
+  default_scene_occupied: !input default_scene_occupied
+  target_entities: "{{ state_attr(default_scene_occupied, 'entity_id') | list }}"
+
+trigger:
+  - alias: Any change in daylight
+    platform: state
+    entity_id: !input daylight_sensor
+  - alias: Change of occupancy detected to occupancy clear for the specified duration
+    platform: state
+    entity_id: !input occupancy_sensor
+    from: "on"
+    to: "off"
+    for: !input off_delay_duration
+    id: "occupancy_clear"
+  - alias: Change of occupancy clear to occupancy detected.
+    platform: state
+    entity_id: !input occupancy_sensor
+    from: "off"
+    to: "on"
+    id: "occupancy_detected"
+
+# condition:
+
+action:
+  - choose:
+      # Saved state: activate saved scene based on occupancy if its not expired
+      - conditions:
+          - alias: "Check that saved state is available"
+            condition: template
+            value_template: "{{ states.scene[temporary_scene_name] is not none }}"
+          - alias: >
+              Check that triggered by a change in occupancy from clear to 
+              detected.
+            condition: trigger
+            id:
+              - "occupancy_detected"
+        sequence:
+          - if:
+              - alias: "Check that the saved state is not expired"
+                condition: template
+                value_template: >
+                  {% set to_last_changed = trigger.to_state.last_changed %}
+                  {% set from_last_changed = trigger.from_state.last_changed %}
+                  {% set temporary_scene_expiration_duration_timedelta = timedelta(
+                      days = temporary_scene_expiration_duration.days | default(0),
+                      hours = temporary_scene_expiration_duration.hours | default(0),
+                      minutes = temporary_scene_expiration_duration.minutes | default(0),
+                      seconds = temporary_scene_expiration_duration.seconds | default(0),
+                      milliseconds = temporary_scene_expiration_duration.milliseconds | default(0)
+                  ) %}
+                  {% if to_last_changed is not none and from_last_changed is not none %}
+                    {% set time_difference = as_datetime(to_last_changed) - as_datetime(from_last_changed)  %}
+                    {% if time_difference < temporary_scene_expiration_duration_timedelta %}
+                      True
+                    {% else %}
+                      False
+                    {% endif %}
+                  {% else %}
+                    False
+                  {% endif %}
+            then:
+              - alias: "Restore the saved state"
+                action: scene.turn_on
+                target:
+                  entity_id: "scene.{{ temporary_scene_name }}"
+          - alias: "Clean up the saved state, regardless of expired or not"
+            action: scene.delete
+            target:
+              entity_id: "scene.{{ temporary_scene_name }}"
+      # No saved state: activate default scene based on occupancy and daylight
+      - conditions:
+          - condition: state
+            entity_id: !input occupancy_sensor
+            state: "on"
+          - condition: state
+            entity_id: !input daylight_sensor
+            state: "off"
+        sequence:
+          - action: scene.turn_on
+            data: {}
+            target:
+              entity_id: !input default_scene_occupied
+      # Save scene when no occupancy for duration
+      - conditions:
+          - alias: >
+              Check that it was triggered by a change in occupancy from 
+              detected to clear for specified duration
+            condition: trigger
+            id:
+              - "occupancy_clear"
+          - alias: "Check that at least one of the target entities is on"
+            condition: template
+            value_template: "{{ target_entities | select('is_state', 'on') | list | count > 0 }}"
+        sequence:
+          - action: scene.create
+            data:
+              scene_id: !input temporary_scene_name
+              snapshot_entities: "{{ target_entities }}"
+          - action: homeassistant.turn_off
+            target:
+              entity_id: "{{ target_entities }}"
