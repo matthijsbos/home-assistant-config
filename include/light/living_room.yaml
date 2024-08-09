@@ -2,7 +2,30 @@
   unique_id: living_room_lights
   name: "Living Room Lights"
   entities:
+    - light.living_room_ambient_lights
+    - light.living_room_decorative_lights
+    - light.living_room_task_lights
+
+- platform: group
+  unique_id: living_room_abient_lights
+  name: "Living Room Ambient Lights"
+  entities:
     - light.light_ec96_light
+
+- platform: group
+  unique_id: living_room_decorative_lights
+  name: "Living Room Decorative Lights"
+  entities:
+    - light.living_room_desk_windowsill_light
+    - light.living_room_doorway_windowsill_light
+    - light.living_room_sofa_windowsill_light
+
+- platform: group
+  unique_id: living_room_task_lights
+  name: Living Room Task Lights
+  entities:
+    - light.living_room_3d_printer_light
+    - light.living_room_desk_reading_light
 
 - platform: template
   lights:
@@ -19,6 +42,7 @@
         data:
           entity_id: switch.switch_50b5
       availability_template: "{{ is_state('switch.switch_50b5', 'unavailable') == False }}"
+
 - platform: template
   lights:
     living_room_3d_printer_light:
@@ -34,25 +58,21 @@
         data:
           entity_id: switch.switch_ac16
       availability_template: "{{ is_state('switch.switch_ac16', 'unavailable') == False }}"
+
 - platform: group
   unique_id: living_room_desk_reading_light
   name: "Living Room Desk Reading Light"
   entities:
     - light.light_2a1e_light
+
 - platform: group
   unique_id: living_room_desk_windowsill_light
   name: "Living Room Desk Windowsill Light"
   entities:
     - light.light_1d46_light
+
 - platform: group
-  unique_id: living_room_tv_windowsill_light
-  name: "Living Room TV Windowsill Light"
+  unique_id: living_room_doorway_windowsill_light
+  name: "Living Room Doorway Windowsill Light"
   entities:
     - light.light_0b62_light
-- platform: group
-  unique_id: living_room_accent_lights
-  name: "Living Room Accent Lights"
-  entities:
-    - light.living_room_desk_windowsill_light
-    - light.living_room_tv_windowsill_light
-    - light.living_room_sofa_windowsill_light
