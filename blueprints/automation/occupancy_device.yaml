@@ -19,6 +19,7 @@ blueprint:
         entity:
           domain: binary_sensor
           device_class: light
+      default: ""
     default_scene_occupied:
       name: Default Scene (Occupied)
       description: The scene to activate when occupancy is detected
@@ -60,11 +61,13 @@ variables:
   temporary_scene_expiration_duration: !input temporary_scene_expiration_duration
   default_scene_occupied: !input default_scene_occupied
   target_entities: "{{ state_attr(default_scene_occupied, 'entity_id') | list }}"
+  daylight_sensor: !input daylight_sensor
 
 trigger:
   - alias: Any change in daylight
     platform: state
     entity_id: !input daylight_sensor
+    enabled: "{{ daylight_sensor != '' }}"
   - alias: Change of occupancy detected to occupancy clear for the specified duration
     platform: state
     entity_id: !input occupancy_sensor
@@ -135,6 +138,7 @@ action:
           - condition: state
             entity_id: !input daylight_sensor
             state: "off"
+            enabled: "{{ daylight_sensor != '' }}"
         sequence:
           - action: scene.turn_on
             data: {}
