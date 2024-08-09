@@ -17,3 +17,4 @@ input_number: !include_dir_merge_named include/input_number
 switch: !include_dir_merge_list include/switch
 iaquk: !include_dir_merge_named include/iaquk
 fan: !include_dir_merge_list include/fan
+media_player: !include_dir_merge_list include/media_player

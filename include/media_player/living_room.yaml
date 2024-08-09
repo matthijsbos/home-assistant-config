@@ -1,0 +1,25 @@
+- platform: universal
+  name: "Living Room TV"
+  unique_id: living_room_tv
+  device_class: tv
+  children:
+    - media_player.tv_0f54_remote
+    - media_player.tv_0f54_cast
+  browse_media_entity: media_player.tv_0f54_remote
+  commands:
+    turn_off:
+      action: media_player.turn_off
+      data:
+        entity_id: media_player.tv_0f54_remote
+    turn_on:
+      action: media_player.turn_on
+      data:
+        entity_id: media_player.tv_0f54_remote
+    volume_up:
+      action: media_player.volume_up
+      data:
+        entity_id: media_player.tv_0f54_remote
+    volume_down:
+      action: media_player.volume_down
+      data:
+        entity_id: media_player.tv_0f54_remote
