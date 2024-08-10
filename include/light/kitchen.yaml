@@ -2,4 +2,17 @@
   unique_id: kitchen_lights
   name: "Kitchen Lights"
   entities:
+    - light.kitchen_ambient_lights
+    - light.kitchen_accent_lights
+
+- platform: group
+  unique_id: kitchen_ambient_lights
+  name: "Kitchen Ambient Lights"
+  entities:
     - light.light_b55c_light_1
+
+- platform: group
+  unique_id: kitchen_accent_lights
+  name: "Kitchen Accent Lights"
+  entities:
+    - light.light_7a86_light
