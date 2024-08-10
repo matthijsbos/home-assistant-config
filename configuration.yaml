@@ -33,6 +33,8 @@ homeassistant:
       icon: "mdi:lamps"
     "light.*_reading_light*":
       icon: "mdi:desk-lamp"
+    "light.*_windowsill_light*":
+      icon: "mdi:desk-lamp"
 
 # Load frontend themes from the themes folder
 frontend:
