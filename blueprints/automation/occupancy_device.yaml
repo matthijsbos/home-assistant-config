@@ -149,9 +149,6 @@ action:
             condition: trigger
             id:
               - "occupancy_clear"
-          - alias: "Check that at least one of the target entities is on"
-            condition: template
-            value_template: "{{ target_entities | select('is_state', 'on') | list | count > 0 }}"
         sequence:
           - action: scene.create
             data:
