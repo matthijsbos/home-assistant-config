@@ -1,6 +1,27 @@
 # Loads default set of integrations. Do not remove.
 default_config:
 
+homeassistant:
+  customize_glob:
+    "sensor.*_temperature":
+      device_class: termerature
+      icon: "mdi:thermometer"
+    "sensor.*_illuminance":
+      device_class: illuminance
+      icon: "mdi:brightness-5"
+    "sensor.*_pm_2_5":
+      device_class: pm25
+      icon: "mdi:molecule"
+    "sensor.*_pm_10":
+      device_class: pm10
+      icon: "mdi:molecule"
+    "sensor.*_nitrogen_dioxide*":
+      # device_class: nitrogen_dioxide
+      icon: "mdi:air-filter"
+    "sensor.*volatile_organic_compounds*":
+      # device_class: volatile_organic_compounds
+      icon: "mdi:air-filter"
+
 # Load frontend themes from the themes folder
 frontend:
   themes: !include_dir_merge_named themes
