@@ -1,4 +1,5 @@
 - platform: group
+  unique_id: living_room_fan
   name: "Living Room Fan"
   entities:
     - fan.fan_6ab8_fan_6ab8
