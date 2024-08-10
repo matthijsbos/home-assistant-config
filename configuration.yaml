@@ -35,6 +35,20 @@ homeassistant:
       icon: "mdi:desk-lamp"
     "light.*_windowsill_light*":
       icon: "mdi:desk-lamp"
+    "scene.*_ambient_light":
+      icon: "mdi:ceiling-light"
+    "scene.*_ambient_lights":
+      icon: "mdi:ceiling-light-multiple"
+    "scene.*_accent_light*":
+      icon: "mdi:track-light"
+    "scene.*_decorative_light":
+      icon: "mdi:lamp"
+    "scene.*_decorative_lights":
+      icon: "mdi:lamps"
+    "scene.*_reading_light*":
+      icon: "mdi:desk-lamp"
+    "scene.*_windowsill_light*":
+      icon: "mdi:desk-lamp"
 
 # Load frontend themes from the themes folder
 frontend:
