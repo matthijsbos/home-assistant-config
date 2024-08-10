@@ -4,13 +4,52 @@
   entities:
     - light.living_room_ambient_lights
     - light.living_room_decorative_lights
-    - light.living_room_task_lights
+    - light.living_room_3d_printer_light
+    - light.living_room_desk_reading_light
 
-- platform: group
-  unique_id: living_room_abient_lights
-  name: "Living Room Ambient Lights"
-  entities:
-    - light.light_ec96_light
+- platform: template
+  lights:
+    living_room_ambient_lights:
+      unique_id: living_room_ambient_lights
+      friendly_name: "Living Room Ambient Lights"
+      value_template: "{{ is_state('light.light_ec96_light', 'on') }}"
+      turn_on:
+        if:
+          - condition: template
+            value_template: "{{ brightness is not none and brightness is not undefined and (brightness | int) != (states('input_number.living_room_ambient_lights_brightness') | int) }}"
+        then:
+          - action: light.turn_on
+            data:
+              entity_id: light.light_ec96_light
+              brightness: " {{ brightness | int }}"
+        else:
+          - action: light.turn_on
+            data:
+              entity_id: light.light_ec96_light
+      turn_off:
+        action: light.turn_off
+        data:
+          entity_id: light.light_ec96_light
+      level_template: "{{ state_attr('light.light_ec96_light', 'brightness') }}"
+      set_level:
+        sequence:
+          - if:
+              - condition: template
+                value_template: "{{ brightness is not none and brightness is not undefined and (brightness | int) != (states('input_number.living_room_ambient_lights_brightness') | int) }}"
+            then:
+              - action: light.turn_on
+                data:
+                  entity_id: light.light_ec96_light
+                  brightness: " {{ brightness | int }}"
+            else:
+              - action: light.turn_on
+                data:
+                  entity_id: light.light_ec96_light
+          - action: input_number.set_value
+            data_template:
+              entity_id: input_number.living_room_ambient_lights_brightness
+              value: "{{ brightness | int }}"
+      availability_template: "{{ is_state('light.light_ec96_light', 'unavailable') == False }}"
 
 - platform: group
   unique_id: living_room_decorative_lights
@@ -19,13 +58,6 @@
     - light.living_room_desk_windowsill_light
     - light.living_room_doorway_windowsill_light
     - light.living_room_sofa_windowsill_light
-
-- platform: group
-  unique_id: living_room_task_lights
-  name: Living Room Task Lights
-  entities:
-    - light.living_room_3d_printer_light
-    - light.living_room_desk_reading_light
 
 - platform: template
   lights:
