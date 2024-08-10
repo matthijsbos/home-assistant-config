@@ -21,6 +21,18 @@ homeassistant:
     "sensor.*volatile_organic_compounds*":
       # device_class: volatile_organic_compounds
       icon: "mdi:air-filter"
+    "light.*_ambient_light":
+      icon: "mdi:ceiling-light"
+    "light.*_ambient_lights":
+      icon: "mdi:ceiling-light-multiple"
+    "light.*_accent_light*":
+      icon: "mdi:track-light"
+    "light.*_decorative_light":
+      icon: "mdi:lamp"
+    "light.*_decorative_lights":
+      icon: "mdi:lamps"
+    "light.*_reading_light*":
+      icon: "mdi:desk-lamp"
 
 # Load frontend themes from the themes folder
 frontend:
