@@ -1,8 +1,14 @@
+- platform: group
+  unique_id: hallway_lights
+  name: Hallway Lights
+  entities:
+    - light.hallway_ambient_lights
+
 - platform: template
   lights:
-    hallway_lights:
-      unique_id: hallway_lights
-      friendly_name: "Hallway Lights"
+    hallway_ambient_lights:
+      unique_id: hallway_ambient_lights
+      friendly_name: "Hallway Ambient Lights"
       value_template: "{{ is_state('switch.switch_f37c', 'on') }}"
       turn_on:
         service: switch.turn_on
