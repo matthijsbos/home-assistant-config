@@ -6,6 +6,19 @@
     - light.bedroom_accent_lights
     - light.bedroom_reading_light
 
+- platform: group
+  unique_id: bedroom_accent_lights
+  name: Bedroom Accent Lights
+  entities:
+    - light.light_09e6_light
+    - light.light_40a4_light
+
+- platform: group
+  unique_id: bedroom_decorative_lights
+  name: Bedroom Decorative Lights
+  entities:
+    - light.bedroom_clock_light
+
 - platform: template
   lights:
     bedroom_ambient_lights:
@@ -20,13 +33,6 @@
         service: switch.turn_off
         data:
           entity_id: switch.switch_67a8
-
-- platform: group
-  unique_id: bedroom_accent_lights
-  name: Bedroom Accent Lights
-  entities:
-    - light.light_09e6_light
-    - light.light_40a4_light
 
 - platform: template
   lights:
@@ -49,3 +55,9 @@
   name: Bedroom Night Light
   entities:
     - light.clock_3006_night_light
+
+- platform: group
+  unique_id: bedroom_clock_light
+  name: Bedroom Clock Light
+  entities:
+    - light.clock_3006_light
