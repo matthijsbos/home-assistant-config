@@ -606,7 +606,7 @@
         minutes: 1
         seconds: 0
 - id: '1723205448609'
-  alias: Hallway Lights
+  alias: Hallway Ambient Lights
   description: ''
   use_blueprint:
     path: occupancy_device.yaml
