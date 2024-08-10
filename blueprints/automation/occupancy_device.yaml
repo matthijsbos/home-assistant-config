@@ -87,9 +87,6 @@ action:
   - choose:
       # Saved state: activate saved scene based on occupancy if its not expired
       - conditions:
-          - alias: "Check that saved state is available"
-            condition: template
-            value_template: "{{ states.scene[temporary_scene_name] is not none }}"
           - alias: >
               Check that triggered by a change in occupancy from clear to 
               detected.
@@ -97,50 +94,55 @@ action:
             id:
               - "occupancy_detected"
         sequence:
+          - choose:
+              - conditions:
+                  - alias: "Check that saved state is available"
+                    condition: template
+                    value_template: "{{ states.scene[temporary_scene_name] is not none }}"
+                  - alias: "Check that the saved state is not expired"
+                    condition: template
+                    value_template: >
+                      {% set to_last_changed = trigger.to_state.last_changed %}
+                      {% set from_last_changed = trigger.from_state.last_changed %}
+                      {% set temporary_scene_expiration_duration_timedelta = timedelta(
+                          days = temporary_scene_expiration_duration.days | default(0),
+                          hours = temporary_scene_expiration_duration.hours | default(0),
+                          minutes = temporary_scene_expiration_duration.minutes | default(0),
+                          seconds = temporary_scene_expiration_duration.seconds | default(0),
+                          milliseconds = temporary_scene_expiration_duration.milliseconds | default(0)
+                      ) %}
+                      {% if to_last_changed is not none and from_last_changed is not none %}
+                        {% set time_difference = as_datetime(to_last_changed) - as_datetime(from_last_changed)  %}
+                        {% if time_difference < temporary_scene_expiration_duration_timedelta %}
+                          True
+                        {% else %}
+                          False
+                        {% endif %}
+                      {% else %}
+                        False
+                      {% endif %}
+                sequence:
+                  - alias: "Restore the saved state"
+                    action: scene.turn_on
+                    target:
+                      entity_id: "scene.{{ temporary_scene_name }}"
+              - conditions:
+                  - condition: template
+                    value_template: "{{ daylight_sensor == '' or is_state(daylight_sensor, 'off') }}"
+                sequence:
+                  - action: scene.turn_on
+                    data: {}
+                    target:
+                      entity_id: !input default_scene_occupied
           - if:
-              - alias: "Check that the saved state is not expired"
+              - alias: "Check that saved state is available"
                 condition: template
-                value_template: >
-                  {% set to_last_changed = trigger.to_state.last_changed %}
-                  {% set from_last_changed = trigger.from_state.last_changed %}
-                  {% set temporary_scene_expiration_duration_timedelta = timedelta(
-                      days = temporary_scene_expiration_duration.days | default(0),
-                      hours = temporary_scene_expiration_duration.hours | default(0),
-                      minutes = temporary_scene_expiration_duration.minutes | default(0),
-                      seconds = temporary_scene_expiration_duration.seconds | default(0),
-                      milliseconds = temporary_scene_expiration_duration.milliseconds | default(0)
-                  ) %}
-                  {% if to_last_changed is not none and from_last_changed is not none %}
-                    {% set time_difference = as_datetime(to_last_changed) - as_datetime(from_last_changed)  %}
-                    {% if time_difference < temporary_scene_expiration_duration_timedelta %}
-                      True
-                    {% else %}
-                      False
-                    {% endif %}
-                  {% else %}
-                    False
-                  {% endif %}
+                value_template: "{{ states.scene[temporary_scene_name] is not none }}"
             then:
-              - alias: "Restore the saved state"
-                action: scene.turn_on
+              - alias: "Clean up the saved state, regardless of expired or not"
+                action: scene.delete
                 target:
                   entity_id: "scene.{{ temporary_scene_name }}"
-          - alias: "Clean up the saved state, regardless of expired or not"
-            action: scene.delete
-            target:
-              entity_id: "scene.{{ temporary_scene_name }}"
-      # No saved state: activate default scene based on occupancy and daylight
-      - conditions:
-          - condition: state
-            entity_id: !input occupancy_sensor
-            state: "on"
-          - condition: template
-            value_template: "{{ daylight_sensor == '' or is_state(daylight_sensor, 'off') }}"
-        sequence:
-          - action: scene.turn_on
-            data: {}
-            target:
-              entity_id: !input default_scene_occupied
       # Save scene when no occupancy for duration
       - conditions:
           - alias: >
@@ -154,6 +156,8 @@ action:
             data:
               scene_id: !input temporary_scene_name
               snapshot_entities: "{{ target_entities }}"
+          - alias: "Wait 2 seconds"
+            delay: 2
           - action: homeassistant.turn_off
             target:
               entity_id: "{{ target_entities }}"
