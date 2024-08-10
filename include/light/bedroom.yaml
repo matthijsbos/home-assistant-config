@@ -1,14 +1,15 @@
 - platform: group
-  unique_id: bedroom_lights_spots
-  name: Bedroom Lights Spots
+  unique_id: bedroom_lights
+  name: Bedroom Lights
   entities:
-    - light.light_09e6_light
-    - light.light_40a4_light
+    - light.bedroom_ambient_lights
+    - light.bedroom_accent_lights
+
 - platform: template
   lights:
-    bedroom_lights:
-      unique_id: bedroom_lights
-      friendly_name: "Bedroom Lights"
+    bedroom_ambient_lights:
+      unique_id: bedroom_ambient_lights
+      friendly_name: "Bedroom Ambient Lights"
       value_template: "{{ is_state('switch.switch_67a8', 'on') }}"
       turn_on:
         service: switch.turn_on
@@ -32,6 +33,14 @@
             mdi:lightbulb-outline
           {% endif %}
         {% endif %}
+
+- platform: group
+  unique_id: bedroom_accent_lights
+  name: Bedroom Accent Lights
+  entities:
+    - light.light_09e6_light
+    - light.light_40a4_light
+
 - platform: template
   lights:
     bedroom_reading_light:
