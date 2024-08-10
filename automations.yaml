@@ -554,7 +554,11 @@
       temporary_scene_name: hallway_lights_temp
       off_delay_duration:
         hours: 0
-        minutes: 1
+        minutes: 3
+        seconds: 0
+      temporary_scene_expiration_duration:
+        hours: 0
+        minutes: 0
         seconds: 0
 - id: '1723219668852'
   alias: Living Room Ambient Lights
