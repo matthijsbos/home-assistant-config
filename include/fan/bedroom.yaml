@@ -1,0 +1,5 @@
+- platform: group
+  unique_id: bedroom_fan
+  name: "Bedroom Fan"
+  entities:
+    - fan.fan_1d90
