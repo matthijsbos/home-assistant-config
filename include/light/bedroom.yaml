@@ -4,6 +4,7 @@
   entities:
     - light.bedroom_ambient_lights
     - light.bedroom_accent_lights
+    - light.bedroom_reading_light
 
 - platform: template
   lights:
@@ -42,3 +43,9 @@
         data:
           entity_id: switch.switch_b941
       availability_template: "{{ is_state('switch.switch_b941', 'unavailable') == False }}"
+
+- platform: group
+  unique_id: bedroom_night_light
+  name: Bedroom Night Light
+  entities:
+    - light.clock_3006_night_light
