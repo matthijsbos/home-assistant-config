@@ -12,17 +12,3 @@
         service: switch.turn_off
         data:
           entity_id: switch.switch_f37c
-      icon_template: >-
-        {% if is_state('switch.hallway_lights_auto', 'on') %}
-          {% if is_state('switch.switch_f37c', 'on') %}
-            mdi:lightbulb-auto
-          {% else %}
-            mdi:lightbulb-auto-outline
-          {% endif %}
-        {% else %}
-          {% if is_state('switch.switch_f37c', 'on') %}
-            mdi:lightbulb
-          {% else %}
-            mdi:lightbulb-outline
-          {% endif %}
-        {% endif %}

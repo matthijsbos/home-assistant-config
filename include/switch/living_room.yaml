@@ -38,28 +38,6 @@
           entity_id: button.laptop_5647_displaysleep
 - platform: template
   switches:
-    living_room_lights_auto:
-      unique_id: living_room_lights_auto
-      friendly_name: "Living Room Lights Auto"
-      turn_on:
-        - service: automation.turn_on
-          data:
-            entity_id: automation.living_room_lights_on
-        - service: automation.turn_on
-          data:
-            entity_id: automation.living_room_lights_off
-      turn_off:
-        - service: automation.turn_off
-          data:
-            entity_id: automation.living_room_lights_on
-        - service: automation.turn_off
-          data:
-            entity_id: automation.living_room_lights_off
-      value_template: >
-        {{ is_state('automation.living_room_lights_on', 'on') and is_state('automation.living_room_lights_off', 'on') }}
-      icon_template: mdi:lightbulb-auto
-- platform: template
-  switches:
     living_room_fan_off:
       friendly_name: "Living Room Fan Off"
       value_template: "{{ is_state('fan.living_room_fan', 'off') }}"

@@ -19,20 +19,6 @@
         service: switch.turn_off
         data:
           entity_id: switch.switch_67a8
-      icon_template: >-
-        {% if is_state('switch.bedroom_lights_auto', 'on') %}
-          {% if is_state('switch.switch_67a8', 'on') %}
-            mdi:lightbulb-auto
-          {% else %}
-            mdi:lightbulb-auto-outline
-          {% endif %}
-        {% else %}
-          {% if is_state('switch.switch_67a8', 'on') %}
-            mdi:lightbulb
-          {% else %}
-            mdi:lightbulb-outline
-          {% endif %}
-        {% endif %}
 
 - platform: group
   unique_id: bedroom_accent_lights
