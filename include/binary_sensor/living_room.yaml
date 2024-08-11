@@ -9,7 +9,7 @@
   name: "Living Room Sofa Occupancy"
   device_class: occupancy
   entities:
-    - binary_sensor.occupancy_7ae8_presence_sensor_1
+    - binary_sensor.occupancy_7ae8_presence_sensor_2
 - platform: group
   unique_id: living_room_desk_occupancy
   name: "Living Room Desk Occupancy"
