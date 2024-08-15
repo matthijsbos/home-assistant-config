@@ -456,51 +456,51 @@
         id:
         - btn1
       sequence:
-      - service: light.toggle
-        metadata: {}
+      - metadata: {}
         data: {}
         target:
           entity_id: light.bedroom_reading_light
+        action: light.toggle
     - conditions:
       - condition: trigger
         id:
         - btn2
       sequence:
-      - service: light.toggle
+      - data: {}
+        action: light.toggle
         target:
-          entity_id: light.bedroom_lights
-        data: {}
+          entity_id: light.bedroom_ambient_lights
     - conditions:
       - condition: trigger
         id:
         - btn3
       sequence:
-      - service: automation.trigger
-        target:
+      - target:
           entity_id: automation.bedroom_bedtime
         data:
           skip_condition: true
+        action: automation.trigger
     - conditions:
       - condition: trigger
         id:
         - btn4
       sequence:
-      - service: fan.increase_speed
-        metadata: {}
+      - metadata: {}
         data: {}
         target:
           area_id: bedroom
+        action: fan.increase_speed
     - conditions:
       - condition: trigger
         id:
         - btn5
       sequence:
-      - service: fan.decrease_speed
-        metadata: {}
+      - metadata: {}
         data:
           percentage_step: 10
         target:
           area_id: bedroom
+        action: fan.decrease_speed
   mode: single
 - id: '1723148861587'
   alias: Living Room Desk Reading Light
