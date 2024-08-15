@@ -2,7 +2,7 @@
     - platform: state
       entity_id: sensor.kitchen_illuminance
     - platform: state
-      entity_id: light.kitchen_lights
+      entity_id: light.kitchen_ambient_lights
       to: "on"
   sensor:
     - unique_id: "kitchen_illuminance_lights_off"
@@ -11,20 +11,20 @@
       state_class: measurement
       device_class: illuminance
       state: >
-        {% if is_state('light.kitchen_lights', 'on') %}
+        {% if is_state('light.kitchen_ambient_lights', 'on') %}
           {{ state_attr('sensor.kitchen_illuminance_lights_off', 'last_lights_off_illuminance') }}
         {% else %}
           {{ states('sensor.kitchen_illuminance') }}
         {% endif %}
       attributes:
         last_lights_off_illuminance: >
-          {% if is_state('light.kitchen_lights', 'off') %}
+          {% if is_state('light.kitchen_ambient_lights', 'off') %}
             {{ states('sensor.kitchen_illuminance') }}
           {% else %}
             {{ state_attr('sensor.kitchen_illuminance_lights_off', 'last_lights_off_illuminance') }}
           {% endif %}
       availability: >
-        {% if is_state('light.kitchen_lights', 'on') and state_attr('sensor.kitchen_illuminance_lights_off', 'last_lights_off_illuminance') == None %}
+        {% if is_state('light.kitchen_ambient_lights', 'on') and state_attr('sensor.kitchen_illuminance_lights_off', 'last_lights_off_illuminance') == None %}
           false
         {% else %}
           true
