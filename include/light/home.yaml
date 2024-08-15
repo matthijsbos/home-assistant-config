@@ -1,0 +1,8 @@
+- platform: group
+  unique_id: home_lights
+  name: "Home Lights"
+  entities:
+    - light.living_room_lights
+    - light.bedroom_lights
+    - light.kitchen_lights
+    - light.hallway_lights

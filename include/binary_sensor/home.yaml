@@ -1,0 +1,8 @@
+- platform: group
+  unique_id: home_occupancy
+  name: "Home Occupancy"
+  device_class: occupancy
+  entities:
+    - binary_sensor.living_room_occupancy
+    - binary_sensor.kitchen_occupancy
+    - binary_sensor.hallway_occupancy

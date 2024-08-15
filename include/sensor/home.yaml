@@ -1,0 +1,12 @@
+- platform: min_max
+  unique_id: home_temperature
+  name: "Home Temperature"
+  type: mean
+  entity_ids:
+    # living room
+    - sensor.fan_6ab8_temperature
+    - sensor.therm_b31f_therm_b31f
+    - sensor.therm_977c_therm_977c
+    # bedroom
+    - sensor.fan_1d90_temperature
+    - sensor.clock_3006_temperature
