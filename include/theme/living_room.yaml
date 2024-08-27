@@ -1,0 +1,17 @@
+living_room:
+  primary-color: "#494D3A"
+  accent-color: "#C68404"
+  # primary-color: "#595D45"
+  # accent-color: "#CAA98B"
+
+  lovelace-background: center / cover no-repeat fixed url('/local/images/dashboard-background.jpg')
+
+  # background-color: "#B5A798" # Pure & Original Soft Taupe
+  primary-background-color: "var(--background-color)"
+
+  card-background-color: "var(--ha-card-background)"
+  ha-card-background: "#F0ECE1" # RAL9010
+
+  state-icon-color: "var(--primary-color)"
+  # state-active-color: "#7F8369"
+  # state-inactive-color: "#7F8369"

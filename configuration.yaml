@@ -52,7 +52,7 @@ homeassistant:
 
 # Load frontend themes from the themes folder
 frontend:
-  themes: !include_dir_merge_named themes
+  themes: !include_dir_merge_named include/theme
 
 automation: !include automations.yaml
 script: !include scripts.yaml
