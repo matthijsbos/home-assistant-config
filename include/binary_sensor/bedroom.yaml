@@ -1,0 +1,12 @@
+- platform: group
+  unique_id: bedroom_occupancy
+  name: "Bedroom Occupancy"
+  device_class: occupancy
+  entities:
+    - binary_sensor.occupancy_249b_presence_sensor_1
+- platform: group
+  unique_id: bedroom_bed_occupancy
+  name: "Bedroom Bed Occupancy"
+  device_class: occupancy
+  entities:
+    - binary_sensor.occupancy_249b_presence_sensor_2
