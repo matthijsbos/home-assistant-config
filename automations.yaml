@@ -455,12 +455,30 @@
       - condition: trigger
         id:
         - btn1
+      - condition: state
+        entity_id: event.btn_74ad_button_1_pressed
+        attribute: event_type
+        state: short_press
       sequence:
       - metadata: {}
         data: {}
         target:
           entity_id: light.bedroom_reading_light
         action: light.toggle
+    - conditions:
+      - condition: trigger
+        id:
+        - btn1
+      - condition: state
+        entity_id: event.btn_74ad_button_1_pressed
+        attribute: event_type
+        state: long_press
+      sequence:
+      - metadata: {}
+        data: {}
+        action: light.toggle
+        target:
+          entity_id: light.bedroom_decorative_lights
     - conditions:
       - condition: trigger
         id:
