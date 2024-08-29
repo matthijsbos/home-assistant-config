@@ -75,24 +75,29 @@ binary_sensor:
         input: true
         pullup: true
     name: "Button 1"
+    id: button_1
     filters:
       - invert:
       - delayed_on: 10ms
       - delayed_off: 10ms
     internal: true
-    on_click:
-      - min_length: 50ms
-        max_length: 500ms
-        then:
-          - event.trigger:
-              id: button_1_pressed
-              event_type: "short_press"
-      - min_length: 500ms
-        max_length: 5s
-        then:
-          - event.trigger:
-              id: button_1_pressed
-              event_type: "long_press"
+    on_press:
+      then:
+        - wait_until:
+            condition:
+              binary_sensor.is_off: button_1
+            timeout: 1s
+        - if:
+            condition:
+              binary_sensor.is_on: button_1
+            then:
+              - event.trigger:
+                  id: button_1_pressed
+                  event_type: "long_press"
+            else:
+              - event.trigger:
+                  id: button_1_pressed
+                  event_type: "short_press"
   - platform: gpio
     pin:
       number: GPIO4
@@ -100,24 +105,29 @@ binary_sensor:
         input: true
         pullup: true
     name: "Button 2"
+    id: button_2
     filters:
       - invert:
       - delayed_on: 10ms
       - delayed_off: 10ms
     internal: true
-    on_click:
-      - min_length: 50ms
-        max_length: 500ms
-        then:
-          - event.trigger:
-              id: button_2_pressed
-              event_type: "short_press"
-      - min_length: 500ms
-        max_length: 5s
-        then:
-          - event.trigger:
-              id: button_2_pressed
-              event_type: "long_press"
+    on_press:
+      then:
+        - wait_until:
+            condition:
+              binary_sensor.is_off: button_2
+            timeout: 1s
+        - if:
+            condition:
+              binary_sensor.is_on: button_2
+            then:
+              - event.trigger:
+                  id: button_2_pressed
+                  event_type: "long_press"
+            else:
+              - event.trigger:
+                  id: button_2_pressed
+                  event_type: "short_press"
   - platform: gpio
     pin:
       number: GPIO0
@@ -125,25 +135,29 @@ binary_sensor:
         input: true
         pullup: true
     name: "Button 3"
+    id: button_3
     filters:
       - invert:
       - delayed_on: 10ms
       - delayed_off: 10ms
     internal: true
-    on_click:
-      - min_length: 50ms
-        max_length: 500ms
-        then:
-          - event.trigger:
-              id: button_3_pressed
-              event_type: "short_press"
-      - min_length: 500ms
-        max_length: 5s
-        then:
-          - event.trigger:
-              id: button_3_pressed
-              event_type: "long_press"
-
+    on_press:
+      then:
+        - wait_until:
+            condition:
+              binary_sensor.is_off: button_3
+            timeout: 1s
+        - if:
+            condition:
+              binary_sensor.is_on: button_3
+            then:
+              - event.trigger:
+                  id: button_3_pressed
+                  event_type: "long_press"
+            else:
+              - event.trigger:
+                  id: button_3_pressed
+                  event_type: "short_press"
   - platform: gpio
     pin:
       number: GPIO2
@@ -151,25 +165,29 @@ binary_sensor:
         input: true
         pullup: true
     name: "Button 4"
+    id: button_4
     filters:
       - invert:
       - delayed_on: 10ms
       - delayed_off: 10ms
     internal: true
-    on_click:
-      - min_length: 50ms
-        max_length: 500ms
-        then:
-          - event.trigger:
-              id: button_4_pressed
-              event_type: "short_press"
-      - min_length: 500ms
-        max_length: 5s
-        then:
-          - event.trigger:
-              id: button_4_pressed
-              event_type: "long_press"
-
+    on_press:
+      then:
+        - wait_until:
+            condition:
+              binary_sensor.is_off: button_4
+            timeout: 1s
+        - if:
+            condition:
+              binary_sensor.is_on: button_4
+            then:
+              - event.trigger:
+                  id: button_4_pressed
+                  event_type: "long_press"
+            else:
+              - event.trigger:
+                  id: button_4_pressed
+                  event_type: "short_press"
   - platform: gpio
     pin:
       number: GPIO14
@@ -177,21 +195,26 @@ binary_sensor:
         input: true
         pullup: true
     name: "Button 5"
+    id: button_5
     filters:
       - invert:
       - delayed_on: 10ms
       - delayed_off: 10ms
     internal: true
-    on_click:
-      - min_length: 50ms
-        max_length: 500ms
-        then:
-          - event.trigger:
-              id: button_5_pressed
-              event_type: "short_press"
-      - min_length: 500ms
-        max_length: 5s
-        then:
-          - event.trigger:
-              id: button_5_pressed
-              event_type: "long_press"
+    on_press:
+      then:
+        - wait_until:
+            condition:
+              binary_sensor.is_off: button_5
+            timeout: 1s
+        - if:
+            condition:
+              binary_sensor.is_on: button_5
+            then:
+              - event.trigger:
+                  id: button_5_pressed
+                  event_type: "long_press"
+            else:
+              - event.trigger:
+                  id: button_5_pressed
+                  event_type: "short_press"
