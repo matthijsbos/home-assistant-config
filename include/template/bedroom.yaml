@@ -44,3 +44,47 @@
         {% else %}
           {{ illuminance | float > threshold }}
         {% endif %}
+- sensor:
+    - name: "Bedroom Temperature Level"
+      unique_id: bedroom_temperature_level
+      device_class: enum
+      state: >
+        {% set temp = states('sensor.bedroom_temperature') | float %}
+        {% if temp < 17 %}
+          Cold
+        {% elif 17 <= temp < 19 %}
+          Cool
+        {% elif 19 <= temp < 21 %}
+          Mild
+        {% elif 21 <= temp < 23 %}
+          Warm
+        {% elif 23 <= temp < 25 %}
+          Hot
+        {% elif 25 <= temp %}
+          Very Hot
+        {% else %}
+          Unknown
+        {% endif %}
+      icon: >
+        {% set temp = states('sensor.bedroom_temperature') | float %}
+        {% if temp < 17 %}
+          mdi:thermometer-low
+        {% elif 17 <= temp < 19 %}
+          mdi:thermometer-low
+        {% elif 19 <= temp < 21 %}
+          mdi:thermometer
+        {% elif 21 <= temp < 23 %}
+          mdi:thermometer-high
+        {% elif 23 <= temp < 25 %}
+          mdi:thermometer-high
+        {% elif 25 <= temp %}
+          mdi:thermometer-alert
+        {% else %}
+          mdi:thermometer
+        {% endif %}
+      availability: >
+        {% if states('sensor.bedroom_temperature') not in ['unavailable', 'unknown'] %}
+          true
+        {% else %}
+          false
+        {% endif %}
