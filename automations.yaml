@@ -487,7 +487,9 @@
       - data: {}
         action: light.toggle
         target:
-          entity_id: light.bedroom_ambient_lights
+          entity_id:
+          - light.bedroom_ambient_lights
+          - light.bedroom_accent_lights
     - conditions:
       - condition: trigger
         id:
