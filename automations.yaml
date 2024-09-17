@@ -658,3 +658,23 @@
         hours: 0
         minutes: 0
         seconds: 0
+- id: '1725655593814'
+  alias: Kitchen Mosquito Repeller
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - switch.kitchen_mosquito_repeller
+    to: 'on'
+    for:
+      hours: 4
+      minutes: 0
+      seconds: 0
+  condition: []
+  action:
+  - action: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.kitchen_mosquito_repeller
+  mode: single
