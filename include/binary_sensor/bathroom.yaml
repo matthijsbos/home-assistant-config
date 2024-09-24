@@ -1,0 +1,6 @@
+- platform: group
+  unique_id: bathroom_occupancy
+  name: "Bathroom Occupancy"
+  device_class: occupancy
+  entities:
+    - binary_sensor.occupancy_715f_occupancy
