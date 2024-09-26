@@ -28,7 +28,7 @@
           false
         {% else %}
           true
-        {% endif %}w
+        {% endif %}
 - binary_sensor:
     - unique_id: bedroom_daylight
       name: "Bedroom Daylight"
