@@ -1,0 +1,6 @@
+- platform: min_max
+  unique_id: bathroom_illuminance
+  name: "Bathroom Illuminance"
+  type: mean
+  entity_ids:
+    - sensor.occupancy_715f_illuminance

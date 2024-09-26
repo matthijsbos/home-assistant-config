@@ -1,0 +1,11 @@
+- platform: group
+  unique_id: bathroom_lights
+  name: Bathroom Lights
+  entities:
+    - light.bathroom_ambient_lights
+
+- platform: group
+  unique_id: bathroom_ambient_lights
+  name: Bathroom Ambient Lights
+  entities:
+    - light.light_b55c_light_2

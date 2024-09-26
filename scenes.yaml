@@ -262,3 +262,19 @@
   metadata:
     light.bedroom_clock_light:
       entity_only: true
+- id: '1727380553479'
+  name: Bathroom Ambient Lights Default
+  entities:
+    light.bathroom_ambient_lights:
+      supported_color_modes:
+      - onoff
+      color_mode: onoff
+      entity_id:
+      - light.light_b55c_light_2
+      icon: mdi:ceiling-light-multiple
+      friendly_name: Bathroom Ambient Lights
+      supported_features: 0
+      state: 'on'
+  metadata:
+    light.bathroom_ambient_lights:
+      entity_only: true

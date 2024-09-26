@@ -678,3 +678,21 @@
     target:
       entity_id: switch.kitchen_mosquito_repeller
   mode: single
+- id: '1727380853232'
+  alias: Bathroom Ambient Lights
+  description: ''
+  use_blueprint:
+    path: occupancy_device.yaml
+    input:
+      occupancy_sensor: binary_sensor.bathroom_occupancy
+      daylight_sensor: binary_sensor.bathroom_daylight
+      default_scene_occupied: scene.bathroom_ambient_lights_default
+      temporary_scene_name: bathroom_ambient_lights_default
+      off_delay_duration:
+        hours: 0
+        minutes: 1
+        seconds: 0
+      temporary_scene_expiration_duration:
+        hours: 0
+        minutes: 0
+        seconds: 0
