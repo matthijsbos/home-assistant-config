@@ -4,3 +4,41 @@
   type: mean
   entity_ids:
     - sensor.occupancy_715f_illuminance
+- platform: min_max
+  unique_id: bathroom_temperature
+  name: "Bathroom Temperature"
+  type: mean
+  entity_ids:
+    - sensor.therm_d7f6_temperature
+- platform: min_max
+  unique_id: bathroom_humidity
+  name: "Bathroom Humidity"
+  type: mean
+  entity_ids:
+    - sensor.therm_d7f6_humidity
+- platform: statistics
+  name: "Bathroom Humidity Mean"
+  unique_id: bathroom_humidity_mean
+  entity_id: sensor.bathroom_humidity
+  max_age:
+    hours: 24
+  state_characteristic: mean
+- platform: statistics
+  name: "Bathroom Humidity Median"
+  unique_id: bathroom_humidity_median
+  entity_id: sensor.bathroom_humidity
+  max_age:
+    hours: 24
+  state_characteristic: median
+- platform: min_max
+  unique_id: bathroom_humidity
+  name: "Bathroom Humidity"
+  type: mean
+  entity_ids:
+    - sensor.therm_d7f6_humidity
+- platform: min_max
+  unique_id: bathroom_atmospheric_pressure
+  name: "Bathroom Atmospheric Pressure"
+  type: mean
+  entity_ids:
+    - sensor.therm_d7f6_pressure
