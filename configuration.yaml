@@ -6,6 +6,12 @@ homeassistant:
     "sensor.*_temperature":
       device_class: termerature
       icon: "mdi:thermometer"
+    "sensor.*_humidity":
+      device_class: humidity
+      icon: "mdi:water-percent"
+    "sensor.*_atmospheric_pressure":
+      device_class: atmospheric_pressure
+      icon: "mdi:gauge"
     "sensor.*_illuminance":
       device_class: illuminance
       icon: "mdi:brightness-5"
