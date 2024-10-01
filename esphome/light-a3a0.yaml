@@ -30,6 +30,11 @@ ota:
 improv_serial:
 
 wifi:
+  networks:
+    - ssid: !secret wifi_ssid
+      password: !secret wifi_password
+    - ssid: !secret wifi_ssid2
+      password: !secret wifi_password
   # Set up a wifi access point
   ap: {}
 
@@ -58,6 +63,7 @@ light:
     num_leds: 209
     id: rgbwlight
     name: "Light"
+    restore_mode: RESTORE_AND_ON
     effects:
       - addressable_twinkle:
           name: "Twinkle 10%"
