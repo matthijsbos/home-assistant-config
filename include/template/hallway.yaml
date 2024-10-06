@@ -1,7 +1,7 @@
 - trigger:
-    - platform: state
+    - trigger: state
       entity_id: sensor.hallway_illuminance
-    - platform: state
+    - trigger: state
       entity_id: light.hallway_ambient_lights
       to: "on"
   sensor:
@@ -45,13 +45,13 @@
           {{ illuminance | float > threshold }}
         {% endif %}
 - trigger:
-    - platform: state
+    - trigger: state
       entity_id: binary_sensor.front_door
   binary_sensor:
     - name: "Front Door Occupancy"
       unique_id: "front_door_occupancy"
       device_class: occupancy
-      state: on
+      state: "on"
       auto_off:
         seconds: 5
 - binary_sensor:

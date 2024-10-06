@@ -1,7 +1,7 @@
 - trigger:
-    - platform: state
+    - trigger: state
       entity_id: sensor.bathroom_illuminance
-    - platform: state
+    - trigger: state
       entity_id: light.bathroom_lights
       to: "on"
   sensor:

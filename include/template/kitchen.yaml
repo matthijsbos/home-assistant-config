@@ -1,7 +1,7 @@
 - trigger:
-    - platform: state
+    - trigger: state
       entity_id: sensor.kitchen_illuminance
-    - platform: state
+    - trigger: state
       entity_id: light.kitchen_ambient_lights
       to: "on"
   sensor:

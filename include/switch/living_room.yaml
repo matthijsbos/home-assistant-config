@@ -15,11 +15,11 @@
       friendly_name: "Living Room Dashboard Display"
       value_template: "{{ is_state('sensor.dashboard_7e2b_displaypower', 'PowerOn') }}"
       turn_on:
-        service: button.press
+        action: button.press
         data:
           entity_id: button.dashboard_7e2b_displaywake
       turn_off:
-        service: button.press
+        action: button.press
         data:
           entity_id: button.dashboard_7e2b_displaysleep
 - platform: template
@@ -29,11 +29,11 @@
       friendly_name: "Laptop Display"
       value_template: "{{ is_state('sensor.laptop_5647_displaypower', 'PowerOn') }}"
       turn_on:
-        service: button.press
+        action: button.press
         data:
           entity_id: button.laptop_5647_displaywake
       turn_off:
-        service: button.press
+        action: button.press
         data:
           entity_id: button.laptop_5647_displaysleep
 - platform: template

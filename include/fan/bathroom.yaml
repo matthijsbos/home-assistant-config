@@ -5,11 +5,11 @@
       unique_id: bathroom_fan
       value_template: "{{ states('light.light_b55c_light_1') == 'on' }}"
       turn_on:
-        service: light.turn_on
+        action: light.turn_on
         target:
           entity_id: light.light_b55c_light_1
       turn_off:
-        service: light.turn_off
+        action: light.turn_off
         target:
           entity_id: light.light_b55c_light_1
       speed_count: 1

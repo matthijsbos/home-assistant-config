@@ -26,11 +26,11 @@
       friendly_name: "Bedroom Ambient Lights"
       value_template: "{{ is_state('switch.switch_67a8', 'on') }}"
       turn_on:
-        service: switch.turn_on
+        action: switch.turn_on
         data:
           entity_id: switch.switch_67a8
       turn_off:
-        service: switch.turn_off
+        action: switch.turn_off
         data:
           entity_id: switch.switch_67a8
 
@@ -41,11 +41,11 @@
       friendly_name: "Bedroom Reading Light"
       value_template: "{{ is_state('switch.switch_b941', 'on') }}"
       turn_on:
-        service: switch.turn_on
+        action: switch.turn_on
         data:
           entity_id: switch.switch_b941
       turn_off:
-        service: switch.turn_off
+        action: switch.turn_off
         data:
           entity_id: switch.switch_b941
       availability_template: "{{ is_state('switch.switch_b941', 'unavailable') == False }}"
