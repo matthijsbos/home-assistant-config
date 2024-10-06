@@ -73,9 +73,9 @@ action:
       # activate default scene on occupancy
       - conditions:
           - condition: trigger
-            id: "occupancy_detected"
-          - condition: trigger
-            id: "daylight_no_light_detected"
+            id:
+              - "occupancy_detected"
+              - "daylight_no_light_detected"
           - condition: state
             entity_id: !input daylight_sensor
             state: "off"
@@ -88,9 +88,9 @@ action:
       # turn off when no occupancy for duration
       - conditions:
           - condition: trigger
-            id: "occupancy_cleared"
-          - condition: trigger
-            id: "daylight_light_detected"
+            id:
+              - "occupancy_cleared"
+              - "daylight_light_detected"
         sequence:
           - action: homeassistant.turn_off
             target:
