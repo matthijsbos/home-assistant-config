@@ -23,3 +23,13 @@
     - sensor.clock_3006_humidity
     # bathroom
     - sensor.therm_d7f6_humidity
+
+- platform: min_max
+  unique_id: home_mains_voltage
+  name: "Home Mains Voltage"
+  type: mean
+  entity_ids:
+    - sensor.switch_2653_voltage
+    - sensor.switch_50b5_voltage
+    - sensor.switch_8761_voltage
+    - sensor.switch_b941_voltage
