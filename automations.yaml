@@ -773,3 +773,23 @@
       - light.hallway_lights
       - light.living_room_decorative_lights
   mode: single
+- id: '1728130054200'
+  alias: Bedroom Reading Light
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.bedroom_bed_occupancy
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    to: 'off'
+  conditions: []
+  actions:
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.bedroom_reading_light
+  mode: single
