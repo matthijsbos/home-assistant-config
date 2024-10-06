@@ -70,6 +70,7 @@
       color_mode: onoff
       friendly_name: Living Room Sofa Windowsill Light
       supported_features: 0
+      icon: mdi:desk-lamp
       state: 'on'
     light.living_room_desk_windowsill_light:
       min_color_temp_kelvin: 2000
@@ -94,7 +95,7 @@
       - 0.382
       entity_id:
       - light.light_1d46_light
-      icon: mdi:lightbulb-group
+      icon: mdi:desk-lamp
       friendly_name: Living Room Desk Windowsill Light
       supported_features: 32
       state: 'on'
@@ -121,9 +122,41 @@
       - 0.382
       entity_id:
       - light.light_0b62_light
-      icon: mdi:lightbulb-group
+      icon: mdi:desk-lamp
       friendly_name: Living Room Doorway Windowsill Light
       supported_features: 32
+      state: 'on'
+    light.living_room_hex_light:
+      effect_list:
+      - None
+      - Twinkle 15%
+      - Twinkle 25%
+      - Twinkle 35%
+      supported_color_modes:
+      - rgbw
+      effect: Twinkle 15%
+      color_mode: rgbw
+      brightness: 255
+      hs_color:
+      - 239.048
+      - 49.412
+      rgb_color:
+      - 129
+      - 131
+      - 255
+      xy_color:
+      - 0.213
+      - 0.163
+      rgbw_color:
+      - 0
+      - 4
+      - 250
+      - 255
+      entity_id:
+      - light.light_a3a0_light
+      icon: mdi:lightbulb-group
+      friendly_name: Living Room Hex Light
+      supported_features: 44
       state: 'on'
   metadata:
     light.living_room_sofa_windowsill_light:
@@ -131,6 +164,8 @@
     light.living_room_desk_windowsill_light:
       entity_only: true
     light.living_room_doorway_windowsill_light:
+      entity_only: true
+    light.living_room_hex_light:
       entity_only: true
 - id: '1723206317089'
   name: Living Room 3D printer Light Default
