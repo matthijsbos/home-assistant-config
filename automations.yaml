@@ -1,538 +1,537 @@
-- id: "1715778689765"
+- id: '1715778689765'
   alias: Living Room Dashboard Display Wake
-  description: ""
+  description: ''
   trigger:
-    - trigger: state
-      entity_id:
-        - binary_sensor.living_room_dashboard_occupancy
-      to: "on"
+  - trigger: state
+    entity_id:
+    - binary_sensor.living_room_dashboard_occupancy
+    to: 'on'
   condition:
-    - condition: state
-      entity_id: switch.living_room_dashboard_display
-      state: "off"
+  - condition: state
+    entity_id: switch.living_room_dashboard_display
+    state: 'off'
   action:
-    - action: switch.turn_on
-      metadata: {}
-      data: {}
-      target:
-        entity_id: switch.living_room_dashboard_display
+  - action: switch.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.living_room_dashboard_display
   mode: single
-- id: "1715778727157"
+- id: '1715778727157'
   alias: Living Room Dashboard Display Sleep
-  description: ""
+  description: ''
   trigger:
-    - trigger: state
-      entity_id:
-        - binary_sensor.living_room_dashboard_occupancy
-      to: "off"
-      for:
-        seconds:
-          "{{  states('input_number.living_room_dashboard_display_off_delay')|int
-          }}"
+  - trigger: state
+    entity_id:
+    - binary_sensor.living_room_dashboard_occupancy
+    to: 'off'
+    for:
+      seconds: '{{  states(''input_number.living_room_dashboard_display_off_delay'')|int
+        }}'
   condition:
-    - condition: state
+  - condition: state
+    entity_id: switch.living_room_dashboard_display
+    state: 'on'
+  action:
+  - action: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
       entity_id: switch.living_room_dashboard_display
-      state: "on"
-  action:
-    - action: switch.turn_off
-      metadata: {}
-      data: {}
-      target:
-        entity_id: switch.living_room_dashboard_display
   mode: single
-- id: "1715781035946"
+- id: '1715781035946'
   alias: Living Room Docked Laptop Display Sleep
-  description: ""
+  description: ''
   trigger:
-    - trigger: state
-      entity_id:
-        - binary_sensor.living_room_desk_occupancy
-      to: "off"
-      for:
-        seconds: "{{  states('input_number.laptop_display_off_delay')|int }}"
-    - trigger: state
-      entity_id:
-        - switch.laptop_display
-      to: "on"
-      for:
-        seconds: "{{  states('input_number.laptop_display_off_delay')|int }}"
+  - trigger: state
+    entity_id:
+    - binary_sensor.living_room_desk_occupancy
+    to: 'off'
+    for:
+      seconds: '{{  states(''input_number.laptop_display_off_delay'')|int }}'
+  - trigger: state
+    entity_id:
+    - switch.laptop_display
+    to: 'on'
+    for:
+      seconds: '{{  states(''input_number.laptop_display_off_delay'')|int }}'
   condition:
-    - condition: state
-      entity_id: binary_sensor.laptop_docked
-      state: "on"
-      for:
-        hours: 0
-        minutes: 0
-        seconds: 0
-    - condition: state
-      entity_id: switch.laptop_display
-      state: "on"
-      for:
-        seconds: "{{  states('input_number.laptop_display_off_delay')|int }}"
-    - condition: state
-      entity_id: binary_sensor.living_room_desk_occupancy
-      state: "off"
-      for:
-        seconds: "{{  states('input_number.laptop_display_off_delay')|int }}"
+  - condition: state
+    entity_id: binary_sensor.laptop_docked
+    state: 'on'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 0
+  - condition: state
+    entity_id: switch.laptop_display
+    state: 'on'
+    for:
+      seconds: '{{  states(''input_number.laptop_display_off_delay'')|int }}'
+  - condition: state
+    entity_id: binary_sensor.living_room_desk_occupancy
+    state: 'off'
+    for:
+      seconds: '{{  states(''input_number.laptop_display_off_delay'')|int }}'
   action:
-    - action: switch.turn_off
-      metadata: {}
-      data: {}
-      target:
-        entity_id: switch.laptop_display
+  - action: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.laptop_display
   mode: single
-- id: "1715781074719"
+- id: '1715781074719'
   alias: Living Room Docked Laptop Display Wake
-  description: ""
+  description: ''
   trigger:
-    - trigger: state
-      entity_id:
-        - binary_sensor.living_room_desk_occupancy
-      to: "on"
+  - trigger: state
+    entity_id:
+    - binary_sensor.living_room_desk_occupancy
+    to: 'on'
   condition:
-    - condition: state
-      entity_id: binary_sensor.laptop_docked
-      state: "on"
-    - condition: state
+  - condition: state
+    entity_id: binary_sensor.laptop_docked
+    state: 'on'
+  - condition: state
+    entity_id: switch.laptop_display
+    state: 'off'
+  action:
+  - action: switch.turn_on
+    metadata: {}
+    data: {}
+    target:
       entity_id: switch.laptop_display
-      state: "off"
-  action:
-    - action: switch.turn_on
-      metadata: {}
-      data: {}
-      target:
-        entity_id: switch.laptop_display
   mode: single
-- id: "1715787983168"
+- id: '1715787983168'
   alias: Living Room TV Youtube Auto-Pause
-  description: ""
+  description: ''
   trigger:
-    - trigger: state
-      entity_id:
-        - binary_sensor.living_room_occupancy
-      to: "off"
+  - trigger: state
+    entity_id:
+    - binary_sensor.living_room_occupancy
+    to: 'off'
   condition:
-    - condition: device
-      device_id: 1c6580cf287963b48caad619f2d5a1b2
-      domain: media_player
-      entity_id: a4ec7014f506f908a4236dfa1ca43898
-      type: is_playing
-    - condition: or
-      conditions:
-        - condition: state
-          entity_id: media_player.tv_0f54_remote
-          attribute: app_id
-          state: com.google.android.youtube.tv
-  action:
-    - action: media_player.media_pause
-      metadata: {}
-      data: {}
-      target:
-        entity_id:
-          - media_player.tv_0f54_cast
-          - media_player.tv_0f54_remote
-  mode: single
-- id: "1715788081710"
-  alias: Living Room TV Youtube Auto-Play
-  description: ""
-  trigger:
-    - trigger: state
-      entity_id:
-        - binary_sensor.living_room_occupancy
-      to: "on"
-  condition:
-    - condition: device
-      device_id: 1c6580cf287963b48caad619f2d5a1b2
-      domain: media_player
-      entity_id: a4ec7014f506f908a4236dfa1ca43898
-      type: is_paused
-    - condition: or
-      conditions:
-        - condition: state
-          entity_id: media_player.tv_0f54_remote
-          attribute: app_id
-          state: com.google.android.youtube.tv
-  action:
-    - action: media_player.media_play
-      target:
-        entity_id:
-          - media_player.tv
-          - media_player.tv_0f54_cast
-      data: {}
-  mode: single
-- id: "1716473547910"
-  alias: Bedroom Fan Off
-  description: ""
-  trigger:
-    - trigger: state
-      entity_id:
-        - binary_sensor.front_door
-      to: "on"
-      for:
-        hours: 0
-        minutes: 5
-        seconds: 0
-    - trigger: state
-      entity_id:
-        - switch.bedroom_mosquito_repeller
-  condition: []
-  action:
-    - type: turn_off
-      device_id: d9f60f6e439d7d04d0a14366940cf5e4
-      entity_id: c647751fa2efaef897f9c4d6b2764174
-      domain: fan
-  mode: single
-- id: "1716715924876"
-  alias: Living Room Docking Station On
-  description: ""
-  trigger:
-    - trigger: state
-      entity_id:
-        - binary_sensor.living_room_occupancy
-      to: "on"
-  condition: []
-  action:
-    - action: switch.turn_on
-      metadata: {}
-      data: {}
-      target:
-        entity_id: switch.living_room_docking_station
-  mode: single
-- id: "1716716038346"
-  alias: Living Room TV Power On
-  description: ""
-  trigger:
-    - trigger: state
-      entity_id:
-        - binary_sensor.living_room_occupancy
-      to: "on"
-  condition: []
-  action:
-    - action: switch.turn_on
-      metadata: {}
-      data: {}
-      target:
-        entity_id: switch.living_room_tv_power
-  mode: single
-- id: "1716716274495"
-  alias: Living Room TV Power Off
-  description: ""
-  trigger:
-    - trigger: state
-      entity_id:
-        - binary_sensor.living_room_occupancy
-      to: "off"
-      for:
-        hours: 1
-        minutes: 0
-        seconds: 0
-  condition:
+  - condition: device
+    device_id: 1c6580cf287963b48caad619f2d5a1b2
+    domain: media_player
+    entity_id: a4ec7014f506f908a4236dfa1ca43898
+    type: is_playing
+  - condition: or
+    conditions:
     - condition: state
       entity_id: media_player.tv_0f54_remote
-      state: "off"
+      attribute: app_id
+      state: com.google.android.youtube.tv
   action:
-    - action: switch.turn_off
-      metadata: {}
-      data: {}
-      target:
-        entity_id: switch.living_room_tv_power
-  mode: single
-- id: "1716716358957"
-  alias: Living Room Docking Station Off
-  description: ""
-  trigger:
-    - trigger: state
+  - action: media_player.media_pause
+    metadata: {}
+    data: {}
+    target:
       entity_id:
-        - binary_sensor.living_room_occupancy
-      to: "off"
+      - media_player.tv_0f54_cast
+      - media_player.tv_0f54_remote
+  mode: single
+- id: '1715788081710'
+  alias: Living Room TV Youtube Auto-Play
+  description: ''
+  trigger:
+  - trigger: state
+    entity_id:
+    - binary_sensor.living_room_occupancy
+    to: 'on'
+  condition:
+  - condition: device
+    device_id: 1c6580cf287963b48caad619f2d5a1b2
+    domain: media_player
+    entity_id: a4ec7014f506f908a4236dfa1ca43898
+    type: is_paused
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: media_player.tv_0f54_remote
+      attribute: app_id
+      state: com.google.android.youtube.tv
+  action:
+  - action: media_player.media_play
+    target:
+      entity_id:
+      - media_player.tv
+      - media_player.tv_0f54_cast
+    data: {}
+  mode: single
+- id: '1716473547910'
+  alias: Bedroom Fan Off
+  description: ''
+  trigger:
+  - trigger: state
+    entity_id:
+    - binary_sensor.front_door
+    to: 'on'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+  - trigger: state
+    entity_id:
+    - switch.bedroom_mosquito_repeller
+  condition: []
+  action:
+  - type: turn_off
+    device_id: d9f60f6e439d7d04d0a14366940cf5e4
+    entity_id: c647751fa2efaef897f9c4d6b2764174
+    domain: fan
+  mode: single
+- id: '1716715924876'
+  alias: Living Room Docking Station On
+  description: ''
+  trigger:
+  - trigger: state
+    entity_id:
+    - binary_sensor.living_room_occupancy
+    to: 'on'
+  condition: []
+  action:
+  - action: switch.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.living_room_docking_station
+  mode: single
+- id: '1716716038346'
+  alias: Living Room TV Power On
+  description: ''
+  trigger:
+  - trigger: state
+    entity_id:
+    - binary_sensor.living_room_occupancy
+    to: 'on'
+  condition: []
+  action:
+  - action: switch.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.living_room_tv_power
+  mode: single
+- id: '1716716274495'
+  alias: Living Room TV Power Off
+  description: ''
+  trigger:
+  - trigger: state
+    entity_id:
+    - binary_sensor.living_room_occupancy
+    to: 'off'
+    for:
+      hours: 1
+      minutes: 0
+      seconds: 0
+  condition:
+  - condition: state
+    entity_id: media_player.tv_0f54_remote
+    state: 'off'
+  action:
+  - action: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.living_room_tv_power
+  mode: single
+- id: '1716716358957'
+  alias: Living Room Docking Station Off
+  description: ''
+  trigger:
+  - trigger: state
+    entity_id:
+    - binary_sensor.living_room_occupancy
+    to: 'off'
+    for:
+      hours: 1
+      minutes: 0
+      seconds: 0
+  condition:
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: binary_sensor.laptop_docked
+      state: 'on'
       for:
-        hours: 1
+        hours: 0
         minutes: 0
         seconds: 0
-  condition:
-    - condition: not
-      conditions:
-        - condition: state
-          entity_id: binary_sensor.laptop_docked
-          state: "on"
-          for:
-            hours: 0
-            minutes: 0
-            seconds: 0
   action:
-    - action: switch.turn_off
-      metadata: {}
-      data: {}
-      target:
-        entity_id: switch.living_room_docking_station
+  - action: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.living_room_docking_station
   mode: single
-- id: "1717175760685"
+- id: '1717175760685'
   alias: Bedroom Fan On
-  description: ""
+  description: ''
   trigger:
-    - trigger: state
-      entity_id:
-        - binary_sensor.front_door
-      to: "off"
-    - trigger: state
-      entity_id:
-        - sensor.bedroom_iaq_index
+  - trigger: state
+    entity_id:
+    - binary_sensor.front_door
+    to: 'off'
+  - trigger: state
+    entity_id:
+    - sensor.bedroom_iaq_index
   condition:
-    - condition: state
-      entity_id: binary_sensor.front_door
-      state: "off"
-    - condition: numeric_state
-      entity_id: sensor.bedroom_iaq_index
-      below: 50
-    - condition: state
-      entity_id: fan.fan_1d90
-      state: "off"
+  - condition: state
+    entity_id: binary_sensor.front_door
+    state: 'off'
+  - condition: numeric_state
+    entity_id: sensor.bedroom_iaq_index
+    below: 50
+  - condition: state
+    entity_id: fan.fan_1d90
+    state: 'off'
   action:
-    - action: fan.turn_on
-      metadata: {}
-      data: {}
-      target:
-        device_id: d9f60f6e439d7d04d0a14366940cf5e4
+  - action: fan.turn_on
+    metadata: {}
+    data: {}
+    target:
+      device_id: d9f60f6e439d7d04d0a14366940cf5e4
   mode: single
-- id: "1717181154454"
+- id: '1717181154454'
   alias: Bedroom Bedtime
-  description: ""
+  description: ''
   trigger: []
   condition: []
   action:
-    - action: light.turn_off
-      metadata: {}
-      data: {}
-      target:
-        entity_id:
-          - light.bedroom_lights
-          - light.bedroom_reading_light
-    - action: switch.turn_off
-      metadata: {}
-      data: {}
-      target:
-        entity_id: switch.bedroom_mosquito_repeller
-    - type: toggle
-      device_id: d31e007475f48da84ec9406b72785700
-      entity_id: 5b48a3d54783281449ca0208f1839143
-      domain: switch
-    - action: switch.turn_on
-      metadata: {}
-      data: {}
-      target:
-        entity_id: switch.fan_1d90_night_mode
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - light.bedroom_lights
+      - light.bedroom_reading_light
+  - action: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.bedroom_mosquito_repeller
+  - type: toggle
+    device_id: d31e007475f48da84ec9406b72785700
+    entity_id: 5b48a3d54783281449ca0208f1839143
+    domain: switch
+  - action: switch.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.fan_1d90_night_mode
   mode: single
-- id: "1719322575405"
+- id: '1719322575405'
   alias: Living Room Fan On
-  description: ""
+  description: ''
   trigger:
-    - trigger: state
-      entity_id:
-        - binary_sensor.living_room_occupancy
-      to: "on"
+  - trigger: state
+    entity_id:
+    - binary_sensor.living_room_occupancy
+    to: 'on'
   condition:
-    - condition: state
-      entity_id: binary_sensor.living_room_occupancy
-      state: "on"
+  - condition: state
+    entity_id: binary_sensor.living_room_occupancy
+    state: 'on'
   action:
-    - action: scene.turn_on
-      target:
-        entity_id: scene.living_room_fan_state
-      data: {}
-    - action: scene.delete
-      target:
-        entity_id: scene.living_room_fan_state
+  - action: scene.turn_on
+    target:
+      entity_id: scene.living_room_fan_state
+    data: {}
+  - action: scene.delete
+    target:
+      entity_id: scene.living_room_fan_state
   mode: single
-- id: "1719322611405"
+- id: '1719322611405'
   alias: Living Room Fan Off
-  description: ""
+  description: ''
   trigger:
-    - trigger: state
-      entity_id:
-        - binary_sensor.living_room_occupancy
-      to: "off"
-      for:
-        hours: 0
-        minutes: 1
-        seconds: 0
+  - trigger: state
+    entity_id:
+    - binary_sensor.living_room_occupancy
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
   condition:
-    - condition: state
-      entity_id: binary_sensor.living_room_occupancy
-      state: "off"
+  - condition: state
+    entity_id: binary_sensor.living_room_occupancy
+    state: 'off'
   action:
-    - action: scene.create
-      data:
-        scene_id: living_room_fan_state
-        snapshot_entities:
-          - fan.living_room_fan
-    - action: fan.turn_off
-      target:
-        entity_id:
-          - fan.living_room_fan
-      data: {}
+  - action: scene.create
+    data:
+      scene_id: living_room_fan_state
+      snapshot_entities:
+      - fan.living_room_fan
+  - action: fan.turn_off
+    target:
+      entity_id:
+      - fan.living_room_fan
+    data: {}
   mode: single
-- id: "1719610365051"
+- id: '1719610365051'
   alias: Bedroom Mosquito Repelling Start
-  description: ""
+  description: ''
   trigger:
-    - trigger: time
-      at: "21:00:00"
-    - trigger: state
-      entity_id:
-        - binary_sensor.front_door
+  - trigger: time
+    at: '21:00:00'
+  - trigger: state
+    entity_id:
+    - binary_sensor.front_door
   condition:
-    - condition: state
-      entity_id: binary_sensor.front_door
-      state: "off"
-    - condition: time
-      after: "21:00:00"
+  - condition: state
+    entity_id: binary_sensor.front_door
+    state: 'off'
+  - condition: time
+    after: '21:00:00'
   action:
-    - action: switch.turn_on
-      metadata: {}
-      data: {}
-      target:
-        entity_id: switch.bedroom_mosquito_repeller
+  - action: switch.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.bedroom_mosquito_repeller
   mode: single
-- id: "1719610469629"
+- id: '1719610469629'
   alias: Bedroom Mosquito Repelling Stop
-  description: ""
+  description: ''
   trigger:
-    - trigger: state
-      entity_id:
-        - switch.bedroom_mosquito_repeller
-      to: "on"
-      for:
-        hours: 2
-        minutes: 0
-        seconds: 0
-    - trigger: state
-      entity_id:
-        - fan.fan_1d90
-      to: "on"
-    - trigger: state
-      entity_id:
-        - binary_sensor.front_door
-      to: "on"
-      for:
-        hours: 0
-        minutes: 5
-        seconds: 0
+  - trigger: state
+    entity_id:
+    - switch.bedroom_mosquito_repeller
+    to: 'on'
+    for:
+      hours: 2
+      minutes: 0
+      seconds: 0
+  - trigger: state
+    entity_id:
+    - fan.fan_1d90
+    to: 'on'
+  - trigger: state
+    entity_id:
+    - binary_sensor.front_door
+    to: 'on'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
   condition: []
   action:
-    - action: switch.turn_off
-      metadata: {}
-      data: {}
-      target:
-        entity_id: switch.bedroom_mosquito_repeller
+  - action: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.bedroom_mosquito_repeller
   mode: single
-- id: "1721088136807"
+- id: '1721088136807'
   alias: Bedroom Buttons
-  description: ""
+  description: ''
   trigger:
-    - trigger: state
-      entity_id:
-        - event.btn_74ad_button_5_pressed
-      id: btn5
-    - trigger: state
-      entity_id:
-        - event.btn_74ad_button_4_pressed
-      id: btn4
-    - trigger: state
-      entity_id:
-        - event.btn_74ad_button_3_pressed
-      id: btn3
-    - trigger: state
-      entity_id:
-        - event.btn_74ad_button_2_pressed
-      id: btn2
-    - trigger: state
-      entity_id:
-        - event.btn_74ad_button_1_pressed
-      id: btn1
+  - trigger: state
+    entity_id:
+    - event.btn_74ad_button_5_pressed
+    id: btn5
+  - trigger: state
+    entity_id:
+    - event.btn_74ad_button_4_pressed
+    id: btn4
+  - trigger: state
+    entity_id:
+    - event.btn_74ad_button_3_pressed
+    id: btn3
+  - trigger: state
+    entity_id:
+    - event.btn_74ad_button_2_pressed
+    id: btn2
+  - trigger: state
+    entity_id:
+    - event.btn_74ad_button_1_pressed
+    id: btn1
   condition: []
   action:
-    - choose:
-        - conditions:
-            - condition: trigger
-              id:
-                - btn1
-            - condition: state
-              entity_id: event.btn_74ad_button_1_pressed
-              attribute: event_type
-              state: short_press
-          sequence:
-            - metadata: {}
-              data: {}
-              target:
-                entity_id: light.bedroom_reading_light
-              action: light.toggle
-        - conditions:
-            - condition: trigger
-              id:
-                - btn1
-            - condition: state
-              entity_id: event.btn_74ad_button_1_pressed
-              attribute: event_type
-              state: long_press
-          sequence:
-            - metadata: {}
-              data: {}
-              action: light.toggle
-              target:
-                entity_id: light.bedroom_decorative_lights
-        - conditions:
-            - condition: trigger
-              id:
-                - btn2
-          sequence:
-            - data: {}
-              action: light.toggle
-              target:
-                entity_id:
-                  - light.bedroom_ambient_lights
-                  - light.bedroom_accent_lights
-        - conditions:
-            - condition: trigger
-              id:
-                - btn3
-          sequence:
-            - target:
-                entity_id: automation.bedroom_bedtime
-              data:
-                skip_condition: true
-              action: automation.trigger
-        - conditions:
-            - condition: trigger
-              id:
-                - btn4
-          sequence:
-            - metadata: {}
-              data: {}
-              target:
-                area_id: bedroom
-              action: fan.increase_speed
-        - conditions:
-            - condition: trigger
-              id:
-                - btn5
-          sequence:
-            - metadata: {}
-              data:
-                percentage_step: 10
-              target:
-                area_id: bedroom
-              action: fan.decrease_speed
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - btn1
+      - condition: state
+        entity_id: event.btn_74ad_button_1_pressed
+        attribute: event_type
+        state: short_press
+      sequence:
+      - metadata: {}
+        data: {}
+        target:
+          entity_id: light.bedroom_reading_light
+        action: light.toggle
+    - conditions:
+      - condition: trigger
+        id:
+        - btn1
+      - condition: state
+        entity_id: event.btn_74ad_button_1_pressed
+        attribute: event_type
+        state: long_press
+      sequence:
+      - metadata: {}
+        data: {}
+        action: light.toggle
+        target:
+          entity_id: light.bedroom_decorative_lights
+    - conditions:
+      - condition: trigger
+        id:
+        - btn2
+      sequence:
+      - data: {}
+        action: light.toggle
+        target:
+          entity_id:
+          - light.bedroom_ambient_lights
+          - light.bedroom_accent_lights
+    - conditions:
+      - condition: trigger
+        id:
+        - btn3
+      sequence:
+      - target:
+          entity_id: automation.bedroom_bedtime
+        data:
+          skip_condition: true
+        action: automation.trigger
+    - conditions:
+      - condition: trigger
+        id:
+        - btn4
+      sequence:
+      - metadata: {}
+        data: {}
+        target:
+          area_id: bedroom
+        action: fan.increase_speed
+    - conditions:
+      - condition: trigger
+        id:
+        - btn5
+      sequence:
+      - metadata: {}
+        data:
+          percentage_step: 10
+        target:
+          area_id: bedroom
+        action: fan.decrease_speed
   mode: single
-- id: "1723148861587"
+- id: '1723148861587'
   alias: Living Room Desk Reading Light
-  description: ""
+  description: ''
   use_blueprint:
     path: occupancy_device.yaml
     input:
       occupancy_sensor: binary_sensor.living_room_desk_occupancy
       daylight_sensor: binary_sensor.living_room_daylight
       target_lights:
-        - light.living_room_desk_reading_light
+      - light.living_room_desk_reading_light
       off_delay:
         hours: 0
         minutes: 0
@@ -548,10 +547,10 @@
         minutes: 0
         seconds: 0
       target_entities:
-        - light.living_room_desk_reading_light
-- id: "1723203704306"
+      - light.living_room_desk_reading_light
+- id: '1723203704306'
   alias: Kitchen Lights
-  description: ""
+  description: ''
   use_blueprint:
     path: occupancy_device.yaml
     input:
@@ -563,9 +562,9 @@
         hours: 0
         minutes: 1
         seconds: 0
-- id: "1723205448609"
+- id: '1723205448609'
   alias: Hallway Ambient Lights
-  description: ""
+  description: ''
   use_blueprint:
     path: occupancy_device.yaml
     input:
@@ -581,9 +580,9 @@
         hours: 0
         minutes: 0
         seconds: 0
-- id: "1723219668852"
+- id: '1723219668852'
   alias: Living Room Ambient Lights
-  description: ""
+  description: ''
   use_blueprint:
     path: occupancy_device.yaml
     input:
@@ -595,9 +594,9 @@
         hours: 0
         minutes: 2
         seconds: 0
-- id: "1723219752988"
+- id: '1723219752988'
   alias: Living Room Decorative Lights
-  description: ""
+  description: ''
   use_blueprint:
     path: occupancy_device.yaml
     input:
@@ -609,9 +608,9 @@
         hours: 0
         minutes: 5
         seconds: 0
-- id: "1723220126869"
+- id: '1723220126869'
   alias: Living Room 3D Printer Light
-  description: ""
+  description: ''
   use_blueprint:
     path: occupancy_device.yaml
     input:
@@ -623,9 +622,9 @@
         hours: 0
         minutes: 0
         seconds: 10
-- id: "1724788305694"
+- id: '1724788305694'
   alias: Bedroom Ambient Lights
-  description: ""
+  description: ''
   use_blueprint:
     path: occupancy_device.yaml
     input:
@@ -641,9 +640,9 @@
         hours: 0
         minutes: 2
         seconds: 0
-- id: "1724791966620"
+- id: '1724791966620'
   alias: Bedroom Accent Lights
-  description: ""
+  description: ''
   use_blueprint:
     path: occupancy_device.yaml
     input:
@@ -659,29 +658,29 @@
         hours: 0
         minutes: 0
         seconds: 0
-- id: "1725655593814"
+- id: '1725655593814'
   alias: Kitchen Mosquito Repeller
-  description: ""
+  description: ''
   trigger:
-    - trigger: state
-      entity_id:
-        - switch.kitchen_mosquito_repeller
-      to: "on"
-      for:
-        hours: 4
-        minutes: 0
-        seconds: 0
+  - trigger: state
+    entity_id:
+    - switch.kitchen_mosquito_repeller
+    to: 'on'
+    for:
+      hours: 4
+      minutes: 0
+      seconds: 0
   condition: []
   action:
-    - action: switch.turn_off
-      metadata: {}
-      data: {}
-      target:
-        entity_id: switch.kitchen_mosquito_repeller
+  - action: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.kitchen_mosquito_repeller
   mode: single
-- id: "1727380853232"
+- id: '1727380853232'
   alias: Bathroom Ambient Lights
-  description: ""
+  description: ''
   use_blueprint:
     path: occupancy_device.yaml
     input:
@@ -697,102 +696,110 @@
         hours: 0
         minutes: 0
         seconds: 0
-- id: "1727605152388"
+- id: '1727605152388'
   alias: Bathroom Fan
-  description: ""
-  trigger:
-    - id: humidity_above_threshold
-      trigger: template
-      value_template:
-        "{{ states('sensor.bathroom_humidity') | float > (states('sensor.bathroom_humidity_mean')
-        | float + 15) }}"
-      for:
-        hours: 0
-        minutes: 0
-        seconds: 30
-    - id: humidity_below_threshold
-      trigger: template
-      value_template:
-        "{{ states('sensor.bathroom_humidity') | float < (states('sensor.bathroom_humidity_mean')
-        | float + 10) }}"
-      for:
-        hours: 0
-        minutes: 1
-        seconds: 0
-  condition: []
-  action:
-    - choose:
-        - conditions:
-            - condition: trigger
-              id:
-                - humidity_above_threshold
-          sequence:
-            - action: fan.turn_on
-              metadata: {}
-              data: {}
-              target:
-                entity_id: fan.bathroom_fan
-        - conditions:
-            - condition: trigger
-              id:
-                - humidity_below_threshold
-          sequence:
-            - action: fan.turn_off
-              target:
-                entity_id:
-                  - fan.bathroom_fan
-              data: {}
-  mode: single
-- id: "1727641808330"
-  alias: Arriving Home
-  description: ""
-  trigger:
-    - trigger: zone
-      entity_id: person.matthijs_bos
-      zone: zone.parking
-      event: enter
-    - trigger: zone
-      entity_id: person.matthijs_bos
-      zone: zone.home
-      event: enter
-  condition:
-    - condition: state
-      entity_id: binary_sensor.home_occupancy
-      state: "off"
-    - condition: or
-      conditions:
-        - condition: state
-          entity_id: binary_sensor.hallway_daylight
-          state: "off"
-        - condition: state
-          entity_id: binary_sensor.living_room_daylight
-          state: "off"
-  action:
-    - action: light.turn_on
-      metadata: {}
-      data: {}
-      target:
-        entity_id:
-          - light.hallway_lights
-          - light.living_room_decorative_lights
-  mode: single
-- id: "1728130054200"
-  alias: Bedroom Reading Light
-  description: ""
+  description: ''
   triggers:
-    - trigger: state
-      entity_id:
-        - binary_sensor.bedroom_bed_occupancy
-      for:
-        hours: 0
-        minutes: 5
-        seconds: 0
-      to: "off"
+  - id: humidity_above_threshold
+    trigger: template
+    value_template: '{{ states(''sensor.bathroom_humidity'') | float > (states(''sensor.bathroom_humidity_mean'')
+      | float + 10) }}'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 30
+  - id: humidity_below_threshold
+    trigger: template
+    value_template: '{{ states(''sensor.bathroom_humidity'') | float < (states(''sensor.bathroom_humidity_mean'')
+      | float + 5) }}'
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+  - trigger: state
+    entity_id:
+    - fan.bathroom_fan
+    to: 'on'
+    for:
+      hours: 4
+      minutes: 0
+      seconds: 0
+    id: maximum_duration_reached
   conditions: []
   actions:
-    - action: light.turn_off
-      metadata: {}
-      data: {}
-      target:
-        entity_id: light.bedroom_reading_light
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - humidity_above_threshold
+      sequence:
+      - action: fan.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: fan.bathroom_fan
+    - conditions:
+      - condition: trigger
+        id:
+        - humidity_below_threshold
+        - maximum_duration_reached
+      sequence:
+      - action: fan.turn_off
+        target:
+          entity_id:
+          - fan.bathroom_fan
+        data: {}
+  mode: single
+- id: '1727641808330'
+  alias: Arriving Home
+  description: ''
+  trigger:
+  - trigger: zone
+    entity_id: person.matthijs_bos
+    zone: zone.parking
+    event: enter
+  - trigger: zone
+    entity_id: person.matthijs_bos
+    zone: zone.home
+    event: enter
+  condition:
+  - condition: state
+    entity_id: binary_sensor.home_occupancy
+    state: 'off'
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: binary_sensor.hallway_daylight
+      state: 'off'
+    - condition: state
+      entity_id: binary_sensor.living_room_daylight
+      state: 'off'
+  action:
+  - action: light.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - light.hallway_lights
+      - light.living_room_decorative_lights
+  mode: single
+- id: '1728130054200'
+  alias: Bedroom Reading Light
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.bedroom_bed_occupancy
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    to: 'off'
+  conditions: []
+  actions:
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.bedroom_reading_light
   mode: single
