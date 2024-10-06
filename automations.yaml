@@ -740,3 +740,36 @@
           - fan.bathroom_fan
         data: {}
   mode: single
+- id: '1727641808330'
+  alias: Arriving Home
+  description: ''
+  trigger:
+  - platform: zone
+    entity_id: person.matthijs_bos
+    zone: zone.parking
+    event: enter
+  - platform: zone
+    entity_id: person.matthijs_bos
+    zone: zone.home
+    event: enter
+  condition:
+  - condition: state
+    entity_id: binary_sensor.home_occupancy
+    state: 'off'
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: binary_sensor.hallway_daylight
+      state: 'off'
+    - condition: state
+      entity_id: binary_sensor.living_room_daylight
+      state: 'off'
+  action:
+  - action: light.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - light.hallway_lights
+      - light.living_room_decorative_lights
+  mode: single
