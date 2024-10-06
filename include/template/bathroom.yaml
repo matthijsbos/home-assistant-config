@@ -44,3 +44,57 @@
         {% else %}
           {{ illuminance | float > threshold }}
         {% endif %}
+- sensor:
+    - name: "Bathroom Temperature Level"
+      unique_id: bathroom_temperature_level
+      device_class: enum
+      state: >
+        {% set temp = states('sensor.bathroom_temperature') | float %}
+        {% if temp < 17 %}
+          Cold
+        {% elif 17 <= temp < 19 %}
+          Cool
+        {% elif 19 <= temp < 21 %}
+          Mild
+        {% elif 21 <= temp < 23 %}
+          Warm
+        {% elif 23 <= temp < 25 %}
+          Hot
+        {% elif 25 <= temp %}
+          Very Hot
+        {% else %}
+          Unknown
+        {% endif %}
+      icon: >
+        {% set temp = states('sensor.bathroom_temperature') | float %}
+        {% if temp < 17 %}
+          mdi:thermometer-low
+        {% elif 17 <= temp < 19 %}
+          mdi:thermometer-low
+        {% elif 19 <= temp < 21 %}
+          mdi:thermometer
+        {% elif 21 <= temp < 23 %}
+          mdi:thermometer-high
+        {% elif 23 <= temp < 25 %}
+          mdi:thermometer-high
+        {% elif 25 <= temp %}
+          mdi:thermometer-alert
+        {% else %}
+          mdi:thermometer
+        {% endif %}
+      availability: >
+        {% if states('sensor.bathroom_temperature') not in ['unavailable', 'unknown'] %}
+          true
+        {% else %}
+          false
+        {% endif %}
+- sensor:
+    - name: "Bathroom Absolute Humidity"
+      unique_id: bathroom_absolute_humidity
+      unit_of_measurement: "g/m³"
+      state: >
+        {% set T = states('sensor.bathroom_temperature') | float %}
+        {% set RH = states('sensor.bathroom_humidity') | float %}
+        {% set es = 6.112 * (2.718281828459 ** ((17.67 * T) / (T + 243.5))) %}
+        {% set AH = (es * RH * 2.1674) / (T + 273.15) %}
+        {{ AH | round(2) }}
