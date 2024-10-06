@@ -32,23 +32,12 @@
   entities:
     - binary_sensor.occupancy_7ae8_presence_sensor_5
     - binary_sensor.occupancy_7ae8_presence_sensor_6
-- platform: template
-  sensors:
-    living_room_doorway_occupancy:
-      unique_id: living_room_doorway_occupancy
-      friendly_name: "Living Room Doorway Occupancy"
-      device_class: occupancy
-      value_template: >-
-        {{ is_state('binary_sensor.occupancy_7ae8_presence_sensor_6', 'on') }}
-- platform: template
-  sensors:
-    living_room_doorway_occupancy_delayed:
-      unique_id: living_room_doorway_occupancy_delayed
-      friendly_name: "Living Room Doorway Occupancy Delayed"
-      device_class: occupancy
-      value_template: >-
-        {{ is_state('binary_sensor.living_room_doorway_occupancy', 'on') }}
-      delay_off: "00:01:00"
+- platform: group
+  unique_id: living_room_doorway_occupancy
+  name: "Living Room Doorway Occupancy"
+  device_class: occupancy
+  entities:
+    - binary_sensor.occupancy_7ae8_presence_sensor_6
 - platform: template
   sensors:
     laptop_docked:

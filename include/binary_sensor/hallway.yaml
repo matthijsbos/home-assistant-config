@@ -10,5 +10,6 @@
   device_class: occupancy
   entities:
     - binary_sensor.occupancy_9c01_occupancy
-    - binary_sensor.living_room_doorway_occupancy_delayed
+    - binary_sensor.living_room_doorway_occupancy
     - binary_sensor.front_door_occupancy_delayed
+    - binary_sensor.bedroom_doorway_occupancy
