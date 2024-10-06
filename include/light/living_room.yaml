@@ -58,6 +58,7 @@
     - light.living_room_desk_windowsill_light
     - light.living_room_doorway_windowsill_light
     - light.living_room_sofa_windowsill_light
+    - light.living_room_hex_light
 
 - platform: template
   lights:
@@ -108,3 +109,9 @@
   name: "Living Room Doorway Windowsill Light"
   entities:
     - light.light_0b62_light
+
+- platform: group
+  unique_id: living_room_hex_light
+  name: "Living Room Hex Light"
+  entities:
+    - light.light_a3a0_light
