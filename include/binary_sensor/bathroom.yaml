@@ -4,3 +4,10 @@
   device_class: occupancy
   entities:
     - binary_sensor.occupancy_715f_occupancy
+    - binary_sensor.bathroom_doorway_occupancy
+- platform: group
+  unique_id: bathroom_doorway_occupancy
+  name: "Bathroom Doorway Occupancy"
+  device_class: occupancy
+  entities:
+    - binary_sensor.occupancy_249b_presence_sensor_4
