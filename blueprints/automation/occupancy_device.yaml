@@ -48,33 +48,37 @@ variables:
   daylight_sensor: !input daylight_sensor
 
 triggers:
-  - alias: Any change in daylight
-    trigger: template
-    value_template: "{{ daylight_sensor == '' or is_state(daylight_sensor, 'off') }}"
-  - alias: Change of occupancy detected to occupancy clear for the specified duration
+  - id: "daylight_light_detected"
+    trigger: state
+    entity_id: !input daylight_sensor
+    to: "on"
+  - id: "daylight_no_light_detected"
+    trigger: state
+    entity_id: !input daylight_sensor
+    to: "off"
+  - id: "occupancy_cleared"
     trigger: state
     entity_id: !input occupancy_sensor
     from: "on"
     to: "off"
     for: !input off_delay_duration
-    id: "occupancy_clear"
-  - alias: Change of occupancy clear to occupancy detected.
+  - id: "occupancy_detected"
     trigger: state
     entity_id: !input occupancy_sensor
     from: "off"
     to: "on"
-    id: "occupancy_detected"
 
 action:
   - choose:
       # activate default scene on occupancy
       - conditions:
-          - alias: >
-              Check that triggered by a change in occupancy from clear to 
-              detected.
-            condition: trigger
-            id:
-              - "occupancy_detected"
+          - condition: trigger
+            id: "occupancy_detected"
+          - condition: trigger
+            id: "daylight_no_light_detected"
+          - condition: state
+            entity_id: !input daylight_sensor
+            state: "off"
         sequence:
           - action: scene.turn_on
             data: {}
@@ -83,12 +87,10 @@ action:
 
       # turn off when no occupancy for duration
       - conditions:
-          - alias: >
-              Check that it was triggered by a change in occupancy from 
-              detected to clear for specified duration
-            condition: trigger
-            id:
-              - "occupancy_clear"
+          - condition: trigger
+            id: "occupancy_cleared"
+          - condition: trigger
+            id: "daylight_light_detected"
         sequence:
           - action: homeassistant.turn_off
             target:
