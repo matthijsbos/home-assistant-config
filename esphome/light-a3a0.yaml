@@ -66,19 +66,30 @@ light:
     restore_mode: RESTORE_AND_ON
     effects:
       - addressable_twinkle:
-          name: "Twinkle 10%"
-          twinkle_probability: 10%
-          progress_interval: 50ms
+          name: "Twinkle 15%"
+          twinkle_probability: 15%
+          progress_interval: 100ms
       - addressable_twinkle:
           name: "Twinkle 25%"
           twinkle_probability: 25%
-          progress_interval: 50ms
+          progress_interval: 100ms
       - addressable_twinkle:
-          name: "Twinkle 50%"
-          twinkle_probability: 50%
-          progress_interval: 50ms
+          name: "Twinkle 35%"
+          twinkle_probability: 35%
+          progress_interval: 100ms
 
 sensor:
   - platform: internal_temperature
     name: "CPU Temperature"
     update_interval: 60s
+    on_value:
+      then:
+        # Turn off the light internal CPU temp reaches 60 deg C
+        - if:
+            condition:
+              lambda: 'return x >= 60.0;'
+            then:
+              - light.turn_off: rgbwlight
+              - logger.log:
+                  format: "CPU temperature exceeded 60°C. Turning off the light."
+                  level: ERROR
