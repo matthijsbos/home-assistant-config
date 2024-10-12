@@ -79,6 +79,9 @@ action:
           - condition: state
             entity_id: !input daylight_sensor
             state: "off"
+          - condition: state
+            entity_id: !input occupancy_sensor
+            state: "on"
         sequence:
           - action: scene.turn_on
             data: {}
