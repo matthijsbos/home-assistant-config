@@ -40,54 +40,20 @@ i2c:
   id: bus_a
 
 sensor:
-  - platform: bmp280_i2c
-    address: 0x77
-    update_interval: 10s
+  - platform: sht3xd
+    i2c_id: bus_a
     temperature:
-      name: "BMP temp"
-      id: bmp_temp
-      oversampling: 2x
-      internal: true  # Hide from Home Assistant
-    pressure:
-      name: "Pressure"
-
-  - platform: aht10
-    variant: aht20
-    address: 0x38
-    update_interval: 10s
-    temperature:
-      name: "AHT20 temp"
-      id: aht20_temp
-      accuracy_decimals: 1
-      filters:
-      - filter_out: 0.0
-      - median:
-          window_size: 3
-          send_every: 3
-          send_first_at: 1
-      internal: true  # Hide from Home Assistant
+      name: "Temperature"
+      unit_of_measurement: "°C"
+      accuracy_decimals: 2
     humidity:
       name: "Humidity"
-      id: aht20_humidity
-      accuracy_decimals: 1
-      filters:
-      - filter_out: 0.0
-      - median:
-          window_size: 3
-          send_every: 3
-          send_first_at: 1
+      unit_of_measurement: "%"
+      accuracy_decimals: 2
+    address: 0x44  # Default I2C address for SHT31
+    update_interval: 15s
 
-  # Virtual sensor combining BMP and AHT20 temperatures
-  - platform: template
-    name: "Temperature"
-    unit_of_measurement: "°C"
-    accuracy_decimals: 1
-    update_interval: 10s
-    lambda: |-
-      if (isnan(id(bmp_temp).state)) {
-        return id(aht20_temp).state;
-      } else if (isnan(id(aht20_temp).state)) {
-        return id(bmp_temp).state;
-      } else {
-        return (id(bmp_temp).state + id(aht20_temp).state) / 2;
-      }
+status_led:
+  pin:
+    number: GPIO2
+    inverted: true
