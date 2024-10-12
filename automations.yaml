@@ -216,20 +216,32 @@
 - id: '1716716274495'
   alias: Living Room TV Power Off
   description: ''
-  trigger:
+  triggers:
   - trigger: state
     entity_id:
     - binary_sensor.living_room_occupancy
     to: 'off'
     for:
-      hours: 1
-      minutes: 0
+      hours: 0
+      minutes: 30
       seconds: 0
-  condition:
-  - condition: state
-    entity_id: media_player.tv_0f54_remote
-    state: 'off'
-  action:
+  conditions:
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: media_player.living_room_tv
+      state: playing
+  actions:
+  - action: media_player.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: media_player.living_room_tv
+  - delay:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
   - action: switch.turn_off
     metadata: {}
     data: {}
@@ -549,7 +561,7 @@
       target_entities:
       - light.living_room_desk_reading_light
 - id: '1723203704306'
-  alias: Kitchen Lights
+  alias: Kitchen Ambient Lights
   description: ''
   use_blueprint:
     path: occupancy_device.yaml
@@ -702,7 +714,7 @@
   triggers:
   - id: humidity_above_threshold
     trigger: template
-    value_template: '{{ states(''sensor.bathroom_humidity'') | float > (states(''sensor.bathroom_humidity_mean'')
+    value_template: '{{ states(''sensor.bathroom_humidity'') | float > (states(''sensor.bathroom_humidity_median'')
       | float + 10) }}'
     for:
       hours: 0
@@ -710,11 +722,11 @@
       seconds: 30
   - id: humidity_below_threshold
     trigger: template
-    value_template: '{{ states(''sensor.bathroom_humidity'') | float < (states(''sensor.bathroom_humidity_mean'')
-      | float + 5) }}'
+    value_template: '{{ states(''sensor.bathroom_humidity'') | float < (states(''sensor.bathroom_humidity_median'')
+      | float + 3) }}'
     for:
       hours: 0
-      minutes: 1
+      minutes: 5
       seconds: 0
   - trigger: state
     entity_id:
@@ -753,7 +765,7 @@
 - id: '1727641808330'
   alias: Arriving Home
   description: ''
-  trigger:
+  triggers:
   - trigger: zone
     entity_id: person.matthijs_bos
     zone: zone.parking
@@ -762,7 +774,7 @@
     entity_id: person.matthijs_bos
     zone: zone.home
     event: enter
-  condition:
+  conditions:
   - condition: state
     entity_id: binary_sensor.home_occupancy
     state: 'off'
@@ -774,14 +786,13 @@
     - condition: state
       entity_id: binary_sensor.living_room_daylight
       state: 'off'
-  action:
-  - action: light.turn_on
-    metadata: {}
-    data: {}
+  actions:
+  - action: scene.turn_on
     target:
-      entity_id:
-      - light.hallway_lights
-      - light.living_room_decorative_lights
+      entity_id: scene.hallway_lights_default
+  - action: scene.turn_on
+    target:
+      entity_id: scene.living_room_lights_default
   mode: single
 - id: '1728130054200'
   alias: Bedroom Reading Light
