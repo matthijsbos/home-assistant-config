@@ -18,6 +18,13 @@
     - sensor.kitchen_relative_humidity
 
 - platform: min_max
+  unique_id: home_atmospheric_pressure
+  name: "Home Atmospheric Pressure"
+  type: mean
+  entity_ids:
+    - sensor.therm_dc8d_atmospheric_pressure
+
+- platform: min_max
   unique_id: home_mains_voltage
   name: "Home Mains Voltage"
   type: mean
