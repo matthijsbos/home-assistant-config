@@ -99,3 +99,37 @@
         {% set AH = (es * RH * 2.1674) / (T + 273.15) %}
         {{ AH | round(2) }}
       state_class: "measurement"
+- binary_sensor:
+    - name: "Bathroom Window Opening Recommendation"
+      unique_id: bathroom_window_opening_recommendation
+      device_class: window
+      state: >
+        {% set indoor_temperature = states('sensor.bathroom_temperature') | float %}
+        {% set outdoor_temperature = states('sensor.outdoor_temperature') | float %}
+        {% set indoor_rh = states('sensor.bathroom_relative_humidity') | float %}
+        {% set outdoor_rh = states('sensor.outdoor_relative_humidity') | float %}
+
+        {# Calculate SVP for indoor and outdoor conditions using the Magnus formula #}
+        {% set indoor_svp = 6.112 * (2.718281828459 ** ((17.67 * indoor_temperature) / (indoor_temperature + 243.5))) %}
+        {% set outdoor_svp = 6.112 * (2.718281828459 ** ((17.67 * outdoor_temperature) / (outdoor_temperature + 243.5))) %}
+
+        {# Calculate AVP for indoor and outdoor conditions #}
+        {% set indoor_avp = (indoor_rh / 100) * indoor_svp %}
+        {% set outdoor_avp = (outdoor_rh / 100) * outdoor_svp %}
+
+        {# Calculate Humidity Ratios for indoor and outdoor air #}
+        {% set indoor_humidity_ratio = indoor_avp / indoor_svp %}
+        {% set outdoor_humidity_ratio = outdoor_avp / outdoor_svp %}
+
+        {# Calculate Dew Points for indoor and outdoor conditions #}
+        {% set indoor_dew_point = (243.5 * (log(indoor_rh / 100) + ((17.67 * indoor_temperature) / (243.5 + indoor_temperature)))) / (17.67 - log(indoor_rh / 100) - ((17.67 * indoor_temperature) / (243.5 + indoor_temperature))) %}
+        {% set outdoor_dew_point = (243.5 * (log(outdoor_rh / 100) + ((17.67 * outdoor_temperature) / (243.5 + outdoor_temperature)))) / (17.67 - log(outdoor_rh / 100) - ((17.67 * outdoor_temperature) / (243.5 + outdoor_temperature))) %}
+
+        {# Determine if it's better to open the window based on all conditions #}
+        {{ outdoor_temperature > 10 and outdoor_humidity_ratio < indoor_humidity_ratio and outdoor_dew_point < indoor_dew_point }}
+      icon: >
+        {% if is_state('binary_sensor.open_bathroom_window', 'on') %}
+          mdi:window-open
+        {% else %}
+          mdi:window-closed
+        {% endif %}
