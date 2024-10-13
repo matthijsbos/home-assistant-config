@@ -6,6 +6,7 @@
     - sensor.living_room_temperature
     - sensor.bedroom_temperature
     - sensor.bathroom_temperature
+    - sensor.kitchen_temperature
 
 - platform: min_max
   unique_id: home_relative_humidity
@@ -14,6 +15,7 @@
   entity_ids:
     - sensor.bedroom_relative_humidity
     - sensor.bathroom_relative_humidity
+    - sensor.kitchen_relative_humidity
 
 - platform: min_max
   unique_id: home_mains_voltage

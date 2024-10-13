@@ -4,3 +4,22 @@
   type: mean
   entity_ids:
     - sensor.occupancy_952c_illuminance
+- platform: min_max
+  unique_id: kitchen_temperature
+  name: "Kitchen Temperature"
+  type: mean
+  entity_ids:
+    - sensor.therm_dc8d_temperature
+- platform: min_max
+  unique_id: kitchen_relative_humidity
+  name: "Kitchen Relative Humidity"
+  type: mean
+  entity_ids:
+    - sensor.therm_dc8d_relative_humidity
+- platform: statistics
+  name: "kitchen Relative Humidity Median"
+  unique_id: kitchen_relative_humidity_median
+  entity_id: sensor.kitchen_relative_humidity
+  max_age:
+    hours: 24
+  state_characteristic: median
