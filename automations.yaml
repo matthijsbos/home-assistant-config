@@ -714,7 +714,7 @@
   triggers:
   - id: humidity_above_threshold
     trigger: template
-    value_template: '{{ states(''sensor.bathroom_humidity'') | float > (states(''sensor.bathroom_humidity_median'')
+    value_template: '{{ states(''sensor.bathroom_relative_humidity'') | float > (states(''sensor.bathroom_relative_humidity_median'')
       | float + 10) }}'
     for:
       hours: 0

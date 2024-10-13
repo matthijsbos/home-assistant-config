@@ -3,7 +3,7 @@ bedroom:
   name: "Bedroom Air Quality Index"
   sources:
     temperature: sensor.bedroom_temperature
-    humidity: sensor.bedroom_humidity
+    humidity: sensor.bedroom_relative_humidity
     pm:
       - sensor.bedroom_pm_10
       - sensor.bedroom_pm_2_5

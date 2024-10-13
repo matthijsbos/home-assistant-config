@@ -3,26 +3,17 @@
   name: "Home Temperature"
   type: mean
   entity_ids:
-    # living room
-    - sensor.fan_6ab8_temperature
-    - sensor.therm_b31f_therm_b31f
-    - sensor.therm_977c_therm_977c
-    # bedroom
-    - sensor.fan_1d90_temperature
-    - sensor.clock_3006_temperature
-    # bathroom
-    - sensor.therm_d7f6_temperature
+    - sensor.living_room_temperature
+    - sensor.bedroom_temperature
+    - sensor.bathroom_temperature
 
 - platform: min_max
-  unique_id: home_humidity
-  name: "Home Humidity"
+  unique_id: home_relative_humidity
+  name: "Home Relative Humidity"
   type: mean
   entity_ids:
-    # bedroom
-    - sensor.fan_1d90_humidity
-    - sensor.clock_3006_humidity
-    # bathroom
-    - sensor.therm_d7f6_humidity
+    - sensor.bedroom_relative_humidity
+    - sensor.bathroom_relative_humidity
 
 - platform: min_max
   unique_id: home_mains_voltage

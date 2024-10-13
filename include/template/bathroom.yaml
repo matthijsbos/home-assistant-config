@@ -94,7 +94,8 @@
       unit_of_measurement: "g/m³"
       state: >
         {% set T = states('sensor.bathroom_temperature') | float %}
-        {% set RH = states('sensor.bathroom_humidity') | float %}
+        {% set RH = states('sensor.bathroom_relative_humidity') | float %}
         {% set es = 6.112 * (2.718281828459 ** ((17.67 * T) / (T + 243.5))) %}
         {% set AH = (es * RH * 2.1674) / (T + 273.15) %}
         {{ AH | round(2) }}
+      state_class: "measurement"

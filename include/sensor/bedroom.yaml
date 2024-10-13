@@ -6,8 +6,8 @@
     - sensor.fan_1d90_temperature
     - sensor.clock_3006_temperature
 - platform: min_max
-  unique_id: bedroom_humidity
-  name: "Bedroom Humidity"
+  unique_id: bedroom_relative_humidity
+  name: "Bedroom Relative Humidity"
   type: mean
   entity_ids:
     - sensor.fan_1d90_humidity
