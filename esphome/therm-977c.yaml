@@ -38,7 +38,7 @@ one_wire:
 
 sensor:
   - platform: dallas_temp
-    name: None
+    name: Temperature
 
 status_led:
   pin:
