@@ -65,7 +65,6 @@ switch:
     id: relay_enable
     name: "Enable"
     entity_category: diagnostic
-
   - platform: gpio
     pin: GPIO17
     id: relay_heater
@@ -83,9 +82,22 @@ one_wire:
 sensor:
   - platform: dallas_temp
     name: Temperature
+    id: internal_temperature
   - platform: homeassistant
     id: external_temperature
     entity_id: ${external_temperature_entity}
+  - platform: template
+    id: combined_temperature
+    name: "Combined Temperature"
+    internal: True
+    unit_of_measurement: "°C"
+    update_interval: 5s
+    lambda: |-
+      if (!isnan(id(external_temperature).state) && (id(external_temperature).has_state())) {
+        return id(external_temperature).state;
+      } else {
+        return id(internal_temperature).state;
+      }
 
 status_led:
   pin:
