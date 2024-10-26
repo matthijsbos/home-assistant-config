@@ -1,0 +1,221 @@
+substitutions:
+  name: "climate-44a4"
+  friendly_name: "climate-44a4"
+  default_eco_temperature: "16.0"
+  default_comfort_temperature: "19.0"
+  external_temperature_entity: "sensor.living_room_temperature"
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+  min_version: 2024.6.0
+  project:
+    name: esphome.web
+    version: dev
+  on_boot:
+    priority: -100
+    then:
+      # Always force ECO preset on startup
+      - climate.control: 
+          id: my_thermostat
+          preset: ECO
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+# Allow Over-The-Air updates
+ota:
+- platform: esphome
+
+# Allow provisioning Wi-Fi via serial
+improv_serial:
+
+wifi:
+  # Set up a wifi access point
+  ap: {}
+
+# In combination with the `ap` this allows the user
+# to provision wifi credentials to the device via WiFi AP.
+captive_portal:
+
+dashboard_import:
+  package_import_url: github://esphome/example-configs/esphome-web/esp32.yaml@main
+  import_full_config: true
+
+# Sets up Bluetooth LE (Only on ESP32) to allow the user
+# to provision wifi credentials to the device.
+esp32_improv:
+  authorizer: none
+
+# To have a "next url" for improv serial
+web_server:
+
+# Relays exposed as switches
+switch:
+  - platform: gpio
+    pin: GPIO16
+    id: relay_enable
+    name: "Enable"
+    entity_category: diagnostic
+
+  - platform: gpio
+    pin: GPIO17
+    id: relay_heater
+    name: "Heater"
+    entity_category: diagnostic
+
+one_wire:
+  - platform: gpio
+    pin: 
+      number: GPIO25
+      mode:
+        input: true
+        pullup: true
+
+sensor:
+  - platform: dallas_temp
+    name: Temperature
+  - platform: homeassistant
+    id: external_temperature
+    entity_id: ${external_temperature_entity}
+
+status_led:
+  pin:
+    number: GPIO23
+    inverted: true
+
+# User-configurable target temperatures
+# https://esphome.io/components/number/template
+number:
+  - platform: template
+    name: "Eco Temperature"
+    id: eco_temperature
+    initial_value: ${default_eco_temperature}
+    restore_value: True
+    step: 0.1
+    min_value: 10
+    max_value: 30
+    entity_category: config
+    mode: box
+    unit_of_measurement: "°C"
+    optimistic: True
+    on_value:
+      - if:
+          condition:
+            lambda: 'return id(my_thermostat).preset == esphome::climate::ClimatePreset::CLIMATE_PRESET_ECO;'
+          then:
+            - climate.control: 
+                id: my_thermostat
+                preset: ECO
+                target_temperature: !lambda return x;
+
+  - platform: template
+    name: "Comfort Temperature"
+    id: comfort_temperature
+    initial_value: ${default_comfort_temperature}
+    restore_value: True
+    step: 0.1
+    min_value: 10
+    max_value: 30
+    entity_category: config
+    mode: box
+    unit_of_measurement: "°C"
+    optimistic: True
+    on_value:
+      - if:
+          condition:
+            lambda: 'return id(my_thermostat).preset == esphome::climate::ClimatePreset::CLIMATE_PRESET_COMFORT;'
+          then:
+            - climate.control: 
+                id: my_thermostat
+                preset: COMFORT
+                target_temperature: !lambda return x;
+
+# Example single-point configuration entry (for heating only)
+climate:
+  - platform: thermostat
+    name: "Thermostat"
+    id: my_thermostat
+    sensor: external_temperature
+    # min_heating_off_time (Required with heat_action, Time): Minimum duration the heating action must be disengaged before it may be engaged.
+    min_heating_off_time: 300s
+    # max_heating_run_time (Required with supplemental_heating_action, Time): Duration after which supplemental_heating_action will be called when heating is active. Note that supplemental_heating_action will be called repeatedly at an interval defined by this parameter, as well, enabling multiple stages of supplemental (auxiliary/emergency) heating.
+    # max_heating_run_time: 600s
+    # min_heating_run_time (Required with heat_action, Time): Minimum duration the heating action must be engaged before it may be disengaged.
+    min_heating_run_time: 120s
+    # min_idle_time (Required, Time): Minimum duration the idle action must be active before calling another climate action.
+    min_idle_time: 60s
+    # heat_deadband (Optional, float): The minimum temperature differential (temperature below the set point) before calling the heating action. Defaults to 0.5 °C.
+    heat_deadband: 0.5
+    # heat_overrun (Optional, float): The minimum temperature differential (heating beyond the set point) before calling the idle action. Defaults to 0.5 °C.
+    heat_overrun: -0.25
+    heat_action:
+      - switch.turn_on: relay_heater
+    idle_action:
+      - switch.turn_off: relay_heater
+    off_mode: 
+      - switch.turn_off: relay_enable
+    heat_mode: 
+      - switch.turn_on: relay_enable
+    default_preset: ECO
+    # Always restore on power outage, ECO mode is forced in on_boot section after restore
+    on_boot_restore_from: MEMORY
+    preset:
+      - name: NONE
+        # mandatory to set default_target_temperature_low, workaround below
+        default_target_temperature_low: ${default_eco_temperature}
+      - name: ECO
+        # default_target_temperature_low overwritten by config entity, workarund below
+        default_target_temperature_low: ${default_eco_temperature}
+      - name: COMFORT
+        # default_target_temperature_low overwritten by config entity, workarund below
+        default_target_temperature_low: ${default_comfort_temperature}
+    on_control: 
+      then:
+        - lambda: |-
+            // Switch to preset None if temperature was manually changed
+            if (!x.get_preset().has_value() && x.get_target_temperature().has_value()) {
+              x.set_preset("NONE");
+
+            // Workaround: Explicitly set target temperature to keep currently set target_temperature in case preset NONE is selected. This to prevent default_target_temperature_low from preset being set.
+            } else if (x.get_preset().has_value() && x.get_preset().value() == esphome::climate::ClimatePreset::CLIMATE_PRESET_NONE) {
+              x.set_target_temperature(id(my_thermostat).target_temperature);
+
+            // Workaround: Explicitly set target temperature by taking over comfort_temperature in case preset COMFORT is selected. This to prevent default_target_temperature_low from preset being set.
+            } else if (x.get_preset().has_value() && x.get_preset().value() == esphome::climate::ClimatePreset::CLIMATE_PRESET_COMFORT) {
+              x.set_target_temperature(id(comfort_temperature).state);
+
+            // Workaround: Explicitly set target temperature by taking over eco_temperature in case preset ECO is selected. This to prevent default_target_temperature_low from preset being set.
+            } else if (x.get_preset().has_value() && x.get_preset().value() == esphome::climate::ClimatePreset::CLIMATE_PRESET_ECO) {
+              x.set_target_temperature(id(eco_temperature).state);
+            }
+        - script.execute: activate_eco_after_24h_inactivity  # Restart script on any control action
+
+script:
+  - id: activate_eco_after_24h_inactivity
+    mode: restart  # Restart the script on each call, resetting the timer
+    then:
+      - delay: 86400s  # 24 hours delay
+      - climate.control:  # Activate ECO preset after 24 hours of no activity
+          id: my_thermostat
+          preset: ECO
+
+time:
+  - platform: homeassistant
+    on_time:
+    # Activate ECO preset every night 00:00
+      - seconds: 0
+        minutes: 0
+        hours: 0
+        then:
+          - climate.control:
+              id: my_thermostat
+              preset: ECO
