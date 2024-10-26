@@ -38,7 +38,11 @@ one_wire:
 
 sensor:
   - platform: dallas_temp
-    name: None
+    address: 0x1f011937b3d80428
+    name: "Temperature 1"
+  - platform: dallas_temp
+    address: 0x57011937e2f97228
+    name: "Temperature 2"
 
 status_led:
   pin:
