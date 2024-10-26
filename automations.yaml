@@ -620,20 +620,6 @@
         hours: 0
         minutes: 5
         seconds: 0
-- id: '1723220126869'
-  alias: Living Room 3D Printer Light
-  description: ''
-  use_blueprint:
-    path: occupancy_device.yaml
-    input:
-      occupancy_sensor: binary_sensor.living_room_3d_printer_occupancy
-      daylight_sensor: binary_sensor.living_room_daylight
-      default_scene_occupied: scene.living_room_3d_printer_light_default
-      temporary_scene_name: living_room_3d_printer_light_temp
-      off_delay_duration:
-        hours: 0
-        minutes: 0
-        seconds: 10
 - id: '1724788305694'
   alias: Bedroom Ambient Lights
   description: ''
@@ -813,4 +799,59 @@
     data: {}
     target:
       entity_id: light.bedroom_reading_light
+  mode: single
+- id: '1729023313452'
+  alias: Living Room 3D Printer Light
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.living_room_3d_printer_occupancy
+    to: 'on'
+    id: occupancy_detected
+  - trigger: state
+    entity_id:
+    - binary_sensor.living_room_3d_printer_occupancy
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 30
+    id: occupancy_cleared
+  - trigger: state
+    entity_id:
+    - sensor.prusalink
+  - trigger: state
+    entity_id:
+    - binary_sensor.living_room_daylight
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: sensor.prusalink
+          state: printing
+        - condition: state
+          entity_id: sensor.prusalink
+          state: finished
+      - condition: state
+        entity_id: binary_sensor.living_room_daylight
+        state: 'off'
+      - condition: state
+        entity_id: binary_sensor.living_room_3d_printer_occupancy
+        state: 'on'
+      sequence:
+      - action: light.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.living_room_3d_printer_light
+    default:
+    - action: light.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id: light.living_room_3d_printer_light
   mode: single
