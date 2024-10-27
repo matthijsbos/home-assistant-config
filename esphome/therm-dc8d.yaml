@@ -66,18 +66,7 @@ sensor:
           send_every: 3
           send_first_at: 1
       internal: true  # Hide from Home Assistant
-      
-    humidity:
-      name: "Relative Humidity"
-      id: aht20_humidity
-      accuracy_decimals: 1
-      filters:
-      - filter_out: 0.0
-      - median:
-          window_size: 3
-          send_every: 3
-          send_first_at: 1
-
+    
   # Virtual sensor combining BMP and AHT20 temperatures
   - platform: template
     name: "Temperature"
