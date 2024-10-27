@@ -83,6 +83,7 @@ sensor:
   - platform: dallas_temp
     name: Temperature
     id: internal_temperature
+    update_interval: 15s
   - platform: homeassistant
     id: external_temperature
     entity_id: ${external_temperature_entity}

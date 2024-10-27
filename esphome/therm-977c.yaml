@@ -39,6 +39,7 @@ one_wire:
 sensor:
   - platform: dallas_temp
     name: Temperature
+    update_interval: 15s
 
 status_led:
   pin:
