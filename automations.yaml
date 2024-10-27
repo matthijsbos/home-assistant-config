@@ -708,7 +708,7 @@
       seconds: 30
   - id: humidity_below_threshold
     trigger: template
-    value_template: '{{ states(''sensor.bathroom_humidity'') | float < (states(''sensor.bathroom_humidity_median'')
+    value_template: '{{ states(''sensor.bathroom_relative_humidity'') | float < (states(''sensor.bathroom_relative_humidity_median'')
       | float + 3) }}'
     for:
       hours: 0
