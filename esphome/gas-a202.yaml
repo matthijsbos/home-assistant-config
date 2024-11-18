@@ -1,0 +1,105 @@
+substitutions:
+  device_name: "gas-a202"
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${device_name}
+  min_version: 2024.6.0
+  name_add_mac_suffix: false
+  project:
+    name: esphome.web
+    version: dev
+  includes:
+    - mcp3421.h
+
+esp8266:
+  board: esp01_1m
+  restore_from_flash: true
+
+logger:
+
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+    id: ota_pass
+
+wifi:
+  networks:
+    - ssid: !secret wifi_ssid
+      password: !secret wifi_password
+    - ssid: !secret wifi_ssid2
+      password: !secret wifi_password
+
+  ap:
+    ssid: ${device_name}
+    password: !secret wifi_fallback_ap_password
+
+captive_portal:
+
+dashboard_import:
+  package_import_url: github://esphome/example-configs/esphome-web/esp8266.yaml@main
+  import_full_config: true
+
+# To have a "next url" for improv serial
+web_server:
+
+i2c:
+  - sda: 4
+    scl: 5
+    scan: true
+    id: bus_a
+
+# Custom sensor for MCP3421
+sensor:
+  - platform: custom
+    lambda: |-
+      auto mcp3421_sensor = new MCP3421Sensor(id(bus_a));
+      App.register_component(mcp3421_sensor);
+      return {mcp3421_sensor};
+    sensors:
+      name: "Voltage"
+      id: voltage
+      unit_of_measurement: "V"
+      accuracy_decimals: 3
+      entity_category: diagnostic
+      filters:
+        - sliding_window_moving_average:
+            window_size: 15
+            send_every: 5
+
+# User-configurable target temperatures
+# https://esphome.io/components/number/template
+number:
+  - platform: template
+    name: "Detection Threshold"
+    id: detection_threshold
+    initial_value: 1
+    restore_value: True
+    step: 0.001
+    min_value: 0
+    max_value: 5
+    entity_category: config
+    mode: box
+    unit_of_measurement: "V"
+    optimistic: True
+
+# Binary sensor to detect if voltage is above threshold
+binary_sensor:
+  - platform: template
+    name: "Gas"
+    device_class: "gas"
+    lambda: |-
+      if (id(voltage).state > id(detection_threshold).state) {
+        return true;
+      } else {
+        return false;
+      }
+
+status_led:
+  pin:
+    number: GPIO2
+    inverted: true
