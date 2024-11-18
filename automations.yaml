@@ -184,13 +184,13 @@
 - id: '1716715924876'
   alias: Living Room Docking Station On
   description: ''
-  trigger:
+  triggers:
   - trigger: state
     entity_id:
-    - binary_sensor.living_room_occupancy
+    - binary_sensor.living_room_desk_occupancy
     to: 'on'
-  condition: []
-  action:
+  conditions: []
+  actions:
   - action: switch.turn_on
     metadata: {}
     data: {}
@@ -200,13 +200,13 @@
 - id: '1716716038346'
   alias: Living Room TV Power On
   description: ''
-  trigger:
+  triggers:
   - trigger: state
     entity_id:
-    - binary_sensor.living_room_occupancy
+    - binary_sensor.living_room_sofa_occupancy
     to: 'on'
-  condition: []
-  action:
+  conditions: []
+  actions:
   - action: switch.turn_on
     metadata: {}
     data: {}
@@ -251,16 +251,16 @@
 - id: '1716716358957'
   alias: Living Room Docking Station Off
   description: ''
-  trigger:
+  triggers:
   - trigger: state
     entity_id:
     - binary_sensor.living_room_occupancy
     to: 'off'
     for:
-      hours: 1
-      minutes: 0
+      hours: 0
+      minutes: 30
       seconds: 0
-  condition:
+  conditions:
   - condition: not
     conditions:
     - condition: state
@@ -270,7 +270,7 @@
         hours: 0
         minutes: 0
         seconds: 0
-  action:
+  actions:
   - action: switch.turn_off
     metadata: {}
     data: {}
@@ -604,7 +604,7 @@
       temporary_scene_name: living_room_ambient_lights_temp
       off_delay_duration:
         hours: 0
-        minutes: 2
+        minutes: 5
         seconds: 0
 - id: '1723219752988'
   alias: Living Room Decorative Lights
