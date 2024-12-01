@@ -34,15 +34,21 @@
       name: "Living Room Daylight"
       device_class: light
       state: >
-        {% set threshold = states('input_number.living_room_daylight_illuminance_threshold') | float %}
-        {% set illuminance = states('sensor.living_room_illuminance_lights_off') %}
-        {% if illuminance in ['unknown', 'unavailable'] %}
-          {% set illuminance = states('sensor.living_room_illuminance') %}
+        {% set lower_threshold = states('input_number.living_room_daylight_illuminance_lower_threshold') | float %}
+        {% set upper_threshold = states('input_number.living_room_daylight_illuminance_upper_threshold') | float %}
+        {% set illuminance = states('sensor.living_room_illuminance') %}
+        {% set illuminance_lights_off = states('sensor.living_room_illuminance_lights_off') %}
+        {% if illuminance_lights_off in ['unknown', 'unavailable'] %}
+          {% set illuminance_lights_off = states('sensor.living_room_illuminance') %}
         {% endif %}
         {% if illuminance in ['unknown', 'unavailable'] %}
           true
+        {% elif illuminance | float > upper_threshold %}
+          true
+        {% elif illuminance_lights_off | float > lower_threshold %}
+          true
         {% else %}
-          {{ illuminance | float > threshold }}
+          false
         {% endif %}
 - sensor:
     - name: "Living Room Temperature Level"
