@@ -129,7 +129,6 @@ number:
                 id: my_thermostat
                 preset: ECO
                 target_temperature: !lambda return x;
-
   - platform: template
     name: "Comfort Temperature"
     id: comfort_temperature
@@ -141,7 +140,7 @@ number:
     entity_category: config
     mode: box
     unit_of_measurement: "°C"
-    optimistic: True
+    optimistic: true
     on_value:
       - if:
           condition:
@@ -151,6 +150,19 @@ number:
                 id: my_thermostat
                 preset: COMFORT
                 target_temperature: !lambda return x;
+
+datetime:
+  - platform: template
+    name: "Eco Actvation Datetime"
+    id: "eco_activation_datetime"
+    time_id: ha_time
+    type: datetime
+    optimistic: true
+    on_time:
+      - then:
+          - climate.control:
+              id: my_thermostat
+              preset: ECO
 
 # Example single-point configuration entry (for heating only)
 climate:
@@ -210,6 +222,21 @@ climate:
             } else if (x.get_preset().has_value() && x.get_preset().value() == esphome::climate::ClimatePreset::CLIMATE_PRESET_ECO) {
               x.set_target_temperature(id(eco_temperature).state);
             }
+
+            // Set eco_activation_datetime in to midnight in case a preset other than ECO is selected
+            if (x.get_preset().has_value() && x.get_preset().value() != esphome::climate::ClimatePreset::CLIMATE_PRESET_ECO) {
+              auto now = id(ha_time).now();
+
+              if (now.is_valid()) {
+
+                now.increment_day();
+
+                auto call = id(eco_activation_datetime).make_call();
+                call.set_datetime(now.strftime("%Y-%m-%d 00:00:00"));
+                call.perform();              
+              }
+            }
+            
         - script.execute: activate_eco_after_24h_inactivity  # Restart script on any control action
 
 script:
@@ -223,12 +250,4 @@ script:
 
 time:
   - platform: homeassistant
-    on_time:
-    # Activate ECO preset every night 00:00
-      - seconds: 0
-        minutes: 0
-        hours: 0
-        then:
-          - climate.control:
-              id: my_thermostat
-              preset: ECO
+    id: ha_time
