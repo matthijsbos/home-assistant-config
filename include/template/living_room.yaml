@@ -88,3 +88,16 @@
         {% else %}
           false
         {% endif %}
+- button:
+    - name: "Comfort 1 Hour"
+      press:
+        - action: climate.set_preset_mode
+          target:
+            entity_id: climate.climate_44a4_thermostat
+          data:
+            preset_mode: "comfort"
+        - action: datetime.set_value
+          target:
+            entity_id: datetime.climate_44a4_eco_actvation_datetime
+          data:
+            datetime: "{{ (now() + timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S') }}"
