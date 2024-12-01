@@ -333,55 +333,6 @@
     target:
       entity_id: switch.fan_1d90_night_mode
   mode: single
-- id: '1719322575405'
-  alias: Living Room Fan On
-  description: ''
-  trigger:
-  - trigger: state
-    entity_id:
-    - binary_sensor.living_room_occupancy
-    to: 'on'
-  condition:
-  - condition: state
-    entity_id: binary_sensor.living_room_occupancy
-    state: 'on'
-  action:
-  - action: scene.turn_on
-    target:
-      entity_id: scene.living_room_fan_state
-    data: {}
-  - action: scene.delete
-    target:
-      entity_id: scene.living_room_fan_state
-  mode: single
-- id: '1719322611405'
-  alias: Living Room Fan Off
-  description: ''
-  trigger:
-  - trigger: state
-    entity_id:
-    - binary_sensor.living_room_occupancy
-    to: 'off'
-    for:
-      hours: 0
-      minutes: 1
-      seconds: 0
-  condition:
-  - condition: state
-    entity_id: binary_sensor.living_room_occupancy
-    state: 'off'
-  action:
-  - action: scene.create
-    data:
-      scene_id: living_room_fan_state
-      snapshot_entities:
-      - fan.living_room_fan
-  - action: fan.turn_off
-    target:
-      entity_id:
-      - fan.living_room_fan
-    data: {}
-  mode: single
 - id: '1719610365051'
   alias: Bedroom Mosquito Repelling Start
   description: ''
