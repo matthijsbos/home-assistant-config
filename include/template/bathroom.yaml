@@ -99,6 +99,9 @@
         {% set AH = (es * RH * 2.1674) / (T + 273.15) %}
         {{ AH | round(2) }}
       state_class: "measurement"
+      availability: >
+        {{ states('sensor.bathroom_temperature') not in ['unavailable', 'unknown', 'none'] and
+            states('sensor.bathroom_relative_humidity') not in ['unavailable', 'unknown', 'none'] }}
 - binary_sensor:
     - name: "Bathroom Window Opening Recommendation"
       unique_id: bathroom_window_opening_recommendation
@@ -133,3 +136,8 @@
         {% else %}
           mdi:window-closed
         {% endif %}
+      availability: >
+        {{ states('sensor.bathroom_temperature') not in ['unavailable', 'unknown', 'none'] and
+           states('sensor.outdoor_temperature') not in ['unavailable', 'unknown', 'none'] and
+           states('sensor.bathroom_relative_humidity') not in ['unavailable', 'unknown', 'none'] and
+           states('sensor.outdoor_relative_humidity') not in ['unavailable', 'unknown', 'none'] }}

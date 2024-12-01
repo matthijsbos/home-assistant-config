@@ -99,3 +99,6 @@
         {% set AH = (es * RH * 2.1674) / (T + 273.15) %}
         {{ AH | round(2) }}
       state_class: "measurement"
+      availability: >
+        {{ states('sensor.bedroom_temperature') not in ['unavailable', 'unknown', 'none'] and
+            states('sensor.bedroom_relative_humidity') not in ['unavailable', 'unknown', 'none'] }}
