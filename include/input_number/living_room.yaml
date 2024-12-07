@@ -33,9 +33,3 @@ laptop_display_off_delay:
   step: 10
   mode: box
   unit_of_measurement: s
-living_room_ambient_lights_brightness:
-  name: Living Room Light Brightness
-  initial: 0
-  min: 0
-  max: 255
-  step: 1

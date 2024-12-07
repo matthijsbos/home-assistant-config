@@ -1,0 +1,9 @@
+- sensor:
+    - unique_id: "light_ec96_last_brightness"
+      state: >
+        {% set brightness = state_attr('light.light_ec96_light', 'brightness') %}
+        {% if brightness is not none and brightness | is_number and (brightness | int) > 0 %}
+          {{ brightness | int }}
+        {% else %}
+          {{ this.state | int if this.state | is_number else 100 }}
+        {% endif %}
