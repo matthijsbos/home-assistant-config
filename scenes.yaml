@@ -353,6 +353,53 @@
       friendly_name: Living Room Desk Windowsill Light
       supported_features: 32
       state: 'off'
+    light.living_room_desk_reading_light:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 5000
+      min_mireds: 200
+      max_mireds: 500
+      supported_color_modes:
+      - color_temp
+      color_mode:
+      brightness:
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      rgb_color:
+      xy_color:
+      entity_id:
+      - light.light_2a1e_light
+      icon: mdi:desk-lamp
+      friendly_name: Living Room Desk Reading Light
+      supported_features: 32
+      state: 'off'
+    light.living_room_3d_printer_light:
+      supported_color_modes:
+      - onoff
+      color_mode:
+      friendly_name: Living Room 3D Printer Light
+      supported_features: 0
+      state: 'off'
+    light.living_room_doorway_windowsill_light:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 5000
+      min_mireds: 200
+      max_mireds: 500
+      supported_color_modes:
+      - color_temp
+      color_mode:
+      brightness:
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      rgb_color:
+      xy_color:
+      entity_id:
+      - light.light_0b62_light
+      icon: mdi:desk-lamp
+      friendly_name: Living Room Doorway Windowsill Light
+      supported_features: 32
+      state: 'off'
   icon: mdi:movie-roll
   metadata:
     light.living_room_ambient_lights:
@@ -360,4 +407,10 @@
     light.living_room_sofa_windowsill_light:
       entity_only: true
     light.living_room_desk_windowsill_light:
+      entity_only: true
+    light.living_room_desk_reading_light:
+      entity_only: true
+    light.living_room_3d_printer_light:
+      entity_only: true
+    light.living_room_doorway_windowsill_light:
       entity_only: true
