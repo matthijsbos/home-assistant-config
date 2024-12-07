@@ -42,7 +42,7 @@
 - id: '1715781035946'
   alias: Living Room Docked Laptop Display Sleep
   description: ''
-  trigger:
+  triggers:
   - trigger: state
     entity_id:
     - binary_sensor.living_room_desk_occupancy
@@ -55,7 +55,11 @@
     to: 'on'
     for:
       seconds: '{{  states(''input_number.laptop_display_off_delay'')|int }}'
-  condition:
+  - trigger: state
+    entity_id:
+    - binary_sensor.laptop_occupancy
+    to: 'off'
+  conditions:
   - condition: state
     entity_id: binary_sensor.laptop_docked
     state: 'on'
@@ -63,6 +67,9 @@
       hours: 0
       minutes: 0
       seconds: 0
+  - condition: state
+    entity_id: binary_sensor.laptop_occupancy
+    state: 'off'
   - condition: state
     entity_id: switch.laptop_display
     state: 'on'
@@ -73,7 +80,7 @@
     state: 'off'
     for:
       seconds: '{{  states(''input_number.laptop_display_off_delay'')|int }}'
-  action:
+  actions:
   - action: switch.turn_off
     metadata: {}
     data: {}
