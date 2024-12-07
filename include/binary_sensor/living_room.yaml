@@ -46,3 +46,5 @@
       device_class: connectivity
       value_template: >-
         {{ is_state('sensor.laptop_5647_docked', 'Docked') }}
+      availability_template: >-
+        {{ states('sensor.laptop_5647_docked') not in ['unknown', 'unavailable', 'None'] }}
