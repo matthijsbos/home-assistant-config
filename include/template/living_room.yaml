@@ -107,3 +107,17 @@
             entity_id: datetime.climate_44a4_eco_actvation_datetime
           data:
             datetime: "{{ (now() + timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S') }}"
+- trigger:
+    - trigger: state
+      entity_id: sensor.laptop_5647_last_active
+    - trigger: state
+      entity_id: sensor.laptop_5647_last_active
+      for: "00:00:30" # Triggers if unchanged for 30 seconds
+  binary_sensor:
+    - unique_id: laptop_occupancy
+      name: "Laptop Occupancy"
+      device_class: occupancy
+      state: >-
+        {{ (as_timestamp(now()) - as_timestamp(states('sensor.laptop_5647_last_active'))) < 20 }}
+      availability: >-
+        {{ states('sensor.laptop_5647_last_active') not in ['unknown', 'unavailable', 'None'] }}
