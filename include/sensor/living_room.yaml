@@ -35,3 +35,23 @@
   type: mean
   entity_ids:
     - sensor.therm_977c_temperature
+
+- platform: history_stats
+  name: Living Room Sofa Occupancy Ratio Last Hour
+  unique_id: living_room_sofa_occupancy_ratio_last_hour
+  entity_id: binary_sensor.living_room_sofa_occupancy
+  state: "on"
+  type: ratio
+  end: "{{ now() }}"
+  duration:
+    hours: 1
+
+- platform: history_stats
+  name: Living Room Desk Occupancy Ratio Last Hour
+  unique_id: living_room_desk_occupancy_ratio_last_hour
+  entity_id: binary_sensor.living_room_desk_occupancy
+  state: "on"
+  type: ratio
+  end: "{{ now() }}"
+  duration:
+    hours: 1

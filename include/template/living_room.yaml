@@ -121,3 +121,57 @@
         {{ (as_timestamp(now()) - as_timestamp(states('sensor.laptop_5647_last_active'))) < 20 }}
       availability: >-
         {{ states('sensor.laptop_5647_last_active') not in ['unknown', 'unavailable', 'None'] }}
+
+- sensor:
+    - name: "Living Room Temperature Occupancy Weighted"
+      unique_id: living_room_temperature_occupancy_weighted
+      unit_of_measurement: "°C"
+      state: >
+        {% set total_weight = 0 %}
+        {% set weighted_temp = 0 %}
+
+        {% set max_additional_weight = 4 %}
+
+        {% if has_value('sensor.living_room_sofa_temperature') %}
+          {% set sofa_occupancy_ratio = (states('sensor.living_room_sofa_occupancy_ratio_last_hour') | float) / 100 %}
+          {% set sofa_additional_weight = sofa_occupancy_ratio * max_additional_weight %}
+          {% set sofa_weight = 1 + sofa_additional_weight %}
+
+          {% set weighted_temp = weighted_temp + (states('sensor.living_room_sofa_temperature') | float * sofa_weight) %}
+          {% set total_weight = total_weight + sofa_weight %}
+        {% endif %}
+
+        {% if has_value('sensor.living_room_desk_temperature') %}
+          {% set desk_occupancy_ratio = (states('sensor.living_room_desk_occupancy_ratio_last_hour') | float) / 100 %}
+          {% set desk_additional_weight = desk_occupancy_ratio * max_additional_weight %}
+          {% set desk_weight = 1 + desk_additional_weight %}
+
+          {% set weighted_temp = weighted_temp + (states('sensor.living_room_desk_temperature') | float * desk_weight) %}
+          {% set total_weight = total_weight + desk_weight %}
+        {% endif %}
+
+        {% if has_value('sensor.fan_6ab8_temperature') %}
+          {% set weighted_temp = weighted_temp + (states('sensor.fan_6ab8_temperature') | float * 1) %}
+          {% set total_weight = total_weight + 1 %}
+        {% endif %}
+
+        {% if has_value('sensor.climate_44a4_temperature') %}
+          {% set weighted_temp = weighted_temp + (states('sensor.climate_44a4_temperature') | float * 1) %}
+          {% set total_weight = total_weight + 1 %}
+        {% endif %}
+
+        {% if total_weight > 0 %}
+          {{ (weighted_temp / total_weight) | round(2) }} 
+        {% else %}
+          unknown
+        {% endif %}
+
+      availability: >
+        {% if has_value('sensor.living_room_sofa_temperature') or
+              has_value('sensor.living_room_desk_temperature') or
+              has_value('sensor.fan_6ab8_temperature') or
+              has_value('sensor.climate_44a4_temperature') %}
+          true
+        {% else %}
+          false
+        {% endif %}
