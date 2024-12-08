@@ -3,7 +3,7 @@ substitutions:
   friendly_name: "climate-44a4"
   default_eco_temperature: "16.0"
   default_comfort_temperature: "19.0"
-  external_temperature_entity: "sensor.living_room_temperature"
+  external_temperature_entity: "sensor.living_room_temperature_occupancy_weighted"
 
 esphome:
   name: ${name}
