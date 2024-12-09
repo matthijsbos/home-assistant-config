@@ -133,7 +133,7 @@
         {% set max_additional_weight = 4 %}
 
         {% if has_value('sensor.living_room_sofa_temperature') %}
-          {% set sofa_occupancy_ratio = (states('sensor.living_room_sofa_occupancy_ratio_last_hour') | float) / 100 %}
+          {% set sofa_occupancy_ratio = (states('sensor.living_room_sofa_occupancy_ratio') | float) / 100 %}
           {% set sofa_additional_weight = sofa_occupancy_ratio * max_additional_weight %}
           {% set sofa_weight = 1 + sofa_additional_weight %}
 
@@ -142,7 +142,7 @@
         {% endif %}
 
         {% if has_value('sensor.living_room_desk_temperature') %}
-          {% set desk_occupancy_ratio = (states('sensor.living_room_desk_occupancy_ratio_last_hour') | float) / 100 %}
+          {% set desk_occupancy_ratio = (states('sensor.living_room_desk_occupancy_ratio') | float) / 100 %}
           {% set desk_additional_weight = desk_occupancy_ratio * max_additional_weight %}
           {% set desk_weight = 1 + desk_additional_weight %}
 
