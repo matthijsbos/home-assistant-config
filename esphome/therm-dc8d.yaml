@@ -47,23 +47,47 @@ sensor:
   - platform: bmp280_i2c
     i2c_id: bus_a
     address: 0x77
-    update_interval: 10s
+    update_interval: 1s
     pressure:
       name: "Atmospheric Pressure"
+      accuracy_decimals: 1
+      filters:
+        - sliding_window_moving_average:
+            window_size: 5
+            send_every: 1
+        - round: 1 # will round to 1 decimal place
+        - or:
+          - delta: 0.1 # only send updated value on change >0.1, or
+          - heartbeat: 60s # at least every 60 s
 
   - platform: sht3xd
     i2c_id: bus_b
+    address: 0x44  # Default I2C address for SHT31
+    update_interval: 1s
     temperature:
       name: "Temperature"
       unit_of_measurement: "°C"
-      accuracy_decimals: 2
+      accuracy_decimals: 1
+      filters:
+        - sliding_window_moving_average:
+            window_size: 5
+            send_every: 1
+        - round: 1 # will round to 1 decimal place
+        - or:
+          - delta: 0.1 # only send updated value on change >0.1, or
+          - heartbeat: 60s # at least every 60 s
     humidity:
       name: "Relative Humidity"
       unit_of_measurement: "%"
-      accuracy_decimals: 2
-    address: 0x44  # Default I2C address for SHT31
-    update_interval: 15s
-
+      accuracy_decimals: 1
+      filters:
+        - sliding_window_moving_average:
+            window_size: 5
+            send_every: 1
+        - round: 1 # will round to 1 decimal place
+        - or:
+          - delta: 0.1 # only send updated value on change >0.1, or
+          - heartbeat: 60s # at least every 60 s
 
 status_led:
   pin:

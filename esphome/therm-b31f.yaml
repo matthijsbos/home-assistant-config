@@ -40,11 +40,29 @@ sensor:
   - platform: dallas_temp
     address: 0x1f011937b3d80428
     name: "Temperature 1"
-    update_interval: 15s
+    update_interval: 1s
+    accuracy_decimals: 1
+    filters:
+      - sliding_window_moving_average:
+          window_size: 5
+          send_every: 1
+      - round: 1 # will round to 1 decimal place
+      - or:
+        - delta: 0.1 # only send updated value on change >0.1, or
+        - heartbeat: 60s # at least every 60 s
   - platform: dallas_temp
     address: 0x57011937e2f97228
     name: "Temperature 2"
-    update_interval: 15s
+    update_interval: 1s
+    accuracy_decimals: 1
+    filters:
+      - sliding_window_moving_average:
+          window_size: 5
+          send_every: 1
+      - round: 1 # will round to 1 decimal place
+      - or:
+        - delta: 0.1 # only send updated value on change >0.1, or
+        - heartbeat: 60s # at least every 60 s
 
 status_led:
   pin:

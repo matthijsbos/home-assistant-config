@@ -15,7 +15,7 @@
   name: "Bathroom Relative Humidity"
   type: mean
   entity_ids:
-    - sensor.therm_d7f6_humidity
+    - sensor.therm_d7f6_relative_humidity
 - platform: statistics
   name: "Bathroom Relative Humidity Median"
   unique_id: bathroom_relative_humidity_median

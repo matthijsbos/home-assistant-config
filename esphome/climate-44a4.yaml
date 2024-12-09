@@ -89,22 +89,42 @@ sensor:
   - platform: dallas_temp
     name: Temperature
     id: internal_temperature
-    update_interval: 15s
+    update_interval: 1s
+    accuracy_decimals: 1
+    filters:
+      - sliding_window_moving_average:
+          window_size: 5
+          send_every: 1
+      - round: 1 # will round to 1 decimal place
+      - or:
+        - delta: 0.1 # only send updated value on change >0.1, or
+        - heartbeat: 60s # at least every 60 s    
   - platform: homeassistant
     id: external_temperature
     entity_id: ${external_temperature_entity}
+    unit_of_measurement: "°C"
+    filters:
+      - round: 1 # will round to 1 decimal place
+      - or:
+        - delta: 0.1 # only send updated value on change >0.1, or
+        - heartbeat: 60s # at least every 60 s        
   - platform: template
     id: combined_temperature
     name: "Combined Temperature"
     internal: True
     unit_of_measurement: "°C"
-    update_interval: 5s
+    update_interval: 1s
     lambda: |-
       if (!isnan(id(external_temperature).state) && (id(external_temperature).has_state())) {
         return id(external_temperature).state;
       } else {
         return id(internal_temperature).state;
       }
+    filters:
+      - round: 1 # will round to 1 decimal place
+      - or:
+        - delta: 0.1 # only send updated value on change >0.1, or
+        - heartbeat: 60s # at least every 60 s    
 
 binary_sensor:
   - platform: template
@@ -198,7 +218,7 @@ climate:
     # heat_deadband (Optional, float): The minimum temperature differential (temperature below the set point) before calling the heating action. Defaults to 0.5 °C.
     heat_deadband: 0.5
     # heat_overrun (Optional, float): The minimum temperature differential (heating beyond the set point) before calling the idle action. Defaults to 0.5 °C.
-    heat_overrun: -0.25
+    heat_overrun: -0.4
     heat_action:
       - switch.turn_on: relay_heater
     idle_action:
