@@ -315,16 +315,20 @@
 - id: '1717181154454'
   alias: Bedroom Bedtime
   description: ''
-  trigger: []
-  condition: []
-  action:
+  triggers: []
+  conditions: []
+  actions:
   - action: light.turn_off
     metadata: {}
     data: {}
     target:
       entity_id:
-      - light.bedroom_lights
       - light.bedroom_reading_light
+      - light.bedroom_ambient_lights
+      - light.living_room_lights
+      - light.bathroom_lights
+      - light.hallway_lights
+      - light.kitchen_lights
   - action: switch.turn_off
     metadata: {}
     data: {}
@@ -339,7 +343,23 @@
     data: {}
     target:
       entity_id: switch.fan_1d90_night_mode
-  mode: single
+  - action: media_player.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: media_player.living_room_tv
+  - action: climate.set_preset_mode
+    metadata: {}
+    data:
+      preset_mode: eco
+    target:
+      entity_id: climate.climate_44a4_thermostat
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.bedroom_accent_lights
+  mode: restart
 - id: '1719610365051'
   alias: Bedroom Mosquito Repelling Start
   description: ''
@@ -397,7 +417,7 @@
 - id: '1721088136807'
   alias: Bedroom Buttons
   description: ''
-  trigger:
+  triggers:
   - trigger: state
     entity_id:
     - event.btn_74ad_button_5_pressed
@@ -418,8 +438,8 @@
     entity_id:
     - event.btn_74ad_button_1_pressed
     id: btn1
-  condition: []
-  action:
+  conditions: []
+  actions:
   - choose:
     - conditions:
       - condition: trigger
@@ -453,13 +473,42 @@
       - condition: trigger
         id:
         - btn2
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: light.bedroom_ambient_lights
+          state: 'on'
+        - condition: state
+          entity_id: light.bedroom_accent_lights
+          state: 'on'
       sequence:
-      - data: {}
-        action: light.toggle
+      - action: light.turn_off
         target:
           entity_id:
           - light.bedroom_ambient_lights
           - light.bedroom_accent_lights
+        data: {}
+    - conditions:
+      - condition: trigger
+        id:
+        - btn2
+      - condition: not
+        conditions:
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: light.bedroom_ambient_lights
+            state: 'on'
+          - condition: state
+            entity_id: light.bedroom_accent_lights
+            state: 'on'
+      sequence:
+      - action: scene.turn_on
+        target:
+          entity_id:
+          - scene.bedroom_light_default
+          - scene.bedroom_accent_lights_default
+        data: {}
     - conditions:
       - condition: trigger
         id:
