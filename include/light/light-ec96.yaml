@@ -8,7 +8,7 @@
   lights:
     light_ec96_wrapper:
       unique_id: light_ec96_wrapper
-      value_template: "{{ is_state('light.light_ec96_light', 'on') }}"
+      value_template: "{{ is_state('light.light_ec96', 'on') }}"
       turn_on:
         if:
           - condition: template
@@ -16,17 +16,17 @@
         then:
           - action: light.turn_on
             data:
-              entity_id: light.light_ec96_light
+              entity_id: light.light_ec96
               brightness: " {{ brightness | int }}"
         else:
           - action: light.turn_on
             data:
-              entity_id: light.light_ec96_light
+              entity_id: light.light_ec96
       turn_off:
         action: light.turn_off
         data:
-          entity_id: light.light_ec96_light
-      level_template: "{{ state_attr('light.light_ec96_light', 'brightness') }}"
+          entity_id: light.light_ec96
+      level_template: "{{ state_attr('light.light_ec96', 'brightness') }}"
       set_level:
         sequence:
           - if:
@@ -35,10 +35,10 @@
             then:
               - action: light.turn_on
                 data:
-                  entity_id: light.light_ec96_light
+                  entity_id: light.light_ec96
                   brightness: " {{ brightness | int }}"
             else:
               - action: light.turn_on
                 data:
-                  entity_id: light.light_ec96_light
-      availability_template: "{{ is_state('light.light_ec96_light', 'unavailable') == False }}"
+                  entity_id: light.light_ec96
+      availability_template: "{{ is_state('light.light_ec96', 'unavailable') == False }}"

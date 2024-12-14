@@ -58,19 +58,19 @@
   unique_id: living_room_desk_reading_light
   name: "Living Room Desk Reading Light"
   entities:
-    - light.light_2a1e_light
+    - light.light_2a1e
 
 - platform: group
   unique_id: living_room_desk_windowsill_light
   name: "Living Room Desk Windowsill Light"
   entities:
-    - light.light_1d46_light
+    - light.light_1d46
 
 - platform: group
   unique_id: living_room_doorway_windowsill_light
   name: "Living Room Doorway Windowsill Light"
   entities:
-    - light.light_0b62_light
+    - light.light_0b62
 
 - platform: group
   unique_id: living_room_hex_light

@@ -2,4 +2,4 @@
   unique_id: kitchen_mosquito_repeller
   name: "Kitchen Mosquito Repeller"
   entities:
-    - switch.switch_8761_switch
+    - switch.switch_8761

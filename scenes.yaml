@@ -245,41 +245,6 @@
   metadata:
     light.bedroom_accent_lights:
       entity_only: true
-- id: '1723321782869'
-  name: Kitchen Accent Lights Default
-  entities:
-    light.kitchen_accent_lights:
-      min_color_temp_kelvin: 2127
-      max_color_temp_kelvin: 6535
-      min_mireds: 153
-      max_mireds: 470
-      supported_color_modes:
-      - color_temp
-      - hs
-      - xy
-      icon: mdi:track-light
-      friendly_name: Kitchen Accent Lights
-      supported_features: 32
-      color_mode: color_temp
-      brightness: 153
-      color_temp_kelvin: 2702
-      color_temp: 370
-      hs_color:
-      - 28.391
-      - 65.659
-      rgb_color:
-      - 255
-      - 166
-      - 87
-      xy_color:
-      - 0.526
-      - 0.387
-      entity_id:
-      - light.light_7a86_light
-      state: 'on'
-  metadata:
-    light.kitchen_accent_lights:
-      entity_only: true
 - id: '1723322318888'
   name: Bedroom Decorative Lights Default
   entities:

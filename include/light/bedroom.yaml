@@ -10,8 +10,8 @@
   unique_id: bedroom_accent_lights
   name: Bedroom Accent Lights
   entities:
-    - light.light_09e6_light
-    - light.light_40a4_light
+    - light.light_09e6
+    - light.light_40a4
 
 - platform: group
   unique_id: bedroom_decorative_lights

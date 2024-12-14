@@ -5,23 +5,8 @@
     - light.kitchen_ambient_lights
     - light.kitchen_accent_lights
 
-- platform: template
-  lights:
-    kitchen_ambient_lights:
-      unique_id: kitchen_ambient_lights
-      friendly_name: "Kitchen Ambient Lights"
-      value_template: "{{ is_state('switch.switch_8920_switch', 'on') }}"
-      turn_on:
-        action: switch.turn_on
-        data:
-          entity_id: switch.switch_8920_switch
-      turn_off:
-        action: switch.turn_off
-        data:
-          entity_id: switch.switch_8920_switch
-
 - platform: group
-  unique_id: kitchen_accent_lights
-  name: "Kitchen Accent Lights"
+  unique_id: kitchen_ambient_lights
+  name: "Kitchen Ambient Lights"
   entities:
-    - light.light_7a86_light
+    - light.light_9940_light_1
