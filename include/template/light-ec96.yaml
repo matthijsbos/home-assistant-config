@@ -5,5 +5,5 @@
         {% if brightness is not none and brightness | is_number and (brightness | int) > 0 %}
           {{ brightness | int }}
         {% else %}
-          {{ this.state | int if this.state | is_number else 100 }}
+          {{ this.state | int if this.state | is_number else unknown }}
         {% endif %}
