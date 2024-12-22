@@ -1,0 +1,76 @@
+esphome:
+  name: "light-4da4"
+  friendly_name: light-4da4
+  min_version: 2024.11.0
+  name_add_mac_suffix: false
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: esp-idf
+
+logger:
+
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+wifi:
+  networks:
+    - ssid: !secret wifi_ssid
+      password: !secret wifi_password
+    - ssid: !secret wifi_ssid2
+      password: !secret wifi_password
+
+  ap:
+    ssid: ${device_name}
+    password: !secret wifi_fallback_ap_password
+
+captive_portal:
+
+output:
+  - platform: ledc
+    pin: GPIO4
+    id: gpio_light
+    frequency: "100Hz"
+    max_power: 0.5
+    min_power: 0.001
+    zero_means_zero: True
+    channel: 2
+
+light:
+  - platform: monochromatic
+    output: gpio_light
+    name: "Light"
+    id: light_control
+
+binary_sensor:
+  - platform: gpio
+    pin: GPIO3
+    name: "Button"
+    filters:
+      - delayed_on: 25ms
+    internal: True
+    on_press:
+      - lambda: |-
+          auto brightness = id(light_control).current_values.get_brightness();
+          if (!id(light_control).current_values.is_on() || brightness < 0.33) {
+            auto call = id(light_control).turn_on();
+            call.set_brightness(0.33);
+            call.perform();
+          } else if (brightness < 0.66) {
+            auto call = id(light_control).turn_on();
+            call.set_brightness(0.66);
+            call.perform();
+          } else if (brightness < 1.0) {
+            auto call = id(light_control).turn_on();
+            call.set_brightness(1.0);
+            call.perform();
+          } else {
+            auto call = id(light_control).turn_off();
+            call.perform();
+          }
