@@ -6,6 +6,7 @@
     - light.living_room_decorative_lights
     - light.living_room_3d_printer_light
     - light.living_room_desk_reading_light
+    - light.living_room_sofa_reading_light
 
 - platform: group
   unique_id: living_room_ambient_lights
@@ -59,6 +60,12 @@
   name: "Living Room Desk Reading Light"
   entities:
     - light.light_2a1e
+
+- platform: group
+  unique_id: living_room_sofa_reading_light
+  name: "Living Room Sofa Reading Light"
+  entities:
+    - light.light_4da4_light
 
 - platform: group
   unique_id: living_room_desk_windowsill_light
