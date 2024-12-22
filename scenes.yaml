@@ -379,3 +379,20 @@
       entity_only: true
     light.living_room_doorway_windowsill_light:
       entity_only: true
+- id: '1734906114653'
+  name: 'Living Room Sofa Reading Light Default '
+  entities:
+    light.living_room_sofa_reading_light:
+      supported_color_modes:
+      - brightness
+      color_mode: brightness
+      brightness: 51
+      entity_id:
+      - light.light_4da4_light
+      icon: mdi:desk-lamp
+      friendly_name: Living Room Sofa Reading Light
+      supported_features: 40
+      state: 'on'
+  metadata:
+    light.living_room_sofa_reading_light:
+      entity_only: true

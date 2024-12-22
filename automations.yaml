@@ -950,3 +950,29 @@
         target:
           entity_id: climate.climate_44a4_thermostat
   mode: single
+- id: '1734906178083'
+  alias: Living Room Sofa Reading Light
+  description: ''
+  use_blueprint:
+    path: occupancy_device.yaml
+    input:
+      occupancy_sensor: binary_sensor.living_room_sofa_occupancy
+      daylight_sensor: binary_sensor.living_room_daylight
+      target_lights:
+      - light.living_room_desk_reading_light
+      off_delay:
+        hours: 0
+        minutes: 0
+        seconds: 10
+      temporary_scene_name: living_room_desk_reading_light_temp
+      default_scene_occupied: scene.living_room_sofa_reading_light_default
+      off_delay_duration:
+        hours: 0
+        minutes: 0
+        seconds: 10
+      temporary_scene_expiration_duration:
+        hours: 1
+        minutes: 0
+        seconds: 0
+      target_entities:
+      - light.living_room_desk_reading_light
