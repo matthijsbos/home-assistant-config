@@ -53,7 +53,7 @@ binary_sensor:
     pin: GPIO3
     name: "Button"
     filters:
-      - delayed_on: 25ms
+      - delayed_on: 5ms
     internal: True
     on_press:
       - lambda: |-
@@ -61,16 +61,20 @@ binary_sensor:
           if (!id(light_control).current_values.is_on() || brightness < 0.33) {
             auto call = id(light_control).turn_on();
             call.set_brightness(0.33);
+            call.set_transition_length(100);
             call.perform();
           } else if (brightness < 0.66) {
             auto call = id(light_control).turn_on();
             call.set_brightness(0.66);
+            call.set_transition_length(100);
             call.perform();
           } else if (brightness < 1.0) {
             auto call = id(light_control).turn_on();
             call.set_brightness(1.0);
+            call.set_transition_length(100);
             call.perform();
           } else {
             auto call = id(light_control).turn_off();
+            call.set_transition_length(100);
             call.perform();
           }
