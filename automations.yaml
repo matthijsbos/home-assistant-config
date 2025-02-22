@@ -977,3 +977,45 @@
         seconds: 0
       target_entities:
       - light.living_room_desk_reading_light
+- id: '1735569997272'
+  alias: Bathroom Mirror Light Power
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.bathroom_occupancy
+    to: 'on'
+    id: occupancy_detected
+  - trigger: state
+    entity_id:
+    - binary_sensor.bathroom_occupancy
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    id: occupancy_clear
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - occupancy_detected
+      sequence:
+      - action: switch.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.bathroom_mirror_light_power
+    - conditions:
+      - condition: trigger
+        id:
+        - occupancy_clear
+      sequence:
+      - action: switch.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.bathroom_mirror_light_power
+  mode: single
