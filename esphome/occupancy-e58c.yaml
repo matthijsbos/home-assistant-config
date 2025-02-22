@@ -65,6 +65,6 @@ binary_sensor:
       } else {
         return false;
       }
-    # filters:
-    #   - delayed_on: 1s
-    #   - delayed_off: 1s
+    filters:
+      - delayed_on: 0.5s
+      - delayed_off: 2s
