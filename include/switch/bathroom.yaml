@@ -1,0 +1,5 @@
+- platform: group
+  unique_id: bathroom_mirror_light_power
+  name: "Bathroom Mirror Light Power"
+  entities:
+    - switch.switch_8920
