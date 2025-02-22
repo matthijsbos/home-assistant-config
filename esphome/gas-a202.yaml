@@ -9,8 +9,8 @@ esphome:
   project:
     name: esphome.web
     version: dev
-  includes:
-    - mcp3421.h
+  # includes:
+  #   - mcp3421.h
 
 esp8266:
   board: esp01_1m
@@ -51,25 +51,36 @@ i2c:
   - sda: 4
     scl: 5
     scan: true
-    id: bus_a
 
-# Custom sensor for MCP3421
+i2c_device:
+  - id: mcp3421
+    address: 0x68
+
 sensor:
-  - platform: custom
+  - platform: template
+    id: voltage
+    name: "Voltage"
+    update_interval: 1s
     lambda: |-
-      auto mcp3421_sensor = new MCP3421Sensor(id(bus_a));
-      App.register_component(mcp3421_sensor);
-      return {mcp3421_sensor};
-    sensors:
-      name: "Voltage"
-      id: voltage
-      unit_of_measurement: "V"
-      accuracy_decimals: 3
-      entity_category: diagnostic
-      filters:
-        - sliding_window_moving_average:
-            window_size: 15
-            send_every: 5
+      auto byte1 = id(mcp3421).read_byte(0);
+      auto byte2 = id(mcp3421).read_byte(1);
+      auto byte3 = id(mcp3421).read_byte(2);
+
+      if (byte1.has_value() && byte2.has_value() && byte3.has_value()) {
+        int16_t raw_value = ((*byte1) << 8) | (*byte2);
+        float voltage = raw_value * 0.001; // Adjust as needed for MCP3421
+        return voltage;
+      } else {
+        ESP_LOGW("MCP3421", "Failed to read from MCP3421");
+        return NAN;
+      }
+    unit_of_measurement: "V"
+    accuracy_decimals: 3
+    entity_category: diagnostic
+    filters:
+      - sliding_window_moving_average:
+          window_size: 15
+          send_every: 5
 
 # User-configurable target temperatures
 # https://esphome.io/components/number/template
