@@ -5,7 +5,9 @@
   entities:
     - binary_sensor.occupancy_715f_occupancy
     - binary_sensor.occupancy_0200_occupancy
+    - binary_sensor.light_c8ee_occupancy
     - binary_sensor.bathroom_doorway_occupancy
+    - binary_sensor.bathroom_toilet_occupancy
 
 - platform: group
   unique_id: bathroom_doorway_occupancy

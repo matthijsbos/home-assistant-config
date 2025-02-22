@@ -9,3 +9,9 @@
   name: Bathroom Ambient Lights
   entities:
     - light.light_b55c_light_2
+
+- platform: group
+  unique_id: bathroom_night_light
+  name: Bathroom Night Light
+  entities:
+    - light.light_c8ee_rgb_light
