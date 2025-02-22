@@ -1,0 +1,76 @@
+esphome:
+  name: light-c8ee
+  friendly_name: light-c8ee
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: esp-idf
+
+logger:
+
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+wifi:
+  networks:
+    - ssid: !secret wifi_ssid
+      password: !secret wifi_password
+    - ssid: !secret wifi_ssid2
+      password: !secret wifi_password
+
+  ap:
+    ssid: ${device_name}
+    password: !secret wifi_fallback_ap_password
+
+captive_portal:
+
+output:
+  - platform: ledc
+    id: output_red
+    pin: GPIO5
+  - platform: ledc
+    id: output_green
+    pin: GPIO6
+  - platform: ledc
+    id: output_blue
+    pin: GPIO7
+
+light:
+  - platform: rgb
+    name: "RGB Light"
+    red: output_red
+    green: output_green
+    blue: output_blue
+
+i2c:
+  sda: GPIO21
+  scl: GPIO20
+  scan: true
+  frequency: 10kHz
+
+# sensor:
+#   - platform: ltr_als_ps
+#     address: 0x53
+#     update_interval: 60s
+#     type: ALS  # or ALS or PS
+#     ambient_light: "Illuminance"
+
+
+binary_sensor:
+  - platform: gpio
+    pin: GPIO4
+    name: "Occupancy"
+    device_class: occupancy
+    filters: 
+      - delayed_off: 30s
+
+status_led:
+  pin:
+    number: GPIO8
+    inverted: true
