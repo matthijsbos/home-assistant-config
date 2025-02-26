@@ -394,74 +394,6 @@
       entity_only: true
     light.living_room_sofa_reading_light:
       entity_only: true
-- id: '1734753650798'
-  name: Bedroom Night Light
-  entities:
-    light.bedroom_accent_lights:
-      min_color_temp_kelvin: 2127
-      max_color_temp_kelvin: 6535
-      min_mireds: 153
-      max_mireds: 470
-      supported_color_modes:
-      - color_temp
-      - hs
-      - xy
-      color_mode: color_temp
-      brightness: 1
-      color_temp_kelvin: 2358
-      color_temp: 424
-      hs_color:
-      - 29.276
-      - 77.925
-      rgb_color:
-      - 255
-      - 153
-      - 56
-      xy_color:
-      - 0.562
-      - 0.389
-      entity_id:
-      - light.light_09e6
-      - light.light_40a4
-      icon: mdi:track-light
-      friendly_name: Bedroom Accent Lights
-      supported_features: 32
-      state: 'on'
-    light.bedroom_ambient_lights:
-      supported_color_modes:
-      - onoff
-      color_mode:
-      friendly_name: Bedroom Ambient Lights
-      supported_features: 0
-      icon: mdi:ceiling-light-multiple
-      state: 'off'
-    light.bedroom_reading_light:
-      supported_color_modes:
-      - onoff
-      color_mode:
-      friendly_name: Bedroom Reading Light
-      supported_features: 0
-      icon: mdi:desk-lamp
-      state: 'off'
-    light.bedroom_night_light:
-      supported_color_modes:
-      - onoff
-      color_mode: onoff
-      entity_id:
-      - light.clock_3006_night_light
-      icon: mdi:lightbulb-group
-      friendly_name: Bedroom Night Light
-      supported_features: 0
-      state: 'on'
-  metadata:
-    light.bedroom_accent_lights:
-      entity_only: true
-    light.bedroom_ambient_lights:
-      entity_only: true
-    light.bedroom_reading_light:
-      entity_only: true
-    light.bedroom_night_light:
-      entity_only: true
 - id: '1734906114653'
   name: 'Living Room Sofa Reading Light Default '
   entities:
@@ -483,3 +415,132 @@
   name: Bathroom Mirror Light Power Default
   entities: {}
   metadata: {}
+- id: '1740428747736'
+  name: Bedroom Decorative Lights Sleeping
+  entities:
+    light.bedroom_night_light:
+      supported_color_modes:
+      - onoff
+      color_mode: onoff
+      entity_id:
+      - light.clock_3006_night_light
+      icon: mdi:lightbulb-group
+      friendly_name: Bedroom Night Light
+      supported_features: 0
+      state: 'on'
+  metadata:
+    light.bedroom_night_light:
+      entity_only: true
+- id: '1740428831993'
+  name: Bedroom Ambient Lights Sleeping
+  entities:
+    light.bedroom_ambient_lights:
+      supported_color_modes:
+      - onoff
+      color_mode:
+      friendly_name: Bedroom Ambient Lights
+      supported_features: 0
+      icon: mdi:ceiling-light-multiple
+      state: 'off'
+  metadata:
+    light.bedroom_ambient_lights:
+      entity_only: true
+- id: '1740428858000'
+  name: Bedroom Accent Lights Sleeping
+  entities:
+    light.bedroom_accent_lights:
+      min_color_temp_kelvin: 2127
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 470
+      supported_color_modes:
+      - color_temp
+      - hs
+      - xy
+      color_mode: hs
+      brightness: 1
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      - 8.504
+      - 66.535
+      rgb_color:
+      - 255
+      - 109
+      - 85
+      xy_color:
+      - 0.589
+      - 0.327
+      entity_id:
+      - light.light_09e6
+      - light.light_40a4
+      icon: mdi:track-light
+      friendly_name: Bedroom Accent Lights
+      supported_features: 32
+      state: 'on'
+  metadata:
+    light.bedroom_accent_lights:
+      entity_only: true
+- id: '1740428968810'
+  name: Bathroom Ambient Lights Sleeping
+  entities:
+    light.bathroom_ambient_lights:
+      supported_color_modes:
+      - onoff
+      color_mode:
+      entity_id:
+      - light.light_b55c_light_2
+      icon: mdi:ceiling-light-multiple
+      friendly_name: Bathroom Ambient Lights
+      supported_features: 0
+      state: 'off'
+  metadata:
+    light.bathroom_ambient_lights:
+      entity_only: true
+- id: '1740429019110'
+  name: Bathroom Decorative Lights Sleeping
+  entities:
+    light.bathroom_night_light:
+      supported_color_modes:
+      - rgb
+      color_mode: rgb
+      brightness: 51
+      hs_color:
+      - 9.123
+      - 67.059
+      rgb_color:
+      - 255
+      - 110
+      - 84
+      xy_color:
+      - 0.589
+      - 0.329
+      entity_id:
+      - light.light_c8ee_rgb_light
+      icon: mdi:lightbulb-group
+      friendly_name: Bathroom Night Light
+      supported_features: 40
+      state: 'on'
+  metadata:
+    light.bathroom_night_light:
+      entity_only: true
+- id: '1740429083741'
+  name: Bathroom Decorative Lights Default
+  entities:
+    light.bathroom_night_light:
+      supported_color_modes:
+      - rgb
+      color_mode:
+      brightness:
+      hs_color:
+      rgb_color:
+      xy_color:
+      entity_id:
+      - light.light_c8ee_rgb_light
+      icon: mdi:lightbulb-group
+      friendly_name: Bathroom Night Light
+      supported_features: 40
+      state: 'off'
+  metadata:
+    light.bathroom_night_light:
+      entity_only: true
