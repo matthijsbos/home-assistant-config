@@ -68,6 +68,7 @@ binary_sensor: !include_dir_merge_list include/binary_sensor
 sensor: !include_dir_merge_list include/sensor
 light: !include_dir_merge_list include/light
 template: !include_dir_merge_list include/template
+input_boolean: !include_dir_merge_named include/input_boolean
 input_number: !include_dir_merge_named include/input_number
 switch: !include_dir_merge_list include/switch
 iaquk: !include_dir_merge_named include/iaquk
