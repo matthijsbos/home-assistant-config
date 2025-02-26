@@ -158,18 +158,7 @@
       state: >-
         {{ is_state('binary_sensor.bathroom_toilet_occupancy', 'on') }}
 
-- trigger:
-    - trigger: template
-      value_template: >-
-        {{ states('sensor.bathroom_relative_humidity') | float > (states('sensor.bathroom_relative_humidity_median') | float + 10) }}
-      for: "00:00:30"
-    - trigger: template
-      value_template: >-
-        {{ states('sensor.bathroom_relative_humidity') | float < (states('sensor.bathroom_relative_humidity_median') | float + 3) }}
-      for: "00:05:00"
-  binary_sensor:
+- binary_sensor:
     - unique_id: bathroom_humidity_ventilation
       name: "Bathroom Humidity Ventilation"
-      state: >-
-        {{ (states('sensor.bathroom_relative_humidity') | float) > (states('sensor.bathroom_relative_humidity_median') | float + 10) and
-          (states('sensor.bathroom_relative_humidity') | float) < (states('sensor.bathroom_relative_humidity_median') | float + 3) }}
+      state: "{{ (states('sensor.bathroom_relative_humidity') | float) > (states('sensor.bathroom_relative_humidity_median') | float + 3) }}"
