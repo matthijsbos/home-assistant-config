@@ -11,6 +11,14 @@
   entities:
     - binary_sensor.occupancy_249b_presence_sensor_2
 - platform: group
+  unique_id: bedroom_bedside_occupancy
+  name: "Bedroom Bedside Occupancy"
+  device_class: occupancy
+  entities:
+    - binary_sensor.occupancy_249b_presence_sensor_3
+    - binary_sensor.occupancy_249b_presence_sensor_4
+    - binary_sensor.occupancy_249b_presence_sensor_5
+- platform: group
   unique_id: bedroom_doorway_occupancy
   name: "Bedroom Doorway Occupancy"
   device_class: occupancy
