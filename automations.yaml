@@ -1020,7 +1020,6 @@
       - light.bedroom_ambient_lights
       - light.living_room_lights
       - light.bathroom_lights
-      - light.hallway_lights
       - light.kitchen_lights
       - light.bedroom_accent_lights
   - action: switch.turn_off
@@ -1049,4 +1048,49 @@
     data: {}
     target:
       entity_id: switch.bathroom_mirror_light_power
+  - wait_for_trigger:
+    - trigger: state
+      entity_id:
+      - binary_sensor.front_door
+      to: 'off'
+      from: 'on'
+    timeout:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.hallway_lights
   mode: restart
+- id: '1741372666795'
+  alias: Remote Control
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - event.rfwb_40g_mt_button_1
+    - event.rfwb_40g_mt_button_2
+    - event.rfwb_40g_mt_button_3
+    - event.rfwb_40g_mt_button_4
+    attribute: event_type
+    to: initial_press
+  - trigger: state
+    entity_id:
+    - event.rfwb_40g_mt_button_1
+    - event.rfwb_40g_mt_button_2
+    - event.rfwb_40g_mt_button_3
+    - event.rfwb_40g_mt_button_4
+    attribute: event_type
+    to: long_press
+  conditions: []
+  actions:
+  - action: automation.trigger
+    metadata: {}
+    data:
+      skip_condition: true
+    target:
+      entity_id: automation.away
+  mode: single
