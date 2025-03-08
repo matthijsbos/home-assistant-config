@@ -10,7 +10,7 @@
   name: "Bedroom Bed Temperature"
   type: mean
   entity_ids:
-    - sensor.therm_d71e_temperature
+    - sensor.climate_0000_temperature
 - platform: min_max
   unique_id: bedroom_relative_humidity
   name: "Bedroom Relative Humidity"

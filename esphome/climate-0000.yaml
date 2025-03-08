@@ -1,0 +1,300 @@
+# https://devices.esphome.io/devices/LSC-Plug-With-Monitoring
+
+substitutions:
+  device_name: "climate-0000"
+  voltage_divider: '795'
+  current_resistor: '0.001'
+  current_multiply: '0.450'
+  default_eco_temperature: "16.0"
+  default_comfort_temperature: "19.0"
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${device_name}
+  min_version: 2024.6.0
+  on_boot:
+    priority: -100
+    then:
+      # Always force ECO preset on startup
+      - climate.control: 
+          id: my_thermostat
+          mode: 'OFF'
+          preset: 'ECO'
+
+bk72xx:
+  board: generic-bk7231n-qfn32-tuya
+
+logger:
+  baud_rate: 0
+
+web_server:
+
+captive_portal:
+
+mdns:
+
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+    id: ota_pass
+
+wifi:
+  networks:
+    - ssid: !secret wifi_ssid
+      password: !secret wifi_password
+    - ssid: !secret wifi_ssid2
+      password: !secret wifi_password
+
+  ap:
+    ssid: ${device_name}
+    password: !secret wifi_fallback_ap_password
+
+one_wire:
+  - platform: gpio
+    pin: P23
+
+sensor:
+  - platform: dallas_temp
+    name: Temperature
+    id: temperature_sensor
+    update_interval: 1s
+    accuracy_decimals: 1
+    filters:
+      - sliding_window_moving_average:
+          window_size: 5
+          send_every: 1
+      - round: 1 # will round to 1 decimal place
+      - or:
+        - delta: 0.1 # only send updated value on change >0.1, or
+        - heartbeat: 60s # at least every 60 s
+  - platform: hlw8012
+    model: BL0937
+    update_interval: 500ms
+    change_mode_every: 2
+    cf_pin:
+      number: P26
+      inverted: true
+    cf1_pin:
+      number: P24
+      inverted: true
+    sel_pin:
+      number: P11
+      inverted: true
+    current:
+      name: Current
+      id: current
+      accuracy_decimals: 3
+      filters:
+        - multiply: ${current_multiply}
+        - sliding_window_moving_average:
+            window_size: 4
+            send_every: 2
+        - or:
+          - delta: 0.001 # only send updated value on change
+          - heartbeat: 60s # at least every 60 s
+    voltage:
+      name: Voltage
+      id: voltage
+      filters:
+        - sliding_window_moving_average:
+            window_size: 4
+            send_every: 2
+        - or:
+          - delta: 0.1 # only send updated value on change
+          - heartbeat: 60s # at least every 60 s
+    power:
+      name: Power
+      id: power
+      filters:
+        - sliding_window_moving_average:
+            window_size: 4
+            send_every: 2
+        - or:
+          - delta: 0.1 # only send updated value on change
+          - heartbeat: 60s # at least every 60 s
+    energy:
+      name: Energy
+      filters:
+        - or:
+          - delta: 0.1 # only send updated value on change
+          - heartbeat: 60s # at least every 60 s
+    voltage_divider: ${voltage_divider}
+    current_resistor: ${current_resistor}
+
+
+binary_sensor:
+  # Button on plug
+  - platform: gpio
+    internal: True
+    name: "Button"
+    pin:
+      number: P7
+      inverted: true
+      mode: INPUT_PULLUP
+    filters:
+      - delayed_on: 10ms
+    on_press:
+      then:
+        - lambda: |-
+            auto call = id(my_thermostat).make_call();
+            if (id(my_thermostat).mode == climate::CLIMATE_MODE_OFF) {
+              call.set_mode("HEAT");
+            } else {
+              call.set_mode("OFF");
+            }
+            call.perform();
+  # Relay status
+  - platform: switch
+    name: "Heater"
+    source_id: heater_switch
+    entity_category: diagnostic
+    device_class: heat
+
+switch:
+  - platform: gpio
+    id: heater_switch
+    name: none
+    pin: P8
+    restore_mode: RESTORE_DEFAULT_OFF
+    internal: True
+    on_turn_on:
+      - light.turn_on: 
+          id: red_led_light
+          effect: "Slow Pulse"
+    on_turn_off: 
+      - light.turn_off: red_led_light
+
+light:
+  - platform: monochromatic
+    id: red_led_light
+    internal: True
+    output: red_led_outout
+    effects: 
+      - pulse:
+          name: "Slow Pulse"
+          update_interval: 1s
+          transition_length: 1000ms
+  - platform: status_led
+    pin: P10
+    internal: true
+    id: blue_led_light
+
+# User-configurable target temperatures
+# https://esphome.io/components/number/template
+number:
+  - platform: template
+    name: "Eco Temperature"
+    id: eco_temperature
+    initial_value: ${default_eco_temperature}
+    restore_value: True
+    step: 0.1
+    min_value: 10
+    max_value: 30
+    entity_category: config
+    mode: box
+    unit_of_measurement: "°C"
+    optimistic: True
+    on_value:
+      - if:
+          condition:
+            lambda: 'return id(my_thermostat).preset == esphome::climate::ClimatePreset::CLIMATE_PRESET_ECO;'
+          then:
+            - climate.control: 
+                id: my_thermostat
+                preset: ECO
+                target_temperature: !lambda return x;
+  - platform: template
+    name: "Comfort Temperature"
+    id: comfort_temperature
+    initial_value: ${default_comfort_temperature}
+    restore_value: True
+    step: 0.1
+    min_value: 10
+    max_value: 30
+    entity_category: config
+    mode: box
+    unit_of_measurement: "°C"
+    optimistic: true
+    on_value:
+      - if:
+          condition:
+            lambda: 'return id(my_thermostat).preset == esphome::climate::ClimatePreset::CLIMATE_PRESET_COMFORT;'
+          then:
+            - climate.control: 
+                id: my_thermostat
+                preset: COMFORT
+                target_temperature: !lambda return x;
+
+
+output:
+  - platform: libretiny_pwm
+    id: red_led_outout
+    pin: P6
+    frequency: 1000 Hz
+
+climate:
+  - platform: thermostat
+    id: my_thermostat
+    name: "Thermostat"
+    sensor: temperature_sensor
+    min_heating_off_time: 5min
+    min_heating_run_time: 30s
+    min_idle_time: 30s
+    heat_deadband: 0.5 °C
+    heat_overrun:  0.0 °C
+    heat_action:
+      - switch.turn_on: heater_switch
+      - light.turn_off: blue_led_light
+    idle_action:
+      - switch.turn_off: heater_switch
+      - light.turn_on: blue_led_light
+    heat_mode:
+      - light.turn_on: blue_led_light
+    off_mode: 
+      - switch.turn_off: heater_switch
+      - light.turn_off: blue_led_light
+    on_boot_restore_from: MEMORY
+    default_preset: ECO
+    preset:
+      - name: NONE
+        # mandatory to set default_target_temperature_low, workaround below
+        default_target_temperature_low: ${default_eco_temperature}
+      - name: ECO
+        # default_target_temperature_low overwritten by config entity, workarund below
+        default_target_temperature_low: ${default_eco_temperature}
+      - name: COMFORT
+        # default_target_temperature_low overwritten by config entity, workarund below
+        default_target_temperature_low: ${default_comfort_temperature}
+    on_control: 
+      then:
+        - lambda: |-
+            // Switch to preset None if temperature was manually changed
+            if (!x.get_preset().has_value() && x.get_target_temperature().has_value()) {
+              x.set_preset("NONE");
+
+            // Workaround: Explicitly set target temperature to keep currently set target_temperature in case preset NONE is selected. This to prevent default_target_temperature_low from preset being set.
+            } else if (x.get_preset().has_value() && x.get_preset().value() == esphome::climate::ClimatePreset::CLIMATE_PRESET_NONE) {
+              x.set_target_temperature(id(my_thermostat).target_temperature);
+
+            // Workaround: Explicitly set target temperature by taking over comfort_temperature in case preset COMFORT is selected. This to prevent default_target_temperature_low from preset being set.
+            } else if (x.get_preset().has_value() && x.get_preset().value() == esphome::climate::ClimatePreset::CLIMATE_PRESET_COMFORT) {
+              x.set_target_temperature(id(comfort_temperature).state);
+
+            // Workaround: Explicitly set target temperature by taking over eco_temperature in case preset ECO is selected. This to prevent default_target_temperature_low from preset being set.
+            } else if (x.get_preset().has_value() && x.get_preset().value() == esphome::climate::ClimatePreset::CLIMATE_PRESET_ECO) {
+              x.set_target_temperature(id(eco_temperature).state);
+            }
+        - script.execute: mode_off_after_2h_inactivity 
+
+script:
+  - id: mode_off_after_2h_inactivity
+    mode: restart  # Restart the script on each call, resetting the timer
+    then:
+      - delay: 2h
+      - climate.control:  # Activate ECO preset after 24 hours of no activity
+          id: my_thermostat
+          mode: 'OFF'
