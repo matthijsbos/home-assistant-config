@@ -1,0 +1,9 @@
+- binary_sensor:
+    - name: "Garden Daylight"
+      unique_id: garden_daylight
+      state: >
+        {% set now = now() %}
+        {% set sunrise = as_datetime(state_attr('sun.sun', 'next_rising')) %}
+        {% set sunset = as_datetime(state_attr('sun.sun', 'next_setting')) %}
+        {{ sunrise is not none and sunset is not none and sunrise <= now < sunset }}
+      device_class: light
