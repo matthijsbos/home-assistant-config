@@ -1,0 +1,6 @@
+- platform: group
+  unique_id: garden_lights
+  name: "Garden Lights"
+  entities:
+    - light.light_03bb_light
+    - light.light_03f8_light
