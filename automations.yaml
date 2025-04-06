@@ -109,35 +109,6 @@
     target:
       entity_id: switch.laptop_display
   mode: single
-- id: '1715787983168'
-  alias: Living Room TV Youtube Auto-Pause
-  description: ''
-  trigger:
-  - trigger: state
-    entity_id:
-    - binary_sensor.living_room_occupancy
-    to: 'off'
-  condition:
-  - condition: device
-    device_id: 1c6580cf287963b48caad619f2d5a1b2
-    domain: media_player
-    entity_id: a4ec7014f506f908a4236dfa1ca43898
-    type: is_playing
-  - condition: or
-    conditions:
-    - condition: state
-      entity_id: media_player.tv_0f54_remote
-      attribute: app_id
-      state: com.google.android.youtube.tv
-  action:
-  - action: media_player.media_pause
-    metadata: {}
-    data: {}
-    target:
-      entity_id:
-      - media_player.tv_0f54_cast
-      - media_player.tv_0f54_remote
-  mode: single
 - id: '1715788081710'
   alias: Living Room TV Youtube Auto-Play
   description: ''
@@ -284,34 +255,6 @@
     target:
       entity_id: switch.living_room_docking_station
   mode: single
-- id: '1717175760685'
-  alias: Bedroom Fan On
-  description: ''
-  trigger:
-  - trigger: state
-    entity_id:
-    - binary_sensor.front_door
-    to: 'off'
-  - trigger: state
-    entity_id:
-    - sensor.bedroom_iaq_index
-  condition:
-  - condition: state
-    entity_id: binary_sensor.front_door
-    state: 'off'
-  - condition: numeric_state
-    entity_id: sensor.bedroom_iaq_index
-    below: 50
-  - condition: state
-    entity_id: fan.fan_1d90
-    state: 'off'
-  action:
-  - action: fan.turn_on
-    metadata: {}
-    data: {}
-    target:
-      device_id: d9f60f6e439d7d04d0a14366940cf5e4
-  mode: single
 - id: '1717181154454'
   alias: Bedroom Bedtime
   description: ''
@@ -361,28 +304,6 @@
     target:
       entity_id: climate.climate_44a4_thermostat
   mode: restart
-- id: '1719610365051'
-  alias: Bedroom Mosquito Repelling Start
-  description: ''
-  trigger:
-  - trigger: time
-    at: '21:00:00'
-  - trigger: state
-    entity_id:
-    - binary_sensor.front_door
-  condition:
-  - condition: state
-    entity_id: binary_sensor.front_door
-    state: 'off'
-  - condition: time
-    after: '21:00:00'
-  action:
-  - action: switch.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id: switch.bedroom_mosquito_repeller
-  mode: single
 - id: '1719610469629'
   alias: Bedroom Mosquito Repelling Stop
   description: ''
@@ -855,24 +776,6 @@
   triggers:
   - trigger: state
     entity_id:
-    - binary_sensor.living_room_occupancy
-    to: 'off'
-    for:
-      hours: 0
-      minutes: 20
-      seconds: 0
-    id: occupancy_clear
-  - trigger: state
-    entity_id:
-    - binary_sensor.living_room_occupancy
-    to: 'on'
-    for:
-      hours: 0
-      minutes: 2
-      seconds: 0
-    id: occupancy_detected
-  - trigger: state
-    entity_id:
     - binary_sensor.front_door
     to: 'on'
     for:
@@ -880,60 +783,12 @@
       minutes: 5
       seconds: 0
     id: front_door_open
-  - trigger: state
-    entity_id:
-    - binary_sensor.front_door
-    to: 'off'
-    for:
-      hours: 0
-      minutes: 1
-      seconds: 0
-    id: front_door_closed
   conditions: []
   actions:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - occupancy_detected
-      sequence:
-      - action: climate.set_preset_mode
-        metadata: {}
-        data:
-          preset_mode: comfort
-        target:
-          entity_id: climate.climate_44a4_thermostat
-    - conditions:
-      - condition: trigger
-        id:
-        - occupancy_clear
-      sequence:
       - action: climate.set_preset_mode
         metadata: {}
         data:
           preset_mode: eco
-        target:
-          entity_id: climate.climate_44a4_thermostat
-    - conditions:
-      - condition: trigger
-        id:
-        - front_door_closed
-      sequence:
-      - action: climate.set_hvac_mode
-        metadata: {}
-        data:
-          hvac_mode: heat
-        target:
-          entity_id: climate.climate_44a4_thermostat
-    - conditions:
-      - condition: trigger
-        id:
-        - front_door_open
-      sequence:
-      - action: climate.set_hvac_mode
-        metadata: {}
-        data:
-          hvac_mode: 'off'
         target:
           entity_id: climate.climate_44a4_thermostat
   mode: single
