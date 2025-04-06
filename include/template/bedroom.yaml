@@ -31,7 +31,7 @@
         {% endif %}
 - binary_sensor:
     - unique_id: bedroom_daylight
-      name: "Living Room Daylight"
+      name: "Bedroom Daylight"
       device_class: light
       state: >
         {% set lower_threshold = states('input_number.bedroom_daylight_illuminance_lower_threshold') | float %}
