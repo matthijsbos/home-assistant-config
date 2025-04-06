@@ -627,19 +627,38 @@
   alias: Bathroom Fan
   description: ''
   triggers:
+  - id: humidity_above_threshold
+    trigger: template
+    value_template: '{{ states(''sensor.bathroom_relative_humidity'') | float > (states(''sensor.bathroom_relative_humidity_median'')
+      | float + 10) }}'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 30
+  - id: humidity_below_threshold
+    trigger: template
+    value_template: '{{ states(''sensor.bathroom_relative_humidity'') | float < (states(''sensor.bathroom_relative_humidity_median'')
+      | float + 3) }}'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
   - trigger: state
     entity_id:
-    - binary_sensor.bathroom_humidity_ventilation
-  - trigger: state
-    entity_id:
-    - binary_sensor.template_bathroom_toilet_ventilation
+    - fan.bathroom_fan
+    to: 'on'
+    for:
+      hours: 4
+      minutes: 0
+      seconds: 0
+    id: maximum_duration_reached
   conditions: []
   actions:
   - choose:
     - conditions:
-      - condition: state
-        entity_id: binary_sensor.bathroom_humidity_ventilation
-        state: 'on'
+      - condition: trigger
+        id:
+        - humidity_above_threshold
       sequence:
       - action: fan.turn_on
         metadata: {}
@@ -647,16 +666,11 @@
         target:
           entity_id: fan.bathroom_fan
     - conditions:
-      - condition: state
-        entity_id: binary_sensor.template_bathroom_toilet_ventilation
-        state: 'on'
+      - condition: trigger
+        id:
+        - humidity_below_threshold
+        - maximum_duration_reached
       sequence:
-      - action: fan.turn_on
-        metadata: {}
-        data: {}
-        target:
-          entity_id: fan.bathroom_fan
-    default:
     - action: fan.turn_off
       target:
         entity_id:
