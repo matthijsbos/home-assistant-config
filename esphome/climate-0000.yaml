@@ -248,15 +248,10 @@ climate:
     heat_overrun:  0.0 °C
     heat_action:
       - switch.turn_on: heater_switch
-      - light.turn_off: blue_led_light
     idle_action:
       - switch.turn_off: heater_switch
-      - light.turn_on: blue_led_light
-    heat_mode:
-      - light.turn_on: blue_led_light
     off_mode: 
       - switch.turn_off: heater_switch
-      - light.turn_off: blue_led_light
     on_boot_restore_from: MEMORY
     default_preset: ECO
     preset:
@@ -269,6 +264,15 @@ climate:
       - name: COMFORT
         # default_target_temperature_low overwritten by config entity, workarund below
         default_target_temperature_low: ${default_comfort_temperature}
+    on_state: 
+      then:
+        - if:
+            condition:
+              lambda: "return x.mode == climate::CLIMATE_MODE_HEAT && x.action == climate::CLIMATE_ACTION_IDLE;"
+            then:
+              - light.turn_on: blue_led_light
+            else: 
+              - light.turn_off: blue_led_light
     on_control: 
       then:
         - lambda: |-
