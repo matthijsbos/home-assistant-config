@@ -544,3 +544,25 @@
   metadata:
     light.bathroom_night_light:
       entity_only: true
+- id: '1743968173453'
+  name: Garden Lights Default
+  entities:
+    light.garden_lights:
+      supported_color_modes:
+      - rgb
+      - white
+      color_mode: white
+      brightness: 26
+      hs_color:
+      rgb_color:
+      xy_color:
+      entity_id:
+      - light.light_03bb_light
+      - light.light_03f8_light
+      icon: mdi:lightbulb-group
+      friendly_name: Garden Lights
+      supported_features: 40
+      state: 'on'
+  metadata:
+    light.garden_lights:
+      entity_only: true
