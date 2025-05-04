@@ -1,0 +1,4 @@
+bedroom_mosquito_repeller_timer:
+  name: "Bedroom Mosquito Repeller Timer"
+  duration: "02:00:00"
+  restore: true
