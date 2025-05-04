@@ -1,0 +1,5 @@
+- platform: group
+  unique_id: "home_away_button_pressed"
+  name: "Home Away Button Pressed"
+  entities:
+    - event.btn_f695_button_1
