@@ -337,17 +337,12 @@
       entity_id: climate.climate_44a4_thermostat
   mode: restart
 - id: '1719610469629'
-  alias: Bedroom Mosquito Repelling Stop
+  alias: Bedroom Mosquito Repeller
   description: ''
-  trigger:
+  triggers:
   - trigger: state
     entity_id:
-    - switch.bedroom_mosquito_repeller
-    to: 'on'
-    for:
-      hours: 2
-      minutes: 0
-      seconds: 0
+    - timer.bedroom_mosquito_repeller_timer
   - trigger: state
     entity_id:
     - fan.fan_1d90
@@ -360,8 +355,20 @@
       hours: 0
       minutes: 5
       seconds: 0
-  condition: []
-  action:
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: timer.bedroom_mosquito_repeller_timer
+        state: active
+      sequence:
+      - action: switch.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.bedroom_mosquito_repeller
+    default:
   - action: switch.turn_off
     metadata: {}
     data: {}
@@ -617,26 +624,6 @@
         hours: 0
         minutes: 0
         seconds: 0
-- id: '1725655593814'
-  alias: Kitchen Mosquito Repeller
-  description: ''
-  trigger:
-  - trigger: state
-    entity_id:
-    - switch.kitchen_mosquito_repeller
-    to: 'on'
-    for:
-      hours: 4
-      minutes: 0
-      seconds: 0
-  condition: []
-  action:
-  - action: switch.turn_off
-    metadata: {}
-    data: {}
-    target:
-      entity_id: switch.kitchen_mosquito_repeller
-  mode: single
 - id: '1727380853232'
   alias: Bathroom Ambient Lights
   description: ''
@@ -994,4 +981,31 @@
       skip_condition: true
     target:
       entity_id: automation.away
+  mode: single
+- id: '1745875489194'
+  alias: Kitchen Mosquito Repeller
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - timer.kitchen_mosquito_repeller_timer
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: timer.kitchen_mosquito_repeller_timer
+        state: active
+      sequence:
+      - action: switch.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.kitchen_mosquito_repeller
+    default:
+    - action: switch.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id: switch.kitchen_mosquito_repeller
   mode: single
