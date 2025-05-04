@@ -141,24 +141,3 @@
            states('sensor.outdoor_temperature') not in ['unavailable', 'unknown', 'none'] and
            states('sensor.bathroom_relative_humidity') not in ['unavailable', 'unknown', 'none'] and
            states('sensor.outdoor_relative_humidity') not in ['unavailable', 'unknown', 'none'] }}
-- trigger:
-    - trigger: state
-      entity_id: binary_sensor.bathroom_toilet_occupancy
-      to: "on"
-      for:
-        minutes: 1
-    - trigger: state
-      entity_id: binary_sensor.bathroom_toilet_occupancy
-      to: "off"
-      for:
-        minutes: 5
-  binary_sensor:
-    - unique_id: bathroom_toilet_ventilation
-      name: "Bathroom Toilet Ventilation"
-      state: >-
-        {{ is_state('binary_sensor.bathroom_toilet_occupancy', 'on') }}
-
-- binary_sensor:
-    - unique_id: bathroom_humidity_ventilation
-      name: "Bathroom Humidity Ventilation"
-      state: "{{ (states('sensor.bathroom_relative_humidity') | float) > (states('sensor.bathroom_relative_humidity_median') | float + 3) }}"
