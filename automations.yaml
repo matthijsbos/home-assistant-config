@@ -646,38 +646,22 @@
   alias: Bathroom Fan
   description: ''
   triggers:
-  - id: humidity_above_threshold
-    trigger: template
-    value_template: '{{ states(''sensor.bathroom_relative_humidity'') | float > (states(''sensor.bathroom_relative_humidity_median'')
-      | float + 10) }}'
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 30
-  - id: humidity_below_threshold
-    trigger: template
-    value_template: '{{ states(''sensor.bathroom_relative_humidity'') | float < (states(''sensor.bathroom_relative_humidity_median'')
-      | float + 3) }}'
-    for:
-      hours: 0
-      minutes: 5
-      seconds: 0
   - trigger: state
     entity_id:
-    - fan.bathroom_fan
-    to: 'on'
-    for:
-      hours: 4
-      minutes: 0
-      seconds: 0
-    id: maximum_duration_reached
+    - timer.bathroom_shower_fan_timer
+    - timer.bathroom_toilet_fan_timer
   conditions: []
   actions:
   - choose:
     - conditions:
-      - condition: trigger
-        id:
-        - humidity_above_threshold
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: timer.bathroom_shower_fan_timer
+          state: active
+        - condition: state
+          entity_id: timer.bathroom_toilet_fan_timer
+          state: active
       sequence:
       - action: fan.turn_on
         metadata: {}
@@ -689,7 +673,8 @@
         id:
         - humidity_below_threshold
         - maximum_duration_reached
-      sequence:
+      sequence: []
+    default:
       - action: fan.turn_off
         target:
           entity_id:
@@ -981,6 +966,73 @@
       skip_condition: true
     target:
       entity_id: automation.away
+  mode: single
+- id: '1745069052672'
+  alias: Bathroom Shower Fan Timer
+  description: ''
+  triggers:
+  - id: humidity_above_threshold
+    trigger: template
+    value_template: '{{ states(''sensor.bathroom_relative_humidity'') | float > (states(''sensor.bathroom_relative_humidity_median'')
+      | float + 10) }}'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 30
+  - id: humidity_below_threshold
+    trigger: template
+    value_template: '{{ states(''sensor.bathroom_relative_humidity'') | float < (states(''sensor.bathroom_relative_humidity_median'')
+      | float + 3) }}'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - humidity_above_threshold
+      sequence:
+      - action: timer.start
+        metadata: {}
+        data: {}
+        target:
+          entity_id: timer.bathroom_shower_fan_timer
+    - conditions:
+      - condition: trigger
+        id:
+        - humidity_below_threshold
+      sequence:
+      - action: timer.finish
+        metadata: {}
+        data: {}
+        target:
+          entity_id: timer.bathroom_shower_fan_timer
+  mode: single
+- id: '1745069359626'
+  alias: New automation
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.bathroom_toilet_occupancy
+    to: 'on'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 45
+  conditions:
+  - condition: state
+    entity_id: binary_sensor.bathroom_toilet_occupancy
+    state: 'on'
+  actions:
+  - action: timer.start
+    metadata: {}
+    data: {}
+    target:
+      entity_id: timer.bathroom_toilet_fan_timer
   mode: single
 - id: '1745875489194'
   alias: Kitchen Mosquito Repeller
