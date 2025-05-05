@@ -159,29 +159,28 @@ switch:
     id: heater_switch
     name: none
     pin: P8
-    restore_mode: RESTORE_DEFAULT_OFF
+    restore_mode: ALWAYS_OFF
     internal: True
-    on_turn_on:
-      - light.turn_on: 
-          id: red_led_light
-          effect: "Slow Pulse"
-    on_turn_off: 
-      - light.turn_off: red_led_light
+
+output:
+  - platform: libretiny_pwm
+    id: red_led_output
+    pin: P6
+    frequency: 1000 Hz
 
 light:
   - platform: monochromatic
     id: red_led_light
     internal: True
-    output: red_led_outout
+    output: red_led_output
     effects: 
       - pulse:
           name: "Slow Pulse"
           update_interval: 1s
-          transition_length: 1000ms
+          transition_length: 1s
   - platform: status_led
-    pin: P10
-    internal: true
     id: blue_led_light
+    pin: P10
 
 # User-configurable target temperatures
 # https://esphome.io/components/number/template
@@ -229,13 +228,6 @@ number:
                 preset: COMFORT
                 target_temperature: !lambda return x;
 
-
-output:
-  - platform: libretiny_pwm
-    id: red_led_outout
-    pin: P6
-    frequency: 1000 Hz
-
 climate:
   - platform: thermostat
     id: my_thermostat
@@ -266,13 +258,14 @@ climate:
         default_target_temperature_low: ${default_comfort_temperature}
     on_state: 
       then:
-        - if:
-            condition:
-              lambda: "return x.mode == climate::CLIMATE_MODE_HEAT && x.action == climate::CLIMATE_ACTION_IDLE;"
-            then:
-              - light.turn_on: blue_led_light
-            else: 
-              - light.turn_off: blue_led_light
+        lambda: |-
+          if (id(heater_switch).state) {
+              id(red_led_light).turn_on().set_effect("Slow Pulse").perform();
+          } else if (id(my_thermostat).mode == climate::CLIMATE_MODE_HEAT) {
+              id(red_led_light).turn_on().set_effect("none").perform();
+          } else {
+              id(red_led_light).turn_off().perform();
+          }
     on_control: 
       then:
         - lambda: |-
@@ -302,3 +295,4 @@ script:
       - climate.control:  # Activate ECO preset after 24 hours of no activity
           id: my_thermostat
           mode: 'OFF'
+
