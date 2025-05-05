@@ -33,3 +33,4 @@
     - sensor.switch_50b5_voltage
     - sensor.switch_8761_voltage
     - sensor.switch_b941_voltage
+    - sensor.climate_0000_voltage
