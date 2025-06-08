@@ -9,3 +9,4 @@ bedroom:
       - sensor.bedroom_pm_2_5
     tvoc: sensor.bedroom_volatile_organic_compounds
     no2: sensor.bedroom_nitrogen_dioxide
+    co2: sensor.bedroom_carbon_dioxide
