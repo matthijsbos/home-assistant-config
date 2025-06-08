@@ -345,18 +345,6 @@
   - trigger: state
     entity_id:
     - timer.bedroom_mosquito_repeller_timer
-  - trigger: state
-    entity_id:
-    - fan.fan_1d90
-    to: 'on'
-  - trigger: state
-    entity_id:
-    - binary_sensor.front_door
-    to: 'on'
-    for:
-      hours: 0
-      minutes: 5
-      seconds: 0
   conditions: []
   actions:
   - choose:
