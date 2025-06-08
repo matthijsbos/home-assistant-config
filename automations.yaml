@@ -309,7 +309,9 @@
     metadata: {}
     data: {}
     target:
-      entity_id: switch.bathroom_mirror_light_power
+      entity_id:
+      - switch.bathroom_mirror_light_power
+      - switch.bathroom_mirror_heater
   - type: toggle
     device_id: d31e007475f48da84ec9406b72785700
     entity_id: 5b48a3d54783281449ca0208f1839143
