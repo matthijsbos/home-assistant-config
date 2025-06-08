@@ -910,7 +910,9 @@
     metadata: {}
     data: {}
     target:
-      entity_id: switch.bathroom_mirror_light_power
+      entity_id:
+      - switch.bathroom_mirror_light_power
+      - switch.bathroom_mirror_heater
   - wait_for_trigger:
     - trigger: state
       entity_id:
