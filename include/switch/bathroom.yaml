@@ -3,3 +3,9 @@
   name: "Bathroom Mirror Light Power"
   entities:
     - switch.switch_8920
+
+- platform: group
+  unique_id: bathroom_mirror_heater
+  name: "Bathroom Mirror Heater"
+  entities:
+    - switch.switch_aa60
