@@ -55,3 +55,24 @@
   end: "{{ now() }}"
   duration:
     minutes: 15
+
+- platform: group
+  unique_id: living_room_sound_pressure_level_LAeq_1s
+  name: "Living Room Sound Pressure Level LAeq,1s"
+  type: last
+  entities:
+    - sensor.spl_5bd8_laeq_1s
+
+- platform: group
+  unique_id: living_room_sound_pressure_level_LAeq_10s
+  name: "Living Room Sound Pressure Level LAeq,10s"
+  type: last
+  entities:
+    - sensor.spl_5bd8_laeq_10s
+
+- platform: group
+  unique_id: living_room_sound_pressure_level_LAeq_1min
+  name: "Living Room Sound Pressure Level LAeq,1min"
+  type: last
+  entities:
+    - sensor.spl_5bd8_laeq_1min
