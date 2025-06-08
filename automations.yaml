@@ -1086,3 +1086,74 @@
       target:
         entity_id: switch.kitchen_mosquito_repeller
   mode: single
+- id: '1747251826098'
+  alias: Bathroom Mirror Heater
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - timer.bathroom_mirror_heater_timer
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: timer.bathroom_mirror_heater_timer
+        state: active
+      sequence:
+      - action: switch.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.bathroom_mirror_heater
+    default:
+    - action: switch.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id: switch.bathroom_mirror_heater
+  mode: single
+- id: '1747252078255'
+  alias: Bathroom Mirror Heater Timer
+  description: ''
+  triggers:
+  - id: humidity_above_threshold
+    trigger: template
+    value_template: '{{ states(''sensor.bathroom_relative_humidity'') | float > (states(''sensor.bathroom_relative_humidity_median'')
+      | float + 10) }}'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 30
+  - id: humidity_below_threshold
+    trigger: template
+    value_template: '{{ states(''sensor.bathroom_relative_humidity'') | float < (states(''sensor.bathroom_relative_humidity_median'')
+      | float + 3) }}'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - humidity_above_threshold
+      sequence:
+      - action: timer.start
+        metadata: {}
+        data: {}
+        target:
+          entity_id: timer.bathroom_mirror_heater_timer
+    - conditions:
+      - condition: trigger
+        id:
+        - humidity_below_threshold
+      sequence:
+      - action: timer.finish
+        metadata: {}
+        data: {}
+        target:
+          entity_id: timer.bathroom_mirror_heater_timer
+  mode: single
