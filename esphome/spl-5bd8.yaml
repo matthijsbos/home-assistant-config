@@ -1,0 +1,419 @@
+substitutions:
+  name: "spl-5bd8"
+  friendly_name: "spl-5bd8"
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+  min_version: 2024.7.0
+  name_add_mac_suffix: false
+  project:
+    name: esphome.web
+    version: dev
+
+external_components:
+  - source: github://stas-sl/esphome-sound-level-meter  # add @tag if you want to use a specific version (e.g @v1.0.0)
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+# Allow Over-The-Air updates
+ota:
+- platform: esphome
+  on_begin: 
+    then:
+      - sound_level_meter.turn_off
+      
+# Allow provisioning Wi-Fi via serial
+improv_serial:
+
+wifi:
+  networks:
+    - ssid: !secret wifi_ssid
+      password: !secret wifi_password
+    - ssid: !secret wifi_ssid2
+      password: !secret wifi_password
+  # Set up a wifi access point
+  ap: {}
+
+# In combination with the `ap` this allows the user
+# to provision wifi credentials to the device via WiFi AP.
+captive_portal:
+
+dashboard_import:
+  package_import_url: github://esphome/firmware/esphome-web/esp32c3.yaml@main
+  import_full_config: true
+
+# Sets up Bluetooth LE (Only on ESP32) to allow the user
+# to provision wifi credentials to the device.
+esp32_improv:
+  authorizer: none
+
+i2s:
+  bck_pin: GPIO6
+  ws_pin: GPIO5
+  din_pin: GPIO7
+  sample_rate: 24000            # default: 48000
+  bits_per_sample: 32           # default: 32
+
+  # right shift samples.
+  # for example if mic has 24 bit resolution, and i2s configured as 32 bits,
+  # then audio data will be aligned left (MSB) and LSB will be padded with
+  # zeros, so you might want to shift them right by 8 bits
+  bits_shift: 8                 # default: 0
+
+  channel: left               # default: right
+
+
+sound_level_meter:
+  # update_interval specifies over which interval to aggregate audio data
+  # you can specify default update_interval on top level, but you can also
+  # override it further by specifying it on sensor level
+  update_interval: 1s           # default: 60s
+
+  # buffer_size is in samples (not bytes), so for float data type
+  # number of bytes will be buffer_size * 4
+  buffer_size: 1024             # default: 1024
+
+  # see your mic datasheet to find sensitivity and reference SPL.
+  # those are used to convert dB FS to db SPL
+  mic_sensitivity: -26dB        # default: empty
+  mic_sensitivity_ref: 94dB     # default: empty
+
+  # additional offset if needed
+  offset: -12dB                   # default: empty
+
+  # for flexibility sensors are organized hierarchically into groups. each group
+  # could have any number of filters, sensors and nested groups.
+  # for examples if there is a top level group A with filter A and nested group B
+  # with filter B, then for sensors inside group B filters A and then B will be
+  # applied:
+  # groups:
+  #   # group A
+  #   - filters:
+  #       - filter A
+  #     groups:
+  #       # group B
+  #       - filters:
+  #           - filter B
+  #         sensors:
+  #           - sensor X
+  groups:
+    # group 1 (mic eq)
+    - filters:
+        # for now only SOS filter type is supported, see math/filter-design.ipynb
+        # to learn how to create or convert other filter types to SOS
+        - type: sos
+          coeffs:
+            # INMP441:
+            #      b0            b1           b2          a1            a2
+            - [ 1.0019784 , -1.9908513  , 0.9889158 , -1.9951786  , 0.99518436]
+
+      # nested groups
+      groups:
+        # group 1.2 (A-weighting)
+        - filters:
+            # for now only SOS filter type is supported, see math/filter-design.ipynb
+            # to learn how to create or convert other filter types to SOS
+            - type: sos
+              coeffs:
+                # A-weighting:
+                #       b0           b1            b2             a1            a2
+                - [ 0.16999495 ,  0.741029   ,  0.52548885 , -0.11321865 , -0.056549273]
+                - [ 1.         , -2.00027    ,  1.0002706  , -0.03433284 , -0.79215795 ]
+                - [ 1.         , -0.709303   , -0.29071867 , -1.9822421  ,  0.9822986  ]
+          sensors:
+            - type: eq
+              name: "LAeq,1s"
+              id: LAeq_1s
+              unit_of_measurement: dBA
+              update_interval: 1s
+              # on_value:
+              #   then:
+              #     - sensor.template.publish:
+              #         id: LAeq_1s_mean_10s
+              #         state: !lambda "return x;"
+              #     - sensor.template.publish:
+              #         id: LAeq_1s_mean_1min
+              #         state: !lambda "return x;"
+              #     - sensor.template.publish:
+              #         id: LAeq_1s_mean_5min
+              #         state: !lambda "return x;"
+              #     - sensor.template.publish:
+              #         id: LAeq_1s_median_10s
+              #         state: !lambda "return x;"
+              #     - sensor.template.publish:
+              #         id: LAeq_1s_median_1min
+              #         state: !lambda "return x;"
+              #     - sensor.template.publish:
+              #         id: LAeq_1s_median_5min
+              #         state: !lambda "return x;"
+
+sensor:
+  - platform: copy
+    source_id: LAeq_1s
+    id: LAeq_1s_linear
+    internal: True
+    filters:
+      - lambda: |-
+          if (isnan(x)) {
+            return NAN;
+          } else {
+            return pow(10, x / 10.0);
+          }
+  - platform: copy
+    source_id: LAeq_1s_linear
+    id: LAeq_10s_linear
+    internal: True
+    accuracy_decimals: 2
+    filters: 
+      - sliding_window_moving_average:
+          window_size: 10
+          send_every: 1
+  - platform: copy
+    source_id: LAeq_1s_linear
+    id: LAeq_1min_linear
+    internal: True
+    accuracy_decimals: 2
+    filters: 
+      - sliding_window_moving_average:
+          window_size: 60
+          send_every: 1
+  - platform: copy
+    source_id: LAeq_1s_linear
+    id: LAeq_5min_linear
+    internal: True
+    accuracy_decimals: 2
+    filters: 
+      - sliding_window_moving_average:
+          window_size: 300
+          send_every: 1
+  - platform: copy
+    source_id: LAeq_10s_linear
+    id: LAeq_10s
+    name: "LAeq,10s"
+    accuracy_decimals: 2
+    device_class: sound_pressure
+    state_class: measurement
+    unit_of_measurement: "dBA"
+    icon: "mdi:waveform"
+    filters: 
+      - lambda: |-
+          if (isnan(x) || x <= 0.0) {
+            return NAN;
+          } else {
+            return 10.0 * log10(x);
+          }
+      - or:
+        - delta: 0.25
+        - heartbeat: 60s # at least every 60 s
+  - platform: copy
+    source_id: LAeq_1min_linear
+    id: LAeq_1min
+    name: "LAeq,1min"
+    accuracy_decimals: 2
+    device_class: sound_pressure
+    state_class: measurement
+    unit_of_measurement: "dBA"
+    icon: "mdi:waveform"
+    filters: 
+      - lambda: |-
+          if (isnan(x) || x <= 0.0) {
+            return NAN;
+          } else {
+            return 10.0 * log10(x);
+          }
+      - or:
+        - delta: 0.25
+        - heartbeat: 60s # at least every 60 s
+  - platform: copy
+    source_id: LAeq_5min_linear
+    id: LAeq_5min
+    name: "LAeq,5min"
+    accuracy_decimals: 2
+    device_class: sound_pressure
+    state_class: measurement
+    unit_of_measurement: "dBA"
+    icon: "mdi:waveform"
+    filters: 
+      - lambda: |-
+          if (isnan(x) || x <= 0.0) {
+            return NAN;
+          } else {
+            return 10.0 * log10(x);
+          }
+      - or:
+        - delta: 0.25
+        - heartbeat: 60s # at least every 60 s
+  - platform: copy
+    source_id: LAeq_1s
+    id: LA50_10s
+    name: "LA50,10s"
+    accuracy_decimals: 2
+    device_class: sound_pressure
+    state_class: measurement
+    unit_of_measurement: "dBA"
+    icon: "mdi:waveform"
+    filters: 
+      - quantile:
+          window_size: 10
+          send_every: 1
+          quantile: 0.5
+      - or:
+        - delta: 0.25
+        - heartbeat: 60s # at least every 60 s
+  - platform: copy
+    source_id: LAeq_1s
+    id: LA10_10s
+    name: "LA10,10s"
+    accuracy_decimals: 2
+    device_class: sound_pressure
+    state_class: measurement
+    unit_of_measurement: "dBA"
+    icon: "mdi:waveform"
+    filters: 
+      - quantile:
+          window_size: 10
+          send_every: 1
+          quantile: 0.1
+      - or:
+        - delta: 0.25
+        - heartbeat: 60s # at least every 60 s
+  - platform: copy
+    source_id: LAeq_1s
+    id: LA90_10s
+    name: "LA90,10s"
+    accuracy_decimals: 2
+    device_class: sound_pressure
+    state_class: measurement
+    unit_of_measurement: "dBA"
+    icon: "mdi:waveform"
+    filters: 
+      - quantile:
+          window_size: 10
+          send_every: 1
+          quantile: 0.9
+      - or:
+        - delta: 0.25
+        - heartbeat: 60s # at least every 60 s
+  - platform: copy
+    source_id: LAeq_1s
+    id: LA50_1min
+    name: "LA50,1min"
+    accuracy_decimals: 2
+    device_class: sound_pressure
+    state_class: measurement
+    unit_of_measurement: "dBA"
+    icon: "mdi:waveform"
+    filters: 
+      - quantile:
+          window_size: 60
+          send_every: 1
+          quantile: 0.5
+      - or:
+        - delta: 0.25
+        - heartbeat: 60s # at least every 60 s
+  - platform: copy
+    source_id: LAeq_1s
+    id: LA10_1min
+    name: "LA10,1min"
+    accuracy_decimals: 2
+    device_class: sound_pressure
+    state_class: measurement
+    unit_of_measurement: "dBA"
+    icon: "mdi:waveform"
+    filters: 
+      - quantile:
+          window_size: 60
+          send_every: 1
+          quantile: 0.1
+      - or:
+        - delta: 0.25
+        - heartbeat: 60s # at least every 60 s
+  - platform: copy
+    source_id: LAeq_1s
+    id: LA90_1min
+    name: "LA90,1min"
+    accuracy_decimals: 2
+    device_class: sound_pressure
+    state_class: measurement
+    unit_of_measurement: "dBA"
+    icon: "mdi:waveform"
+    filters: 
+      - quantile:
+          window_size: 60
+          send_every: 1
+          quantile: 0.9
+      - or:
+        - delta: 0.25
+        - heartbeat: 60s # at least every 60 s
+  - platform: copy
+    source_id: LAeq_1s
+    id: LA50_5min
+    name: "LA50,5min"
+    accuracy_decimals: 2
+    device_class: sound_pressure
+    state_class: measurement
+    unit_of_measurement: "dBA"
+    icon: "mdi:waveform"
+    filters: 
+      - quantile:
+          window_size: 300
+          send_every: 1
+          quantile: 0.5
+      - or:
+        - delta: 0.25
+        - heartbeat: 60s # at least every 60 s
+  - platform: copy
+    source_id: LAeq_1s
+    id: LA10_5min
+    name: "LA10,5min"
+    accuracy_decimals: 2
+    device_class: sound_pressure
+    state_class: measurement
+    unit_of_measurement: "dBA"
+    icon: "mdi:waveform"
+    filters: 
+      - quantile:
+          window_size: 300
+          send_every: 1
+          quantile: 0.1
+      - or:
+        - delta: 0.25
+        - heartbeat: 60s # at least every 60 s
+  - platform: copy
+    source_id: LAeq_1s
+    id: LA90_5min
+    name: "LA90,5min"
+    accuracy_decimals: 2
+    device_class: sound_pressure
+    state_class: measurement
+    unit_of_measurement: "dBA"
+    icon: "mdi:waveform"
+    filters: 
+      - quantile:
+          window_size: 300
+          send_every: 1
+          quantile: 0.9
+      - or:
+        - delta: 0.25
+        - heartbeat: 60s # at least every 60 s
+  - platform: internal_temperature
+    name: "Internal Temperature"
+    entity_category: "diagnostic"
+    update_interval: 1s
+    filters: 
+      - sliding_window_moving_average:
+          window_size: 10
+          send_every: 1
+      - or:
+        - delta: 0.1
+        - heartbeat: 60s # at least every 60 s
