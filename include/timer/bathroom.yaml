@@ -9,3 +9,8 @@ bathroom_shower_fan_timer:
   duration: "04:00:00"
   icon: "mdi:fan-clock"
   restore: true
+
+bathroom_mirror_heater_timer:
+  name: "Bathroom Mirror Heater Timer"
+  duration: "00:30:00"
+  restore: true
