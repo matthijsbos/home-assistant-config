@@ -1,42 +1,19 @@
 # https://devices.esphome.io/devices/Tuya-DY-RQ400A-Combustible-Gas-Alarm
+substitutions:
+  device_name: gas-d903
+
+packages:
+  - !include common/api.yaml
+  - !include common/logger.yaml
+  - !include common/ota.yaml
+  - !include common/wifi.yaml
 
 esphome:
-  name: "gas-d903"
-  friendly_name: "gas-d903"
+  name: ${device_name}
+  friendly_name: ${device_name}
 
 bk72xx:
   board: cb2s
-
-
-# Enable logging
-logger:
-
-web_server:
-
-captive_portal:
-
-mdns:
-
-ota:
-  - platform: esphome
-    password: !secret ota_password
-    id: ota_pass
-
-api:
-  encryption:
-    key: !secret api_encryption_key
-
-wifi:
-  networks:
-    - ssid: !secret wifi_ssid
-      password: !secret wifi_password
-    - ssid: !secret wifi_ssid2
-      password: !secret wifi_password
-
-  ap:
-    ssid: ${device_name}
-    password: !secret wifi_fallback_ap_password
-
 
 uart:
   rx_pin: RX1

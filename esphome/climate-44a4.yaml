@@ -1,17 +1,21 @@
 substitutions:
-  name: "climate-44a4"
-  friendly_name: "climate-44a4"
+  device_name: "climate-44a4"
   default_eco_temperature: "16.0"
   default_comfort_temperature: "19.0"
   external_temperature_entity: "sensor.living_room_temperature_occupancy_weighted"
 
+packages:
+  - !include common/api.yaml
+  - !include common/logger.yaml
+  - !include common/ota.yaml
+  - !include common/wifi.yaml
+  - !include common/improv-esp32.yaml
+  - !include common/web-server.yaml
+
 esphome:
-  name: ${name}
-  friendly_name: ${friendly_name}
+  name: ${device_name}
+  friendly_name: ${device_name}
   min_version: 2024.6.0
-  project:
-    name: esphome.web
-    version: dev
   on_boot:
     priority: -100
     then:
@@ -24,45 +28,6 @@ esp32:
   board: esp32dev
   framework:
     type: arduino
-
-# Enable logging
-logger:
-
-# Enable Home Assistant API
-api:
-
-# Allow provisioning Wi-Fi via serial
-improv_serial:
-
-# Allow Over-The-Air updates
-ota:
-  - platform: esphome
-    password: !secret ota_password
-    id: ota_pass
-
-wifi:
-  networks:
-    - ssid: !secret wifi_ssid
-      password: !secret wifi_password
-    - ssid: !secret wifi_ssid2
-      password: !secret wifi_password
-
-
-# In combination with the `ap` this allows the user
-# to provision wifi credentials to the device via WiFi AP.
-captive_portal:
-
-dashboard_import:
-  package_import_url: github://esphome/example-configs/esphome-web/esp32.yaml@main
-  import_full_config: true
-
-# Sets up Bluetooth LE (Only on ESP32) to allow the user
-# to provision wifi credentials to the device.
-esp32_improv:
-  authorizer: none
-
-# To have a "next url" for improv serial
-web_server:
 
 # Relays exposed as switches
 switch:

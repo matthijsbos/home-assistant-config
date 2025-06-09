@@ -1,9 +1,10 @@
 substitutions:
-  device_name: light-03bb
+  device_name: "spl-206c"
 
 packages:
   - !include common/api.yaml
   - !include common/logger.yaml
   - !include common/ota.yaml
   - !include common/wifi.yaml
-  - !include common/ledvance-smart-table-frame.yaml
+  - !include common/improv-esp32.yaml
+  - !include common/esp-spl.yaml
