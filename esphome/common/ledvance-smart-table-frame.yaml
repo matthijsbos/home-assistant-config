@@ -1,0 +1,78 @@
+esphome:
+  name: ${device_name}
+  friendly_name: ${device_name}
+  min_version: 2024.7.0
+
+bk72xx:
+  board: cb3l
+
+globals:
+  - id: pwm_lookup
+    type: "std::vector<int>"
+    initial_value: >-
+      {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,
+       21,22,23,25,27,29,31,33,35,37,39,41,43,45,48,51,54,57,
+       60,63,66,69,73,77,81,85,89,94,99,104,109,114,120,126,
+       132,138,145,152,159,167,175,183,192,201,211,221,231,242,
+       253,265,277,290,304,318,333,348,364,381,399,417,436,456,
+       477,499,522,546,571,597,624,653,683,714,747,781,817,854,
+       893,934,977,1023}
+
+# Define PWM output channels
+output:
+  - platform: template
+    type: float
+    id: output_white
+    write_action:
+      - lambda: |-
+          float clamped_state = std::max(0.0f, std::min(1.0f, state));  // Clamp between 0 and 1
+          int index = static_cast<int>(roundf(clamped_state * 100));  // Scale and round to nearest integer
+          int pwm_value = id(pwm_lookup)[index];  // Get mapped value
+          analogWriteResolution(10);
+          analogWriteFrequency(1000);
+          analogWrite(7, pwm_value);  // Directly write raw PWM value
+  - platform: template
+    type: float
+    id: output_red
+    write_action:
+      - lambda: |-
+          float clamped_state = std::max(0.0f, std::min(1.0f, state));  // Clamp between 0 and 1
+          int index = static_cast<int>(roundf(clamped_state * 100));  // Scale and round to nearest integer
+          int pwm_value = id(pwm_lookup)[index];  // Get mapped value
+          analogWriteResolution(10);
+          analogWriteFrequency(1000);
+          analogWrite(8, pwm_value);  // Directly write raw PWM value
+  - platform: template
+    type: float
+    id: output_green
+    write_action:
+      - lambda: |-
+          float clamped_state = std::max(0.0f, std::min(1.0f, state));  // Clamp between 0 and 1
+          int index = static_cast<int>(roundf(clamped_state * 100));  // Scale and round to nearest integer
+          int pwm_value = id(pwm_lookup)[index];  // Get mapped value
+          analogWriteResolution(10);
+          analogWriteFrequency(1000);
+          analogWrite(24, pwm_value);  // Directly write raw PWM value
+  - platform: template
+    type: float
+    id: output_blue
+    write_action:
+      - lambda: |-
+          float clamped_state = std::max(0.0f, std::min(1.0f, state));  // Clamp between 0 and 1
+          int index = static_cast<int>(roundf(clamped_state * 100));  // Scale and round to nearest integer
+          int pwm_value = id(pwm_lookup)[index];  // Get mapped value
+          analogWriteResolution(10);
+          analogWriteFrequency(1000);
+          analogWrite(26, pwm_value);  // Directly write raw PWM value
+
+# Define a PWM light
+light:
+  - platform: rgbw
+    name: "Light"
+    red: output_red
+    green: output_green
+    blue: output_blue
+    white: output_white
+    restore_mode: RESTORE_AND_ON
+    color_interlock: True
+    gamma_correct: 1.0
