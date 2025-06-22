@@ -1,0 +1,38 @@
+substitutions:
+  device_name: occupancy-ba92
+
+packages:
+  - !include common/api.yaml
+  - !include common/logger.yaml
+  - !include common/ota.yaml
+  - !include common/openthread.yaml
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${device_name}
+
+esp32:
+  board: esp32-h2-devkitm-1
+  variant: ESP32H2
+  framework:
+    type: esp-idf
+
+light:
+  - platform: esp32_rmt_led_strip
+    rgb_order: GRB
+    pin: GPIO8
+    num_leds: 1
+    chipset: ws2812
+    name: "Light"
+
+binary_sensor:
+  - platform: gpio
+    id: motion_sensor
+    pin: GPIO14
+    name: "Motion"
+    device_class: motion
+  - platform: copy
+    source_id: motion_sensor
+    name: occupancy
+    filters: 
+      - delayed_off: 30s
