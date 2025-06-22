@@ -3,3 +3,9 @@
   name: "Kitchen Speaker Power"
   entities:
     - switch.switch_8761
+
+- platform: group
+  unique_id: kitchen_mosquito_repeller
+  name: "Kitchen Mosquito Repeller"
+  entities:
+    - switch.switch_bd81
