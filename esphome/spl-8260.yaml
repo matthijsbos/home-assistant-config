@@ -7,4 +7,5 @@ packages:   # as a list
   - !include common/ota.yaml
   - !include common/wifi.yaml
   - !include common/improv-esp32.yaml
+  - !include common/web-server.yaml
   - !include common/esp-spl.yaml

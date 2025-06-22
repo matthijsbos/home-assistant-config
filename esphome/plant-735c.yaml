@@ -18,7 +18,7 @@ packages:
   - !include common/logger.yaml
   - !include common/ota.yaml
   - !include common/wifi.yaml
-  - !include common/ledvance-smart-table-frame.yaml
+  - !include common/web-server.yaml
 
 esphome:
   name: "${device_name}"

@@ -6,4 +6,5 @@ packages:
   - !include common/logger.yaml
   - !include common/ota.yaml
   - !include common/wifi.yaml
+  - !include common/web-server.yaml
   - !include common/ledvance-smart-table-frame.yaml

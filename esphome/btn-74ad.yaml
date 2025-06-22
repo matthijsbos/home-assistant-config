@@ -7,6 +7,7 @@ packages:
   - !include common/ota.yaml
   - !include common/wifi.yaml
   - !include common/improv-esp8266.yaml
+  - !include common/web-server.yaml
 
 esphome:
   name: ${device_name}
