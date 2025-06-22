@@ -1,7 +1,10 @@
 substitutions:
   device_name: "spl-5bd8"
 
-packages:   # as a list
+external_components:
+  - source: github://stas-sl/esphome-sound-level-meter
+
+packages:
   - !include common/api.yaml
   - !include common/logger.yaml
   - !include common/ota.yaml

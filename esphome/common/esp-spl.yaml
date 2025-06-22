@@ -3,11 +3,9 @@ esphome:
   friendly_name: ${device_name}
   min_version: 2024.7.0
 
-external_components:
-  - source: github://stas-sl/esphome-sound-level-meter  # add @tag if you want to use a specific version (e.g @v1.0.0)
-
 esp32:
   board: esp32-c3-devkitm-1
+  variant: ESP32C3
   framework:
     type: arduino
 
@@ -340,3 +338,8 @@ sensor:
       - or:
         - delta: 0.25
         - heartbeat: 60s # at least every 60 s
+  
+status_led:
+  pin: 
+    number: GPIO8
+    inverted: true
