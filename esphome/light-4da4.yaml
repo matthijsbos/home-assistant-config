@@ -1,5 +1,5 @@
 substitutions:
-  device_name: gas-4da4
+  device_name: light-4da4
 
 packages:
   - !include common/api.yaml

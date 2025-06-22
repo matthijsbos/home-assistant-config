@@ -1,5 +1,5 @@
 substitutions:
-  device_name: gas-c8ee
+  device_name: light-c8ee
 
 packages:
   - !include common/api.yaml
