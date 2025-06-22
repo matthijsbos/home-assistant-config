@@ -37,6 +37,8 @@ esphome:
 
 esp32:
   board: lolin_d32
+  framework:
+    type: esp-idf
 
 i2c:
   sda: 25
