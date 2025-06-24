@@ -1,10 +1,5 @@
 openthread:
-  channel: !secret openthread_channel
-  network_name: !secret openthread_network_name
-  network_key: !secret openthread_network_key
-  pan_id: !secret openthread_pan_id
-  ext_pan_id: !secret openthread_ext_pan_id
+  tlv: !secret openthread_tlv
 
 network:
   enable_ipv6: true
- 
