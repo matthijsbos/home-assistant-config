@@ -3,27 +3,28 @@ substitutions:
 
 packages:
   - !include common/api.yaml
-  - !include common/logger.yaml
+  # - !include common/logger.yaml
   - !include common/ota.yaml
   - !include common/openthread.yaml
+
+network:
+  enable_ipv6: true
 
 esphome:
   name: ${device_name}
   friendly_name: ${device_name}
+  min_version: "2025.6.0" #openthread component
 
 esp32:
   board: esp32-h2-devkitm-1
   variant: ESP32H2
   framework:
     type: esp-idf
+    sdkconfig_options:
+      CONFIG_CCACHE_ENABLE: y
 
-light:
-  - platform: esp32_rmt_led_strip
-    rgb_order: GRB
-    pin: GPIO8
-    num_leds: 1
-    chipset: ws2812
-    name: "Light"
+logger:
+  hardware_uart: USB_SERIAL_JTAG
 
 binary_sensor:
   - platform: gpio
@@ -33,6 +34,7 @@ binary_sensor:
     device_class: motion
   - platform: copy
     source_id: motion_sensor
-    name: occupancy
+    name: "Occupancy"
+    device_class: occupancy
     filters: 
       - delayed_off: 30s
