@@ -16,14 +16,17 @@ esphome:
 
 esp32:
   board: esp32-c3-devkitm-1
+  flash_size: 4MB
+  variant: ESP32C3
   framework:
-    type: arduino
+    type: esp-idf
 
 # SK6812 RGBW configuration
 light:
-  - platform: neopixelbus
-    variant: SK6812
-    type: GRBW
+  - platform: esp32_rmt_led_strip
+    chipset: SK6812
+    rgb_order: GRB
+    is_rgbw: True
     pin: GPIO10
     num_leds: 209
     id: rgbwlight
