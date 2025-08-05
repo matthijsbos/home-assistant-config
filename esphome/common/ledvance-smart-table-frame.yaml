@@ -76,3 +76,16 @@ light:
     restore_mode: RESTORE_AND_ON
     color_interlock: True
     gamma_correct: 1.0
+    effects: 
+      - random:
+          name: Random Fast
+          transition_length: 1s
+          update_interval: 1.5s
+      - random:
+          name: Random
+          transition_length: 2s
+          update_interval: 3s
+      - random:
+          name: Random Slow
+          transition_length: 4s
+          update_interval: 6s
