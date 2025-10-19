@@ -3,8 +3,8 @@ substitutions:
 
 packages:
   - !include common/api.yaml
-  # - !include common/logger.yaml
-  # - !include common/ota.yaml
+  - !include common/logger.yaml
+  - !include common/ota.yaml
   - !include common/openthread.yaml
 
 network:
