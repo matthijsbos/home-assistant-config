@@ -889,12 +889,9 @@
     metadata: {}
     data: {}
     target:
-      entity_id: switch.bedroom_mosquito_repeller
-  - action: switch.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id: switch.fan_1d90_night_mode
+      entity_id:
+      - switch.bathroom_mirror_light_power
+      - switch.bathroom_mirror_heater
   - action: media_player.turn_off
     metadata: {}
     data: {}
@@ -906,13 +903,13 @@
       preset_mode: eco
     target:
       entity_id: climate.climate_44a4_thermostat
-  - action: switch.turn_off
+  - action: fan.turn_off
     metadata: {}
     data: {}
     target:
       entity_id:
-      - switch.bathroom_mirror_light_power
-      - switch.bathroom_mirror_heater
+      - fan.living_room_fan
+      - fan.bedroom_fan
   - wait_for_trigger:
     - trigger: state
       entity_id:
