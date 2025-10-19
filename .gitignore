@@ -49,3 +49,5 @@ www/community
 # CUSTOM
 .shopping_list.json
 onlineBackupsData
+
+.ha_run.lock
