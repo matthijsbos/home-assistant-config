@@ -1,3 +1,4 @@
 api:
+  reboot_timeout: 24h
   encryption:
     key: !secret api_encryption_key
