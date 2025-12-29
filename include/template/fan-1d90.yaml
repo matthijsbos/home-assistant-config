@@ -1,8 +1,8 @@
-- platform: template
-  sensors:
-    fan_1d90_volatile_organic_compounds:
+- sensor:
+    - name: "fan-1d90 VOC (μg/m³)"
+      unique_id: fan_1d90_volatile_organic_compounds
       unit_of_measurement: "μg/m³"
-      value_template: >
+      state: >
         {% set voc_index = states('sensor.fan_1d90_volatile_organic_compounds_index') %}
         {% if voc_index == 'unknown' or voc_index == 'unavailable' %}
           {{ states('sensor.fan_1d90_volatile_organic_compounds') }}
@@ -18,12 +18,11 @@
             {{ (500 * (voc_index - 8) + 1000) | round(2) }}
           {% endif %}
         {% endif %}
-- platform: template
-  sensors:
-    fan_1d90_nitrogen_dioxide:
-      friendly_name: "fan-1d90 NO2 (ppb)"
+- sensor:
+    - name: "fan-1d90 NO2 (ppb)"
+      unique_id: fan_1d90_nitrogen_dioxide
       unit_of_measurement: "ppb"
-      value_template: >
+      state: >
         {% set no2_index = states('sensor.fan_1d90_nitrogen_dioxide_index') %}
         {% if no2_index == 'unknown' or no2_index == 'unavailable' %}
           {{ states('sensor.fan_1d90_nitrogen_dioxide') }}
@@ -39,3 +38,4 @@
             {{ (100 * (no2_index - 8) + 200) | round(2) }}
           {% endif %}
         {% endif %}
+

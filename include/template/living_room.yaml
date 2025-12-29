@@ -29,6 +29,7 @@
         {% else %}
           true
         {% endif %}
+
 - binary_sensor:
     - unique_id: living_room_daylight
       name: "Living Room Daylight"
@@ -50,6 +51,7 @@
         {% else %}
           false
         {% endif %}
+
 - sensor:
     - name: "Living Room Temperature Level"
       unique_id: living_room_temperature_level
@@ -175,3 +177,46 @@
         {% else %}
           false
         {% endif %}
+
+- switch:
+    - unique_id: living_room_dashboard_display
+      turn_on:
+        - action: button.press
+          data:
+            entity_id: button.dashboard_7e2b_displaywake
+      turn_off:
+        - action: button.press
+          data:
+            entity_id: button.dashboard_7e2b_displaysleep
+      name: Living Room Dashboard Display
+      state: "{{ is_state('sensor.dashboard_7e2b_displaypower', 'PowerOn') }}"
+
+- light:
+    - unique_id: living_room_sofa_windowsill_light
+      turn_on:
+        - action: switch.turn_on
+          data:
+            entity_id: switch.switch_50b5
+      turn_off:
+        - action: switch.turn_off
+          data:
+            entity_id: switch.switch_50b5
+      default_entity_id: light.living_room_sofa_windowsill_light
+      availability: "{{ is_state('switch.switch_50b5', 'unavailable') == False }}"
+      name: Living Room Sofa Windowsill Light
+      state: "{{ is_state('switch.switch_50b5', 'on') }}"
+
+- light:
+    - unique_id: living_room_3d_printer_light
+      turn_on:
+        - action: switch.turn_on
+          data:
+            entity_id: switch.switch_ac16
+      turn_off:
+        - action: switch.turn_off
+          data:
+            entity_id: switch.switch_ac16
+      default_entity_id: light.living_room_3d_printer_light
+      availability: "{{ is_state('switch.switch_ac16', 'unavailable') == False }}"
+      name: Living Room 3D Printer Light
+      state: "{{ is_state('switch.switch_ac16', 'on') }}"

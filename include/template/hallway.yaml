@@ -61,3 +61,17 @@
       state: "{{ is_state('binary_sensor.front_door_occupancy', 'on') }}"
       delay_off:
         minutes: 1
+
+- light:
+  - unique_id: hallway_ambient_lights
+    turn_on:
+    - action: switch.turn_on
+      data:
+        entity_id: switch.switch_f37c
+    turn_off:
+    - action: switch.turn_off
+      data:
+        entity_id: switch.switch_f37c
+    default_entity_id: light.hallway_ambient_lights
+    name: Hallway Ambient Lights
+    state: '{{ is_state(''switch.switch_f37c'', ''on'') }}'

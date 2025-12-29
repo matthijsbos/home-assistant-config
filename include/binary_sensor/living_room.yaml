@@ -39,13 +39,3 @@
   device_class: occupancy
   entities:
     - binary_sensor.occupancy_7ae8_presence_sensor_6
-- platform: template
-  sensors:
-    laptop_docked:
-      unique_id: laptop_docked
-      friendly_name: "Laptop Docked"
-      device_class: connectivity
-      value_template: >-
-        {{ is_state('sensor.laptop_5647_docked', 'Docked') }}
-      availability_template: >-
-        {{ states('sensor.laptop_5647_docked') not in ['unknown', 'unavailable', 'None'] }}

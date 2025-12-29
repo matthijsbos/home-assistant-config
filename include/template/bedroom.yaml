@@ -108,3 +108,32 @@
       availability: >
         {{ states('sensor.bedroom_temperature') not in ['unavailable', 'unknown', 'none'] and
             states('sensor.bedroom_relative_humidity') not in ['unavailable', 'unknown', 'none'] }}
+
+- light:
+    - unique_id: bedroom_ambient_lights
+      turn_on:
+        - action: switch.turn_on
+          data:
+            entity_id: switch.switch_67a8
+      turn_off:
+        - action: switch.turn_off
+          data:
+            entity_id: switch.switch_67a8
+      default_entity_id: light.bedroom_ambient_lights
+      name: Bedroom Ambient Lights
+      state: "{{ is_state('switch.switch_67a8', 'on') }}"
+
+- light:
+    - unique_id: bedroom_reading_light
+      turn_on:
+        - action: switch.turn_on
+          data:
+            entity_id: switch.switch_b941
+      turn_off:
+        - action: switch.turn_off
+          data:
+            entity_id: switch.switch_b941
+      default_entity_id: light.bedroom_reading_light
+      availability: "{{ is_state('switch.switch_b941', 'unavailable') == False }}"
+      name: Bedroom Reading Light
+      state: "{{ is_state('switch.switch_b941', 'on') }}"

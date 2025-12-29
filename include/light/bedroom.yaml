@@ -19,37 +19,6 @@
   entities:
     - light.bedroom_clock_light
 
-- platform: template
-  lights:
-    bedroom_ambient_lights:
-      unique_id: bedroom_ambient_lights
-      friendly_name: "Bedroom Ambient Lights"
-      value_template: "{{ is_state('switch.switch_67a8', 'on') }}"
-      turn_on:
-        action: switch.turn_on
-        data:
-          entity_id: switch.switch_67a8
-      turn_off:
-        action: switch.turn_off
-        data:
-          entity_id: switch.switch_67a8
-
-- platform: template
-  lights:
-    bedroom_reading_light:
-      unique_id: bedroom_reading_light
-      friendly_name: "Bedroom Reading Light"
-      value_template: "{{ is_state('switch.switch_b941', 'on') }}"
-      turn_on:
-        action: switch.turn_on
-        data:
-          entity_id: switch.switch_b941
-      turn_off:
-        action: switch.turn_off
-        data:
-          entity_id: switch.switch_b941
-      availability_template: "{{ is_state('switch.switch_b941', 'unavailable') == False }}"
-
 - platform: group
   unique_id: bedroom_night_light
   name: Bedroom Night Light
