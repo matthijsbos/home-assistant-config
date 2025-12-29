@@ -156,6 +156,7 @@ light:
     effects: 
       - pulse:
           name: "Slow Pulse"
+          min_brightness: 20%
           update_interval: 1s
           transition_length: 1s
   - platform: status_led
@@ -242,7 +243,7 @@ climate:
           if (id(heater_switch).state) {
               id(red_led_light).turn_on().set_effect("Slow Pulse").perform();
           } else if (id(my_thermostat).mode == climate::CLIMATE_MODE_HEAT) {
-              id(red_led_light).turn_on().set_effect("none").perform();
+              id(red_led_light).turn_on().set_effect("none").set_brightness(0.2).perform();
           } else {
               id(red_led_light).turn_off().perform();
           }
