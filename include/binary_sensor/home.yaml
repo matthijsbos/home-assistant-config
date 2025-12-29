@@ -7,3 +7,4 @@
     - binary_sensor.kitchen_occupancy
     - binary_sensor.hallway_occupancy
     - binary_sensor.bedroom_occupancy
+    - binary_sensor.bathroom_occupancy
