@@ -336,7 +336,9 @@
     data:
       preset_mode: eco
     target:
-      entity_id: climate.climate_44a4_thermostat
+      entity_id:
+      - climate.climate_44a4_thermostat
+      - climate.climate_0000_thermostat
   mode: restart
 - id: '1719610469629'
   alias: Bedroom Mosquito Repeller
@@ -902,7 +904,9 @@
     data:
       preset_mode: eco
     target:
-      entity_id: climate.climate_44a4_thermostat
+      entity_id:
+      - climate.climate_44a4_thermostat
+      - climate.climate_0000_thermostat
   - action: fan.turn_off
     metadata: {}
     data: {}
