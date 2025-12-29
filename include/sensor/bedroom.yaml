@@ -24,6 +24,7 @@
   type: mean
   entity_ids:
     - sensor.occupancy_249b_light_sensor_light_level
+    - sensor.occupancy_3e11_illuminance
 - platform: min_max
   unique_id: bedroom_pm_10
   name: "Bedroom PM10"

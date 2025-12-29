@@ -4,6 +4,7 @@
   device_class: occupancy
   entities:
     - binary_sensor.occupancy_249b_presence_sensor_1
+    - binary_sensor.occupancy_3e11_occupancy
 - platform: group
   unique_id: bedroom_bed_occupancy
   name: "Bedroom Bed Occupancy"
