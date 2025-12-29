@@ -76,3 +76,8 @@ fan: !include_dir_merge_list include/fan
 media_player: !include_dir_merge_list include/media_player
 timer: !include_dir_merge_named include/timer
 event: !include_dir_merge_list include/event
+
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 192.168.86.4
