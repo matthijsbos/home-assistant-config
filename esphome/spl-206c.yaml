@@ -1,8 +1,8 @@
 substitutions:
-  device_name: "spl-b94c"
+  device_name: "spl-206c"
 
 external_components:
-  - source: github://stas-sl/esphome-sound-level-meter
+  - source: github://stas-sl/esphome-sound-level-meter@dev
 
 packages:
   - !include common/api.yaml

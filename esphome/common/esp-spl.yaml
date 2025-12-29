@@ -7,89 +7,84 @@ esp32:
   board: esp32-c3-devkitm-1
   variant: ESP32C3
   framework:
-    type: arduino
+    type: esp-idf
 
-i2s:
-  bck_pin: GPIO6
-  ws_pin: GPIO5
-  din_pin: GPIO7
-  sample_rate: 24000            # default: 48000
-  bits_per_sample: 32           # default: 32
+i2s_audio:
+  i2s_bclk_pin: GPIO6
+  i2s_lrclk_pin: GPIO5
+  # bits_shift: 8
 
-  # right shift samples.
-  # for example if mic has 24 bit resolution, and i2s configured as 32 bits,
-  # then audio data will be aligned left (MSB) and LSB will be padded with
-  # zeros, so you might want to shift them right by 8 bits
-  bits_shift: 8                 # default: 0
-
-  channel: left               # default: right
-
+microphone:
+  - platform: i2s_audio
+    id: mic
+    adc_type: external
+    i2s_din_pin: GPIO7
+    sample_rate: 24000            # default: 48000
+    bits_per_sample: 32bit
+    i2s_mode: primary
+    channel: left               # default: right
 
 sound_level_meter:
+  task_core: 0
+  microphone:
+    microphone: mic
+    bits_per_sample: 32
+
   # update_interval specifies over which interval to aggregate audio data
   # you can specify default update_interval on top level, but you can also
   # override it further by specifying it on sensor level
   update_interval: 1s           # default: 60s
-
-  # buffer_size is in samples (not bytes), so for float data type
-  # number of bytes will be buffer_size * 4
-  buffer_size: 1024             # default: 1024
 
   # see your mic datasheet to find sensitivity and reference SPL.
   # those are used to convert dB FS to db SPL
   mic_sensitivity: -26dB        # default: empty
   mic_sensitivity_ref: 94dB     # default: empty
 
-  # additional offset if needed
-  offset: -12dB                   # default: empty
+  # # additional offset if needed
+  # offset: -12dB                   # default: empty
 
-  # for flexibility sensors are organized hierarchically into groups. each group
-  # could have any number of filters, sensors and nested groups.
-  # for examples if there is a top level group A with filter A and nested group B
-  # with filter B, then for sensors inside group B filters A and then B will be
-  # applied:
-  # groups:
-  #   # group A
-  #   - filters:
-  #       - filter A
-  #     groups:
-  #       # group B
-  #       - filters:
-  #           - filter B
-  #         sensors:
-  #           - sensor X
-  groups:
-    # group 1 (mic eq)
-    - filters:
-        # for now only SOS filter type is supported, see math/filter-design.ipynb
-        # to learn how to create or convert other filter types to SOS
-        - type: sos
-          coeffs:
-            # INMP441:
-            #      b0            b1           b2          a1            a2
-            - [ 1.0019784 , -1.9908513  , 0.9889158 , -1.9951786  , 0.99518436]
+  dsp_filters:
+    - type: sos
+      id: f_inmp441
+      coeffs:
+        # INMP441:
+        #      b0            b1           b2          a1            a2
+        - [ 1.0019784 , -1.9908513  , 0.9889158 , -1.9951786  , 0.99518436]
 
-      # nested groups
-      groups:
-        # group 1.2 (A-weighting)
-        - filters:
-            # for now only SOS filter type is supported, see math/filter-design.ipynb
-            # to learn how to create or convert other filter types to SOS
-            - type: sos
-              coeffs:
-                # A-weighting:
-                #       b0           b1            b2             a1            a2
-                - [ 0.16999495 ,  0.741029   ,  0.52548885 , -0.11321865 , -0.056549273]
-                - [ 1.         , -2.00027    ,  1.0002706  , -0.03433284 , -0.79215795 ]
-                - [ 1.         , -0.709303   , -0.29071867 , -1.9822421  ,  0.9822986  ]
-          sensors:
-            - type: eq
-              name: "LAeq,1s"
-              id: LAeq_1s
-              unit_of_measurement: dBA
-              update_interval: 1s
+    - 
+      id: f_a
+      type: sos
+      coeffs:
+      
+        # A-weighting:
+        #       b0           b1            b2             a1            a2
+        - [ 0.16999495 ,  0.741029   ,  0.52548885 , -0.11321865 , -0.056549273]
+        - [ 1.         , -2.00027    ,  1.0002706  , -0.03433284 , -0.79215795 ]
+        - [ 1.         , -0.709303   , -0.29071867 , -1.9822421  ,  0.9822986  ]
+
+  sensors:
+    - type: eq
+      id: LAeq_1s_uncalibrated
+      unit_of_measurement: dBA
+      update_interval: 1s
+      dsp_filters: 
+      - f_inmp441
+      - f_a
+      internal: True
 
 sensor:
+  - platform: copy
+    source_id: LAeq_1s_uncalibrated
+    name: "LAeq,1s"
+    id: LAeq_1s
+    accuracy_decimals: 2
+    device_class: sound_pressure
+    state_class: measurement
+    unit_of_measurement: "dBA"
+    icon: "mdi:waveform"
+    filters:
+      - offset: !lambda return id(calibration_offset).state;
+
   - platform: copy
     source_id: LAeq_1s
     id: LAeq_1s_linear
@@ -145,7 +140,7 @@ sensor:
             return 10.0 * log10(x);
           }
       - or:
-        - delta: 0.25
+        - delta: 0.1
         - heartbeat: 60s # at least every 60 s
   - platform: copy
     source_id: LAeq_1min_linear
@@ -164,7 +159,7 @@ sensor:
             return 10.0 * log10(x);
           }
       - or:
-        - delta: 0.25
+        - delta: 0.1
         - heartbeat: 60s # at least every 60 s
   - platform: copy
     source_id: LAeq_5min_linear
@@ -183,7 +178,7 @@ sensor:
             return 10.0 * log10(x);
           }
       - or:
-        - delta: 0.25
+        - delta: 0.1
         - heartbeat: 60s # at least every 60 s
   - platform: copy
     source_id: LAeq_1s
@@ -200,7 +195,7 @@ sensor:
           send_every: 1
           quantile: 0.5
       - or:
-        - delta: 0.25
+        - delta: 0.1
         - heartbeat: 60s # at least every 60 s
   - platform: copy
     source_id: LAeq_1s
@@ -217,7 +212,7 @@ sensor:
           send_every: 1
           quantile: 0.1
       - or:
-        - delta: 0.25
+        - delta: 0.1
         - heartbeat: 60s # at least every 60 s
   - platform: copy
     source_id: LAeq_1s
@@ -234,7 +229,7 @@ sensor:
           send_every: 1
           quantile: 0.9
       - or:
-        - delta: 0.25
+        - delta: 0.1
         - heartbeat: 60s # at least every 60 s
   - platform: copy
     source_id: LAeq_1s
@@ -251,7 +246,7 @@ sensor:
           send_every: 1
           quantile: 0.5
       - or:
-        - delta: 0.25
+        - delta: 0.1
         - heartbeat: 60s # at least every 60 s
   - platform: copy
     source_id: LAeq_1s
@@ -268,7 +263,7 @@ sensor:
           send_every: 1
           quantile: 0.1
       - or:
-        - delta: 0.25
+        - delta: 0.1
         - heartbeat: 60s # at least every 60 s
   - platform: copy
     source_id: LAeq_1s
@@ -285,7 +280,7 @@ sensor:
           send_every: 1
           quantile: 0.9
       - or:
-        - delta: 0.25
+        - delta: 0.1
         - heartbeat: 60s # at least every 60 s
   - platform: copy
     source_id: LAeq_1s
@@ -302,7 +297,7 @@ sensor:
           send_every: 1
           quantile: 0.5
       - or:
-        - delta: 0.25
+        - delta: 0.1
         - heartbeat: 60s # at least every 60 s
   - platform: copy
     source_id: LAeq_1s
@@ -319,7 +314,7 @@ sensor:
           send_every: 1
           quantile: 0.1
       - or:
-        - delta: 0.25
+        - delta: 0.1
         - heartbeat: 60s # at least every 60 s
   - platform: copy
     source_id: LAeq_1s
@@ -336,10 +331,20 @@ sensor:
           send_every: 1
           quantile: 0.9
       - or:
-        - delta: 0.25
+        - delta: 0.1
         - heartbeat: 60s # at least every 60 s
   
-status_led:
-  pin: 
-    number: GPIO8
-    inverted: true
+
+number:
+  - platform: template
+    name: "Calibration Offset"
+    id: calibration_offset
+    optimistic: true
+    min_value: -20
+    max_value: 20
+    initial_value: 0.0
+    step: 0.1
+    restore_value: true
+    unit_of_measurement: "dBA"
+    mode: box
+    entity_category: config
