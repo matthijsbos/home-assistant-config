@@ -39,76 +39,6 @@
     target:
       entity_id: switch.living_room_dashboard_display
   mode: single
-- id: '1715781035946'
-  alias: Living Room Docked Laptop Display Sleep
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - binary_sensor.living_room_desk_occupancy
-    to: 'off'
-    for:
-      seconds: '{{  states(''input_number.laptop_display_off_delay'')|int }}'
-  - trigger: state
-    entity_id:
-    - switch.laptop_display
-    to: 'on'
-    for:
-      seconds: '{{  states(''input_number.laptop_display_off_delay'')|int }}'
-  - trigger: state
-    entity_id:
-    - binary_sensor.laptop_occupancy
-    to: 'off'
-  conditions:
-  - condition: state
-    entity_id: binary_sensor.laptop_docked
-    state: 'on'
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 0
-  - condition: state
-    entity_id: binary_sensor.laptop_occupancy
-    state: 'off'
-  - condition: state
-    entity_id: switch.laptop_display
-    state: 'on'
-    for:
-      seconds: '{{  states(''input_number.laptop_display_off_delay'')|int }}'
-  - condition: state
-    entity_id: binary_sensor.living_room_desk_occupancy
-    state: 'off'
-    for:
-      seconds: '{{  states(''input_number.laptop_display_off_delay'')|int }}'
-  actions:
-  - action: switch.turn_off
-    metadata: {}
-    data: {}
-    target:
-      entity_id: switch.laptop_display
-  mode: single
-- id: '1715781074719'
-  alias: Living Room Docked Laptop Display Wake
-  description: ''
-  trigger:
-  - trigger: state
-    entity_id:
-    - binary_sensor.living_room_desk_occupancy
-    to: 'on'
-  condition:
-  - condition: state
-    entity_id: binary_sensor.laptop_docked
-    state: 'on'
-  - condition: state
-    entity_id: switch.laptop_display
-    state: 'off'
-  action:
-  - action: switch.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id: switch.laptop_display
-  mode: single
 - id: '1715788081710'
   alias: Living Room TV Youtube Auto-Play
   description: ''
@@ -158,22 +88,6 @@
     device_id: d9f60f6e439d7d04d0a14366940cf5e4
     entity_id: c647751fa2efaef897f9c4d6b2764174
     domain: fan
-  mode: single
-- id: '1716715924876'
-  alias: Living Room Docking Station On
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - binary_sensor.living_room_desk_occupancy
-    to: 'on'
-  conditions: []
-  actions:
-  - action: switch.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id: switch.living_room_docking_station
   mode: single
 - id: '1716716038346'
   alias: Living Room TV Power On
@@ -257,35 +171,6 @@
     data: {}
     target:
       entity_id: switch.living_room_tv_power
-  mode: single
-- id: '1716716358957'
-  alias: Living Room Docking Station Off
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - binary_sensor.living_room_occupancy
-    to: 'off'
-    for:
-      hours: 0
-      minutes: 30
-      seconds: 0
-  conditions:
-  - condition: not
-    conditions:
-    - condition: state
-      entity_id: binary_sensor.laptop_docked
-      state: 'on'
-      for:
-        hours: 0
-        minutes: 0
-        seconds: 0
-  actions:
-  - action: switch.turn_off
-    metadata: {}
-    data: {}
-    target:
-      entity_id: switch.living_room_docking_station
   mode: single
 - id: '1717181154454'
   alias: Bedroom Bedtime
