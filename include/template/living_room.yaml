@@ -206,3 +206,32 @@
       availability: "{{ is_state('switch.switch_ac16', 'unavailable') == False }}"
       name: Living Room 3D Printer Light
       state: "{{ is_state('switch.switch_ac16', 'on') }}"
+
+- light:
+    - unique_id: living_room_ambient_lights
+      turn_on:
+        - if:
+            condition: template
+            value_template: "{{ brightness is defined }}"            
+          then:
+            - action: light.turn_on
+              target:
+                entity_id: light.light_ec96
+              data:
+                brightness: "{{ brightness }}"
+        - action: light.turn_on
+          target:
+            entity_id: light.light_ec96
+      turn_off:
+        - action: light.turn_off
+          target:
+            entity_id: light.light_ec96
+      set_level:
+        - action: light.turn_on
+          target:
+            entity_id: light.light_ec96
+          data:
+            brightness: "{{ brightness }}"
+      availability: "{{ is_state('switch.light_ec96', 'unavailable') == False }}"
+      name: "Living Room Ambient Lights"
+      state: "{{ is_state('switch.light_ec96', 'on') }}"

@@ -8,11 +8,11 @@
     - light.living_room_desk_reading_light
     - light.living_room_sofa_reading_light
 
-- platform: group
-  unique_id: living_room_ambient_lights
-  name: "Living Room Ambient Lights"
-  entities:
-    - light.light_ec96
+# - platform: group
+#   unique_id: living_room_ambient_lights
+#   name: "Living Room Ambient Lights"
+#   entities:
+#     - light.light_ec96
 
 - platform: group
   unique_id: living_room_decorative_lights
