@@ -24,11 +24,12 @@ one_wire:
 sensor:
   - platform: dallas_temp
     name: Temperature
-    update_interval: 1s
+    update_interval: 60s
+    resolution: 12
     accuracy_decimals: 1
     filters:
-      - sliding_window_moving_average:
-          window_size: 5
+      - exponential_moving_average:
+          alpha: 0.1
           send_every: 1
       - round: 1 # will round to 1 decimal place
       - or:

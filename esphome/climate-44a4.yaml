@@ -54,16 +54,17 @@ sensor:
   - platform: dallas_temp
     name: Temperature
     id: internal_temperature
-    update_interval: 1s
+    update_interval: 60s
+    resolution: 12
     accuracy_decimals: 1
     filters:
-      - sliding_window_moving_average:
-          window_size: 5
+      - exponential_moving_average:
+          alpha: 0.1
           send_every: 1
       - round: 1 # will round to 1 decimal place
       - or:
         - delta: 0.1 # only send updated value on change >0.1, or
-        - heartbeat: 60s # at least every 60 s    
+        - heartbeat: 60s # at least every 60 s
   - platform: homeassistant
     id: external_temperature
     entity_id: ${external_temperature_entity}
