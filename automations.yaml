@@ -118,24 +118,29 @@
       seconds: 0
       milliseconds: 0
     continue_on_timeout: false
+    enabled: false
   - action: media_player.turn_off
     metadata: {}
     data: {}
     target:
       entity_id: media_player.living_room_tv
+    enabled: false
   - delay:
       hours: 0
       minutes: 0
       seconds: 10
       milliseconds: 0
+    enabled: false
   - condition: state
     entity_id: binary_sensor.living_room_sofa_occupancy
     state: 'on'
+    enabled: false
   - action: media_player.turn_on
     metadata: {}
     data: {}
     target:
       entity_id: media_player.living_room_tv
+    enabled: false
   mode: single
 - id: '1716716274495'
   alias: Living Room TV Power Off
