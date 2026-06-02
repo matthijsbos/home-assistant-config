@@ -26,6 +26,7 @@ switch:
     pin: GPIO14
     id: relay
     name: None
+    restore_mode: RESTORE_DEFAULT_OFF
 
 binary_sensor:
   - platform: gpio
