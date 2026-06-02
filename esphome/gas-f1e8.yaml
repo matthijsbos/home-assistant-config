@@ -36,7 +36,7 @@ i2c:
 
 sensor:
   - platform: scd4x
-    update_interval: 1s
+    update_interval: 5s
     co2:
       name: "CO2"
       filters:
