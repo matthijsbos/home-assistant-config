@@ -31,11 +31,11 @@ sensor:
     id: distance_sensor
     name: "Distance"
     address: 0x29
-    update_interval: 0.1s
+    update_interval: 0.5s
     filters:
       - sliding_window_moving_average:
-          window_size: 10
-          send_every: 10
+          window_size: 4
+          send_every: 4
       - round: 2
       - or:
         - delta: 0.01 # only send updated value on change >0.01, or
