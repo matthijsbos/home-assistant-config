@@ -51,3 +51,5 @@ www/community
 onlineBackupsData
 
 .ha_run.lock
+
+.cache
