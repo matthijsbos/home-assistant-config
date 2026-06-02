@@ -29,7 +29,7 @@ sensor:
     accuracy_decimals: 1
     filters:
       - exponential_moving_average:
-          alpha: 0.1
+          alpha: 0.5
           send_every: 1
       - round: 1 # will round to 1 decimal place
       - or:

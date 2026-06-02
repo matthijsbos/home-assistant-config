@@ -44,7 +44,7 @@ status_led:
 fan:
   - platform: template
     id: fan_6ab8
-    name: None
+    name: Fan
     restore_mode: ALWAYS_OFF
     speed_count: 3
     has_oscillating: true
@@ -69,8 +69,10 @@ one_wire:
 
 sensor:
   - platform: dallas_temp
+    id: temp_sensor
     name: Temperature
-    update_interval: 1s
+    update_interval: 60s
+    resolution: 12
     accuracy_decimals: 1
     filters:
       - sliding_window_moving_average:
@@ -168,3 +170,30 @@ script:
           } else {
             id(relay_pin_4).turn_off();
           }
+
+# Climate Controller
+climate:
+  - platform: thermostat
+    name: "Living Room Fan Controller"
+    id: fan_climate
+    sensor: temp_sensor
+    min_cooling_off_time: 1s
+    min_cooling_run_time: 1s
+    min_fanning_off_time: 1s
+    min_fanning_run_time: 1s
+    # Hysteresis to protect the fan motor/relays
+    cool_deadband: 0.1 °C
+    cool_overrun: 0.1 °C
+    min_idle_time: 1s
+    # This triggers your existing relay logic
+    fan_only_action:
+      - fan.turn_on: 
+          id: fan_6ab8
+          speed: 1 # Default speed when auto-cooling
+    cool_action:
+      - fan.turn_on: 
+          id: fan_6ab8
+          speed: 1 # Default speed when auto-cooling
+    fan_only_cooling: False
+    idle_action:
+      - fan.turn_off: fan_6ab8
